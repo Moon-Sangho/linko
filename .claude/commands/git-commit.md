@@ -1,3 +1,7 @@
+---
+model: claude-haiku-4-5-20251001
+---
+
 # Git Commit
 
 Stages and commits changes following the project's git conventions.
@@ -10,7 +14,21 @@ Full conventions: `.claude/rules/git-conventions.md`
 
 ```
 <type>(<scope>): <summary>
+
+<body>
+
+<footer>
 ```
+
+| Section | Required | Description |
+|---------|----------|-------------|
+| Header  | Yes | `<type>(<scope>): <summary>` — one line, max 72 chars |
+| Body    | Recommended | What changed and why; bullet list preferred |
+| Footer  | Optional | Issue references, breaking change notes |
+
+Separate each section with a **blank line**.
+
+---
 
 ### Types
 
@@ -38,12 +56,23 @@ Full conventions: `.claude/rules/git-conventions.md`
 | `build`    | electron-vite, electron-builder   |
 | `ui`       | UI components                     |
 
-### Summary Rules
+### Body Rules
 
-- Imperative present tense: "Add" not "Added"
-- Capitalize first letter
-- No period at the end
-- Under 72 characters total
+- Explain **what** changed and **why**, not how
+- Use `-` bullet list for multiple changes
+- Wrap at 72 characters per line
+- Omit if header is self-explanatory
+
+### Footer Keywords
+
+```
+Closes #<n>       ← closes an issue on merge
+Refs #<n>         ← references without closing
+See #<n>          ← informational link
+BREAKING CHANGE:  ← breaking change description + migration guide
+```
+
+---
 
 ## Steps
 
@@ -53,17 +82,22 @@ Full conventions: `.claude/rules/git-conventions.md`
    git diff
    ```
 
-2. **Analyze changes** to determine the correct type and scope.
+2. **Analyze changes** — determine type, scope, and what to say in the body.
 
 3. **Stage relevant files** (avoid staging unrelated or sensitive files):
    ```bash
    git add <specific files>
    ```
 
-4. **Commit** using a heredoc to preserve formatting:
+4. **Commit** using a heredoc:
    ```bash
    git commit -m "$(cat <<'EOF'
    <type>(<scope>): <summary>
+
+   - <what changed and why>
+   - <what changed and why>
+
+   Closes #<n>
    EOF
    )"
    ```
@@ -73,23 +107,37 @@ Full conventions: `.claude/rules/git-conventions.md`
    git log --oneline -3
    ```
 
+---
+
 ## Examples
 
 ```
-feat(renderer): Add bookmark search with tag filtering
+feat(db): Add full-text search across bookmark fields
+
+- Index url, title, and notes columns with FTS5
+- Return ranked results sorted by relevance score
+- Fall back to LIKE query on older SQLite builds
+
+Closes #42
+```
+
+```
 fix(main): Resolve SQLite connection leak on app quit
-refactor(db): Extract repository interface for extensibility
-chore(build): Update electron-builder packaging config
-docs: Update IPC API reference in .context/current/implementation/ipc-api.md
-feat(ipc)!: Rename bookmark channels to use domain prefix
+
+The db connection was not closed on 'before-quit', causing occasional
+corruption on Windows.
+
+Refs #37
 ```
-
-## Breaking Changes
-
-Add `!` before the colon and describe the breaking change:
 
 ```
 feat(ipc)!: Rename bookmark channels to use domain prefix
+
+- BOOKMARKS_GET → bookmark:get-all
+- BOOKMARK_CREATE → bookmark:create
+
+BREAKING CHANGE: All IPC channel names have changed. Update renderer
+to use new constants from src/shared/ipc-channels.ts.
 ```
 
 $ARGUMENTS
