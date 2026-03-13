@@ -8,14 +8,17 @@
 
 ### Types
 
-| Type      | Description                  | Example                              |
-|-----------|------------------------------|--------------------------------------|
-| `feature` | New feature                  | `feature/bookmark-search`            |
-| `fix`     | Bug fix                      | `fix/sqlite-connection-leak`         |
-| `docs`    | Documentation                | `docs/agents-guide`                  |
-| `refactor`| Refactoring                  | `refactor/bookmark-repository`       |
-| `chore`   | Build, config, maintenance   | `chore/update-electron-builder`      |
-| `test`    | Tests                        | `test/ipc-handler-coverage`          |
+| Type       | Description                         | Example                              |
+|------------|-------------------------------------|--------------------------------------|
+| `feat`     | New feature                         | `feat/bookmark-search`               |
+| `fix`      | Bug fix                             | `fix/sqlite-connection-leak`         |
+| `perf`     | Performance improvement             | `perf/search-query-optimization`     |
+| `test`     | Adding/correcting tests             | `test/ipc-handler-coverage`          |
+| `docs`     | Documentation                       | `docs/agents-guide`                  |
+| `refactor` | Code change (no bug fix or feature) | `refactor/bookmark-repository`       |
+| `build`    | Build system or dependencies        | `build/electron-builder-config`      |
+| `ci`       | CI configuration                    | `ci/github-actions-setup`            |
+| `chore`    | Routine tasks, maintenance          | `chore/update-dependencies`          |
 
 ### Rules
 
@@ -26,13 +29,13 @@
 ### Examples
 
 ```
-feature/tag-filtering
-feature/browser-bookmark-import
+feat/tag-filtering
+feat/browser-bookmark-import
 fix/window-state-not-persisted
 fix/search-returns-empty-results
 docs/ipc-api-reference
 refactor/url-fetcher-service
-chore/electron-vite-config
+build/electron-vite-config
 ```
 
 ---
