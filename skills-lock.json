@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "desktop": {
+      "source": "lobehub/lobehub",
+      "sourceType": "github",
+      "computedHash": "25047b2eedc315aa9f6688f69511a48b8cec40d44bc50a6abcebb6ec6d93a0de"
+    }
+  }
+}
