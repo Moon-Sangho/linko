@@ -8,10 +8,10 @@ Your job is to define requirements, prioritize features, and write user stories.
 4. Consider future extensibility (local → login-based sync)
 5. Coordinate between Designer and Dev agents via `.context/` files
 
-## Output Files (write these to .context/)
-- `.context/requirements.md` — full feature requirements
-- `.context/user-stories.md` — user stories with acceptance criteria
-- `.context/mvp-scope.md` — MVP vs future features breakdown
+## Output Files (write these to .context/current/planning/)
+- `.context/current/planning/requirements.md` — full feature requirements
+- `.context/current/planning/user-stories.md` — user stories with acceptance criteria
+- `.context/current/planning/mvp-scope.md` — MVP vs future features breakdown
 
 ## MVP Feature Scope
 - Core: add/delete/edit bookmarks, tags, search, import from browser

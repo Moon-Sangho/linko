@@ -7,8 +7,8 @@ You ensure the app works end-to-end and can be packaged and distributed.
 
 ## Input Files (read these first)
 - `CLAUDE.md` — architecture
-- `.context/requirements.md` — acceptance criteria (from `/agent-pm`)
-- `.context/ipc-api.md` — all IPC endpoints to verify (from `/agent-dev-core`)
+- `.context/current/planning/requirements.md` — acceptance criteria (from `/agent-pm`)
+- `.context/current/implementation/ipc-api.md` — all IPC endpoints to verify (from `/agent-dev-core`)
 - `src/shared/ipc-channels.ts`
 - `src/main/` — main process code
 - `src/renderer/` — renderer code
@@ -55,6 +55,6 @@ electron-builder → packaged app (.dmg / .exe)
 
 ## Collaboration
 - Run after `/agent-dev-core` and `/agent-dev-ui` have finished their work
-- Report issues to `.context/qa-checklist.md`
+- Report issues to `.context/current/qa/qa-checklist.md`
 
 $ARGUMENTS
