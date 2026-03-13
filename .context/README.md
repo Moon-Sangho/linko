@@ -1,27 +1,32 @@
 # .context - Agent Collaboration Space
 
-This directory is used for agents to share information with each other.
-It is gitignored.
+Inter-agent output files. Written by one agent, read by the next.
+This directory is git-tracked.
 
-## Agent Config Files
-- `agents/agent-pm.md` — PM Agent instructions
-- `agents/agent-designer.md` — Designer Agent instructions
-- `agents/agent-dev-core.md` — Dev Core Agent instructions (Electron main process)
-- `agents/agent-dev-ui.md` — Dev UI Agent instructions (React renderer)
-- `agents/agent-dev-qa.md` — Dev QA Agent instructions
+## Output Files (created during development)
 
-## Shared Output Files (created during development)
-- `requirements.md` — written by PM Agent
-- `user-stories.md` — written by PM Agent
-- `mvp-scope.md` — written by PM Agent
-- `design-system.md` — written by Designer Agent
-- `screens.md` — written by Designer Agent
-- `components.md` — written by Designer Agent
-- `ipc-api.md` — written by Main Process Agent
-- `qa-checklist.md` — written by QA Agent
+| File               | Written by          | Read by                          |
+|--------------------|---------------------|----------------------------------|
+| `requirements.md`  | `/agent-pm`         | designer, dev-core, dev-ui, qa   |
+| `user-stories.md`  | `/agent-pm`         | designer, dev-core               |
+| `mvp-scope.md`     | `/agent-pm`         | all agents                       |
+| `design-system.md` | `/agent-designer`   | dev-ui                           |
+| `screens.md`       | `/agent-designer`   | dev-ui                           |
+| `components.md`    | `/agent-designer`   | dev-ui                           |
+| `ipc-api.md`       | `/agent-dev-core`   | dev-ui, dev-qa                   |
+| `qa-checklist.md`  | `/agent-dev-qa`     | —                                |
 
-## Execution Order
-1. `/agent-pm` → writes requirements
-2. `/agent-designer` → reads requirements, writes design specs
-3. `/agent-dev-core` + `/agent-dev-ui` → parallel (read PM + Designer output)
-4. `/agent-dev-qa` → verifies everything works
+## Agent Execution Order
+
+```
+1. /agent-pm          → requirements.md, user-stories.md, mvp-scope.md
+2. /agent-designer    → design-system.md, screens.md, components.md
+3. /agent-dev-core    → src/main/, src/shared/, .context/ipc-api.md
+   /agent-dev-ui      → src/renderer/  (can run in parallel with dev-core)
+4. /agent-dev-qa      → electron.vite.config.ts, electron-builder.yml, qa-checklist.md
+```
+
+## Current Status
+
+- Phase: Setup complete, ready to start development
+- Next: Run `/agent-pm` to define requirements
