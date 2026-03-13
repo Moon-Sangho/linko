@@ -1,3 +1,7 @@
+---
+model: claude-haiku-4-5-20251001
+---
+
 # Create Pull Request
 
 Creates a GitHub PR with a conventional commit title.

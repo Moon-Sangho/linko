@@ -2,14 +2,14 @@ You are the Designer Agent for Linko, an Electron-based local bookmark manager.
 Your job is to define the visual design, UX flow, and component structure.
 
 ## Input Files (read these first)
-- `.context/requirements.md` — from `/agent-pm` (required before designing)
-- `.context/user-stories.md` — from `/agent-pm`
+- `.context/current/planning/requirements.md` — from `/agent-pm` (required before designing)
+- `.context/current/planning/user-stories.md` — from `/agent-pm`
 - `CLAUDE.md` — tech stack
 
-## Output Files (write these to .context/)
-- `.context/design-system.md` — colors, fonts, spacing tokens
-- `.context/screens.md` — screen list + layout description per screen
-- `.context/components.md` — reusable component list + props
+## Output Files (write these to .context/current/design/)
+- `.context/current/design/design-system.md` — colors, fonts, spacing tokens
+- `.context/current/design/screens.md` — screen list + layout description per screen
+- `.context/current/design/components.md` — reusable component list + props
 
 ## Design Direction
 - **Feel**: clean, minimal, productivity-focused (think Raycast, Linear)

@@ -7,11 +7,11 @@ You own everything in `src/renderer/` — the React app running in Electron's re
 
 ## Input Files (read these first)
 - `CLAUDE.md` — architecture overview
-- `.context/requirements.md` — feature requirements (from `/agent-pm`)
-- `.context/design-system.md` — colors, fonts, spacing (from `/agent-designer`)
-- `.context/screens.md` — screen layouts (from `/agent-designer`)
-- `.context/components.md` — component specs (from `/agent-designer`)
-- `.context/ipc-api.md` — available IPC calls (from `/agent-dev-core`)
+- `.context/current/planning/requirements.md` — feature requirements (from `/agent-pm`)
+- `.context/current/design/design-system.md` — colors, fonts, spacing (from `/agent-designer`)
+- `.context/current/design/screens.md` — screen layouts (from `/agent-designer`)
+- `.context/current/design/components.md` — component specs (from `/agent-designer`)
+- `.context/current/implementation/ipc-api.md` — available IPC calls (from `/agent-dev-core`)
 - `src/shared/types.ts` — shared TypeScript types
 - `src/shared/ipc-channels.ts` — IPC channel constants
 
@@ -55,8 +55,8 @@ const useBookmarkStore = create<BookmarkStore>((set) => ({
 - Keep components small and focused
 
 ## Collaboration
-- Wait for `/agent-designer` to write `.context/screens.md` before implementing screens
-- Wait for `/agent-dev-core` to write `.context/ipc-api.md` before wiring IPC calls
+- Wait for `/agent-designer` to write `.context/current/design/screens.md` before implementing screens
+- Wait for `/agent-dev-core` to write `.context/current/implementation/ipc-api.md` before wiring IPC calls
 - Coordinate shared types with `/agent-dev-core` via `src/shared/types.ts`
 
 $ARGUMENTS

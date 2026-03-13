@@ -44,9 +44,27 @@ build/electron-vite-config
 
 ```
 <type>(<scope>): <summary>
+
+<body>
+
+<footer>
 ```
 
-### Types
+### Structure
+
+| Section | Required | Description |
+|---------|----------|-------------|
+| Header  | Yes | `<type>(<scope>): <summary>` — one line |
+| Body    | Recommended | What changed and why; bullet list preferred |
+| Footer  | Optional | References, breaking change notes |
+
+Separate each section with a **blank line**.
+
+---
+
+### Header
+
+#### Types
 
 | Type       | Description                         |
 |------------|-------------------------------------|
@@ -60,7 +78,7 @@ build/electron-vite-config
 | `ci`       | CI configuration                    |
 | `chore`    | Routine tasks, maintenance          |
 
-### Scopes
+#### Scopes
 
 | Scope      | Area                              |
 |------------|-----------------------------------|
@@ -72,27 +90,87 @@ build/electron-vite-config
 | `build`    | electron-vite, electron-builder   |
 | `ui`       | UI components                     |
 
-### Summary Rules
+#### Summary Rules
 
 - Imperative present tense: "Add" not "Added"
 - Capitalize first letter
 - No period at the end
-- Under 72 characters total
+- Under 72 characters total (header line)
 
-### Examples
+---
+
+### Body
+
+- Explain **what** changed and **why**, not how
+- Use a bullet list (`-`) for multiple changes
+- Wrap lines at 72 characters
+- Omit if the header is self-explanatory (e.g. simple typo fix)
+
+---
+
+### Footer
+
+Use for references and breaking change notices.
+
+#### References
 
 ```
-feat(renderer): Add bookmark search with tag filtering
-fix(main): Resolve SQLite connection leak on app quit
-refactor(db): Extract repository interface for extensibility
-chore(build): Update electron-builder packaging config
-docs: Update IPC API reference in .context/ipc-api.md
+Closes #<issue-number>
+Refs #<issue-number>
+See #<issue-number>
 ```
 
-### Breaking Changes
+#### Breaking Changes
 
-Add `!` before the colon:
+```
+BREAKING CHANGE: <description of what broke and how to migrate>
+```
+
+Also add `!` to the header:
 
 ```
 feat(ipc)!: Rename bookmark channels to use domain prefix
+```
+
+---
+
+### Full Example
+
+```
+feat(db): Add full-text search across bookmark fields
+
+- Index url, title, and notes columns with FTS5
+- Return ranked results sorted by relevance score
+- Fall back to LIKE query on older SQLite builds
+
+Closes #42
+```
+
+```
+fix(main): Resolve SQLite connection leak on app quit
+
+The db connection was not closed when the app received a 'before-quit'
+event, causing occasional corruption on Windows.
+
+Refs #37
+```
+
+```
+feat(ipc)!: Rename bookmark channels to use domain prefix
+
+- BOOKMARKS_GET → bookmark:get-all
+- BOOKMARK_CREATE → bookmark:create
+- BOOKMARK_DELETE → bookmark:delete
+
+BREAKING CHANGE: All IPC channel names have changed. Renderer must be
+updated to use the new channel constants from ipc-channels.ts.
+```
+
+```
+docs: Restructure .context/ with versioned milestones and update agent paths
+
+- Add current/{planning,design,implementation,qa}/ folder structure
+- Add versions/v0.1/planning/ snapshot of PM outputs
+- Update all agent commands to reference new .context paths
+- Add git-commit command referencing git-conventions.md
 ```
