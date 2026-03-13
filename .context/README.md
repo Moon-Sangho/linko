@@ -30,9 +30,24 @@ This directory is git-tracked.
 
 ## Versioning Rule
 
-각 단계 완료 시:
-1. `current/` 전체를 `versions/vX.X/<milestone>/` 에 복사 (스냅샷)
-2. 계속 `current/` 에서 작업
+`current`는 항상 최신 버전 디렉토리를 가리키는 **심볼릭 링크**입니다.
+파일을 복사하지 않으므로 중복이 없습니다.
+
+### 릴리즈 경계 시 (예: v0.1 → v0.2)
+
+```bash
+# 1. 현재 버전(v0.1) 아카이브 — current 링크가 끊기므로 직접 복사
+cp -r .context/versions/v0.1 .context/versions/v0.2
+
+# 2. 심볼릭 링크를 새 버전으로 업데이트
+rm .context/current
+ln -s versions/v0.2 .context/current
+
+# 3. v0.1은 이제 불변 스냅샷으로 보존
+```
+
+- 작업 중엔 `current/`(= 현재 버전 디렉토리)에서만 읽고 씀
+- 이전 버전은 `versions/vX.X/`에서 직접 참조 가능
 
 각 버전(v0.1, v0.2, ...)은 제품 릴리즈 단위입니다.
 그 안의 단계(planning → design → implementation → qa)가 쌓여 하나의 릴리즈를 이룹니다.
