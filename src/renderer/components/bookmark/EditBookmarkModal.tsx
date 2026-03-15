@@ -1,140 +1,109 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { AlertTriangle } from 'lucide-react';
-import { IpcChannels } from '../../../shared/ipc-channels';
-import { UrlMetadata, IpcResult, Tag } from '../../../shared/types';
 import { useBookmarkStore } from '../../store/useBookmarkStore';
 import { useUIStore } from '../../store/useUIStore';
 import { useTagStore } from '../../store/useTagStore';
+import { useBookmarkForm } from '../../hooks/useBookmarkForm';
 import { Modal } from '../ui/Modal';
 import { Input } from '../ui/Input';
 import { Spinner } from '../ui/Spinner';
+import { TagCheckboxList } from '../ui/TagCheckboxList';
+import { useState } from 'react';
 
 export function EditBookmarkModal() {
-  const { isEditModalOpen, selectedBookmarkId, closeEditModal } = useUIStore();
-  const { bookmarks, update, deleteBookmark } = useBookmarkStore();
-  const { tags, fetchAll: fetchTags } = useTagStore();
+  const isEditModalOpen = useUIStore((s) => s.isEditModalOpen);
+  const selectedBookmarkId = useUIStore((s) => s.selectedBookmarkId);
+  const closeEditModal = useUIStore((s) => s.closeEditModal);
+  const bookmarks = useBookmarkStore((s) => s.bookmarks);
+  const update = useBookmarkStore((s) => s.update);
+  const deleteBookmark = useBookmarkStore((s) => s.deleteBookmark);
+  const tags = useTagStore((s) => s.tags);
+  const fetchTags = useTagStore((s) => s.fetchAll);
 
+  // m8: Stable lookup — only re-runs when bookmarks array or selectedId changes
   const bookmark = bookmarks.find((b) => b.id === selectedBookmarkId) ?? null;
 
-  const [url, setUrl] = useState('');
-  const [title, setTitle] = useState('');
-  const [notes, setNotes] = useState('');
-  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
-  const [isFetchingMeta, setIsFetchingMeta] = useState(false);
-  const [isDuplicate, setIsDuplicate] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const form = useBookmarkForm();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [urlError, setUrlError] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
 
-  // Pre-fill form when bookmark changes
+  // M2: Pre-fill when modal opens with a valid bookmark. fetchTags is stable.
   useEffect(() => {
     if (isEditModalOpen && bookmark) {
-      setUrl(bookmark.url);
-      setTitle(bookmark.title ?? '');
-      setNotes(bookmark.notes ?? '');
-      setSelectedTagIds(bookmark.tags.map((t) => t.id));
-      setIsFetchingMeta(false);
-      setIsDuplicate(false);
-      setIsSaving(false);
-      setIsDeleting(false);
+      form.prefill({
+        url: bookmark.url,
+        title: bookmark.title ?? '',
+        notes: bookmark.notes ?? '',
+        tagIds: bookmark.tags.map((t) => t.id),
+      });
       setShowDeleteConfirm(false);
-      setUrlError('');
+      setIsDeleting(false);
+      setDeleteError('');
       fetchTags();
     }
-  }, [isEditModalOpen, bookmark?.id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEditModalOpen, bookmark?.id, fetchTags]);
 
-  function isValidUrl(value: string) {
-    try {
-      new URL(value);
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
-  async function handleUrlBlur() {
-    if (!url || !isValidUrl(url)) return;
-    if (url === bookmark?.url) return; // unchanged — skip duplicate check
-
-    const dupResult: IpcResult<boolean> = await window.electron.invoke(
-      IpcChannels.BOOKMARK_CHECK_DUPLICATE,
-      url,
-    );
-    setIsDuplicate(dupResult.success && dupResult.data === true);
-
-    if (!title) {
-      setIsFetchingMeta(true);
-      try {
-        const metaResult: IpcResult<UrlMetadata> = await window.electron.invoke(
-          IpcChannels.BOOKMARK_FETCH_METADATA,
-          url,
-        );
-        if (metaResult.success && metaResult.data?.title) {
-          setTitle(metaResult.data.title);
-        }
-      } finally {
-        setIsFetchingMeta(false);
-      }
-    }
-  }
-
-  function handleUrlChange(value: string) {
-    setUrl(value);
-    setUrlError('');
-    setIsDuplicate(false);
-  }
-
-  function toggleTag(tagId: number) {
-    setSelectedTagIds((prev) =>
-      prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId],
-    );
-  }
-
-  async function handleSave() {
-    if (!url) {
-      setUrlError('URL is required');
+  const handleSave = useCallback(async () => {
+    if (!form.url) {
+      form.setUrlError('URL is required');
       return;
     }
-    if (!isValidUrl(url)) {
-      setUrlError('Please enter a valid URL');
+    if (!form.isValidUrl(form.url)) {
+      form.setUrlError('Please enter a valid URL (https:// or http://)');
       return;
     }
     if (!bookmark) return;
 
-    setIsSaving(true);
+    form.setSaveError('');
+    form.setIsSaving(true);
     try {
       await update(bookmark.id, {
-        url,
-        title: title || null,
-        notes: notes || null,
-        tagIds: selectedTagIds,
+        url: form.url,
+        title: form.title || null,
+        notes: form.notes || null,
+        tagIds: form.selectedTagIds,
       });
       closeEditModal();
+    } catch {
+      // M3: Surface error to user
+      form.setSaveError('Failed to save changes. Please try again.');
     } finally {
-      setIsSaving(false);
+      form.setIsSaving(false);
     }
-  }
+  }, [form, bookmark, update, closeEditModal]);
 
-  async function handleDelete() {
+  // C3: Reset local state BEFORE calling closeEditModal so no updates happen
+  // after the component potentially unmounts.
+  const handleDelete = useCallback(async () => {
     if (!bookmark) return;
+    setDeleteError('');
     setIsDeleting(true);
     try {
       await deleteBookmark(bookmark.id);
-      closeEditModal();
-    } finally {
+      // Success: reset state then close while component is still mounted
       setIsDeleting(false);
       setShowDeleteConfirm(false);
+      closeEditModal();
+    } catch {
+      // M3: Surface error; keep modal open so user can retry
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
+      setDeleteError('Failed to delete bookmark. Please try again.');
     }
-  }
+  }, [bookmark, deleteBookmark, closeEditModal]);
 
-  function handleKeyDown(e: React.KeyboardEvent) {
-    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-      handleSave();
-    }
-  }
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+        handleSave();
+      }
+    },
+    [handleSave],
+  );
 
-  const canSave = url.length > 0 && !isSaving && !isFetchingMeta && !isDeleting;
+  const canSave = form.canSave && !isDeleting;
 
   if (!bookmark) return null;
 
@@ -146,11 +115,11 @@ export function EditBookmarkModal() {
       width={520}
       footer={
         <div className="flex items-center justify-between">
-          {/* Delete */}
+          {/* Delete — two-step confirm */}
           <div>
             {showDeleteConfirm ? (
               <div className="flex items-center gap-2">
-                <span className="text-xs text-[var(--color-text-secondary)]">Delete this bookmark?</span>
+                <span className="text-xs text-[var(--color-text-secondary)]">Are you sure?</span>
                 <button
                   onClick={handleDelete}
                   disabled={isDeleting}
@@ -161,7 +130,8 @@ export function EditBookmarkModal() {
                 </button>
                 <button
                   onClick={() => setShowDeleteConfirm(false)}
-                  className="px-3 py-1 text-xs text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+                  disabled={isDeleting}
+                  className="px-3 py-1 text-xs text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors disabled:opacity-50"
                 >
                   Cancel
                 </button>
@@ -169,7 +139,8 @@ export function EditBookmarkModal() {
             ) : (
               <button
                 onClick={() => setShowDeleteConfirm(true)}
-                className="px-3 py-1.5 text-sm text-[var(--color-danger)] hover:bg-[var(--color-danger-subtle)] rounded transition-colors"
+                disabled={isDeleting || form.isSaving}
+                className="px-3 py-1.5 text-sm text-[var(--color-danger)] hover:bg-[var(--color-danger-subtle)] rounded transition-colors disabled:opacity-50"
               >
                 Delete
               </button>
@@ -189,7 +160,7 @@ export function EditBookmarkModal() {
               disabled={!canSave}
               className="px-4 py-2 text-sm bg-[var(--color-accent)] text-white rounded-md hover:bg-[var(--color-accent-hover)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
             >
-              {isSaving && <Spinner size="sm" />}
+              {form.isSaving && <Spinner size="sm" />}
               Save
             </button>
           </div>
@@ -197,6 +168,22 @@ export function EditBookmarkModal() {
       }
     >
       <div className="space-y-4" onKeyDown={handleKeyDown}>
+        {/* Save error banner */}
+        {form.saveError && (
+          <div className="flex items-center gap-2 text-xs text-[var(--color-danger)] bg-[var(--color-danger-subtle)] rounded-md px-3 py-2">
+            <AlertTriangle size={12} strokeWidth={1.5} />
+            {form.saveError}
+          </div>
+        )}
+
+        {/* Delete error banner */}
+        {deleteError && (
+          <div className="flex items-center gap-2 text-xs text-[var(--color-danger)] bg-[var(--color-danger-subtle)] rounded-md px-3 py-2">
+            <AlertTriangle size={12} strokeWidth={1.5} />
+            {deleteError}
+          </div>
+        )}
+
         {/* URL */}
         <div>
           <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5">
@@ -205,12 +192,12 @@ export function EditBookmarkModal() {
           <Input
             type="url"
             placeholder="https://example.com"
-            value={url}
-            onChange={(e) => handleUrlChange(e.target.value)}
-            onBlur={handleUrlBlur}
-            error={urlError}
+            value={form.url}
+            onChange={(e) => form.handleUrlChange(e.target.value)}
+            onBlur={() => form.handleUrlBlur(bookmark.url)}
+            error={form.urlError}
           />
-          {isDuplicate && (
+          {form.isDuplicate && (
             <div className="mt-1.5 flex items-center gap-1.5 text-xs text-[var(--color-warning)]">
               <AlertTriangle size={12} strokeWidth={1.5} />
               This URL already exists in another bookmark.
@@ -225,11 +212,11 @@ export function EditBookmarkModal() {
           </label>
           <Input
             type="text"
-            placeholder={isFetchingMeta ? 'Fetching title…' : 'Page title'}
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            disabled={isFetchingMeta}
-            isLoading={isFetchingMeta}
+            placeholder={form.isFetchingMeta ? 'Fetching title…' : 'Page title'}
+            value={form.title}
+            onChange={(e) => form.setTitle(e.target.value)}
+            disabled={form.isFetchingMeta}
+            isLoading={form.isFetchingMeta}
           />
         </div>
 
@@ -241,8 +228,8 @@ export function EditBookmarkModal() {
           <textarea
             rows={3}
             placeholder="Optional notes…"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
+            value={form.notes}
+            onChange={(e) => form.setNotes(e.target.value)}
             className="w-full bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-md text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] px-3 py-2 resize-none focus:outline-none focus:border-[var(--color-border-focus)] focus:ring-1 focus:ring-[var(--color-accent)]/20 transition-colors"
           />
         </div>
@@ -253,49 +240,14 @@ export function EditBookmarkModal() {
             <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5">
               Tags
             </label>
-            <TagCheckboxList tags={tags} selectedIds={selectedTagIds} onToggle={toggleTag} />
+            <TagCheckboxList
+              tags={tags}
+              selectedIds={form.selectedTagIds}
+              onToggle={form.toggleTag}
+            />
           </div>
         )}
       </div>
     </Modal>
-  );
-}
-
-function TagCheckboxList({
-  tags,
-  selectedIds,
-  onToggle,
-}: {
-  tags: Tag[];
-  selectedIds: number[];
-  onToggle: (id: number) => void;
-}) {
-  return (
-    <div className="flex flex-wrap gap-2">
-      {tags.map((tag) => {
-        const checked = selectedIds.includes(tag.id);
-        return (
-          <label
-            key={tag.id}
-            className={`
-              flex items-center gap-1.5 text-xs px-2.5 py-1 rounded cursor-pointer
-              border transition-colors duration-[80ms]
-              ${checked
-                ? 'bg-[var(--color-accent-subtle)] border-[var(--color-accent)] text-[var(--color-accent)]'
-                : 'bg-[var(--color-bg-elevated)] border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-border-focus)]'
-              }
-            `}
-          >
-            <input
-              type="checkbox"
-              className="sr-only"
-              checked={checked}
-              onChange={() => onToggle(tag.id)}
-            />
-            {tag.name}
-          </label>
-        );
-      })}
-    </div>
   );
 }
