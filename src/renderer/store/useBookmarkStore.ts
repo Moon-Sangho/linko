@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { IpcChannels } from '../../shared/ipc-channels';
 import type { Bookmark, CreateBookmarkInput, IpcResult, UpdateBookmarkInput } from '../../shared/types';
+import { useTagStore } from './useTagStore';
 
 interface BookmarkStore {
   bookmarks: Bookmark[];
@@ -9,11 +10,11 @@ interface BookmarkStore {
   fetchAll: () => Promise<void>;
   create: (input: CreateBookmarkInput) => Promise<Bookmark | null>;
   update: (id: number, input: UpdateBookmarkInput) => Promise<Bookmark | null>;
-  delete: (id: number) => Promise<boolean>;
-  openUrl: (id: number) => Promise<void>;
+  removeBookmark: (id: number) => Promise<void>;
+  openUrl: (url: string) => Promise<void>;
 }
 
-export const useBookmarkStore = create<BookmarkStore>((set) => ({
+export const useBookmarkStore = create<BookmarkStore>((set, get) => ({
   bookmarks: [],
   isLoading: false,
   error: null,
@@ -54,10 +55,16 @@ export const useBookmarkStore = create<BookmarkStore>((set) => ({
       const result = await window.electron.invoke(IpcChannels.BOOKMARK_UPDATE, id, input) as IpcResult<Bookmark>;
       if (result.success && result.data) {
         const bookmark = result.data;
-        set(state => ({
-          bookmarks: state.bookmarks.map(b => b.id === id ? bookmark : b),
-          error: null,
-        }));
+        const updated = get().bookmarks.map(b => b.id === id ? bookmark : b);
+        set({ bookmarks: updated, error: null });
+
+        // Remove tags no longer used by any bookmark after tag change
+        if (input.tagIds !== undefined) {
+          const usedTagIds = new Set(updated.flatMap(b => b.tags.map(t => t.id)));
+          useTagStore.setState(tagState => ({
+            tags: tagState.tags.filter(tag => usedTagIds.has(tag.id)),
+          }));
+        }
         return bookmark;
       }
       set({ error: result.error ?? 'Failed to update bookmark' });
@@ -67,23 +74,25 @@ export const useBookmarkStore = create<BookmarkStore>((set) => ({
     return null;
   },
 
-  delete: async (id: number) => {
-    try {
-      const result = await window.electron.invoke(IpcChannels.BOOKMARK_DELETE, id) as IpcResult;
-      if (result.success) {
-        set(state => ({ bookmarks: state.bookmarks.filter(b => b.id !== id), error: null }));
-        return true;
-      }
-      set({ error: result.error ?? 'Failed to delete bookmark' });
-    } catch (err) {
-      set({ error: String(err) });
+  removeBookmark: async (id: number): Promise<void> => {
+    const result = await window.electron.invoke(IpcChannels.BOOKMARK_DELETE, id) as IpcResult;
+    if (result.success) {
+      const remaining = get().bookmarks.filter(b => b.id !== id);
+      set({ bookmarks: remaining, error: null });
+
+      // Remove tags no longer used by any remaining bookmark
+      const usedTagIds = new Set(remaining.flatMap(b => b.tags.map(t => t.id)));
+      useTagStore.setState(tagState => ({
+        tags: tagState.tags.filter(tag => usedTagIds.has(tag.id)),
+      }));
+    } else {
+      throw new Error(result.error ?? 'Failed to delete bookmark');
     }
-    return false;
   },
 
-  openUrl: async (id: number) => {
+  openUrl: async (url: string): Promise<void> => {
     try {
-      await window.electron.invoke(IpcChannels.BOOKMARK_OPEN, id);
+      await window.electron.invoke(IpcChannels.BOOKMARK_OPEN, url);
     } catch (err) {
       set({ error: String(err) });
     }

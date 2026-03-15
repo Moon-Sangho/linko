@@ -108,7 +108,13 @@ export function useBookmarkForm() {
     setSaveError('');
   }
 
-  const canSave = url.length > 0 && isValidUrl(url) && !isSaving && !isFetchingMeta;
+  /** Cancels any in-flight async operations (blur-triggered fetch). */
+  function cancel() {
+    sessionRef.current += 1;
+    setIsFetchingMeta(false);
+  }
+
+  const canSave = url.length > 0 && isValidUrl(url) && !isSaving;
 
   return {
     // Field values
@@ -137,5 +143,6 @@ export function useBookmarkForm() {
     // Lifecycle
     reset,
     prefill,
+    cancel,
   };
 }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { useBookmarkStore } from '../../store/useBookmarkStore';
 import { useUIStore } from '../../store/useUIStore';
@@ -8,7 +8,6 @@ import { Modal } from '../ui/Modal';
 import { Input } from '../ui/Input';
 import { Spinner } from '../ui/Spinner';
 import { TagCheckboxList } from '../ui/TagCheckboxList';
-import { useState } from 'react';
 
 export function EditBookmarkModal() {
   const isEditModalOpen = useUIStore((s) => s.isEditModalOpen);
@@ -16,17 +15,30 @@ export function EditBookmarkModal() {
   const closeEditModal = useUIStore((s) => s.closeEditModal);
   const bookmarks = useBookmarkStore((s) => s.bookmarks);
   const update = useBookmarkStore((s) => s.update);
-  const deleteBookmark = useBookmarkStore((s) => s.deleteBookmark);
+  const deleteBookmark = useBookmarkStore((s) => s.removeBookmark);
   const tags = useTagStore((s) => s.tags);
   const fetchTags = useTagStore((s) => s.fetchAll);
 
   // m8: Stable lookup — only re-runs when bookmarks array or selectedId changes
   const bookmark = bookmarks.find((b) => b.id === selectedBookmarkId) ?? null;
 
+  const createTag = useTagStore((s) => s.create);
   const form = useBookmarkForm();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState('');
+  const [newTagName, setNewTagName] = useState('');
+  const [isCreatingTag, setIsCreatingTag] = useState(false);
+
+  const handleCreateTag = useCallback(async () => {
+    const name = newTagName.trim();
+    if (!name || isCreatingTag) return;
+    setIsCreatingTag(true);
+    const tag = await createTag({ name });
+    setIsCreatingTag(false);
+    setNewTagName('');
+    if (tag) form.toggleTag(tag.id);
+  }, [newTagName, isCreatingTag, createTag, form]);
 
   // M2: Pre-fill when modal opens with a valid bookmark. fetchTags is stable.
   useEffect(() => {
@@ -235,18 +247,37 @@ export function EditBookmarkModal() {
         </div>
 
         {/* Tags */}
-        {tags.length > 0 && (
-          <div>
-            <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5">
-              Tags
-            </label>
-            <TagCheckboxList
-              tags={tags}
-              selectedIds={form.selectedTagIds}
-              onToggle={form.toggleTag}
+        <div>
+          <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5">
+            Tags
+          </label>
+          {tags.length > 0 && (
+            <div className="mb-2">
+              <TagCheckboxList
+                tags={tags}
+                selectedIds={form.selectedTagIds}
+                onToggle={form.toggleTag}
+              />
+            </div>
+          )}
+          <div className="flex gap-1.5">
+            <input
+              type="text"
+              value={newTagName}
+              onChange={(e) => setNewTagName(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleCreateTag(); } }}
+              placeholder="New tag…"
+              className="flex-1 h-7 text-xs bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded px-2 text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:border-[var(--color-border-focus)] transition-colors"
             />
+            <button
+              onClick={handleCreateTag}
+              disabled={!newTagName.trim() || isCreatingTag}
+              className="h-7 px-2.5 text-xs bg-[var(--color-accent)] text-white rounded hover:bg-[var(--color-accent-hover)] disabled:opacity-40 transition-colors"
+            >
+              {isCreatingTag ? '…' : '+ Create'}
+            </button>
           </div>
-        )}
+        </div>
       </div>
     </Modal>
   );

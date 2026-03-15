@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react';
 import { IpcChannels } from '@shared/ipc-channels';
+import type { IpcResult } from '@shared/types';
 
 interface TitleBarProps {
   title?: string;
@@ -8,6 +10,16 @@ export function TitleBar({ title = 'Linko' }: TitleBarProps) {
   const handleMinimize = () => window.electron.invoke(IpcChannels.WINDOW_MINIMIZE);
   const handleMaximize = () => window.electron.invoke(IpcChannels.WINDOW_MAXIMIZE);
   const handleClose = () => window.electron.invoke(IpcChannels.WINDOW_CLOSE);
+  const [version, setVersion] = useState<string | null>(null);
+
+  useEffect(() => {
+    window.electron.invoke(IpcChannels.APP_GET_VERSION)
+      .then((r) => {
+        const result = r as IpcResult<string>;
+        if (result.success && result.data) setVersion(result.data);
+      })
+      .catch(() => {});
+  }, []);
 
   const isMac = navigator.platform.toLowerCase().includes('mac');
 
@@ -20,8 +32,11 @@ export function TitleBar({ title = 'Linko' }: TitleBarProps) {
       {isMac && <div className="w-20 flex-shrink-0" />}
 
       {/* App title — centered */}
-      <div className="flex-1 text-center">
+      <div className="flex-1 text-center flex items-center justify-center gap-1.5">
         <span className="text-sm font-semibold text-gray-300">{title}</span>
+        {version && (
+          <span className="text-xs text-gray-600">v{version}</span>
+        )}
       </div>
 
       {/* Windows controls */}

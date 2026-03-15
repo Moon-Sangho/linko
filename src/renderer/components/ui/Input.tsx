@@ -1,4 +1,4 @@
-import { useId, type InputHTMLAttributes, type ReactNode } from 'react';
+import { forwardRef, useId, type InputHTMLAttributes, type ReactNode } from 'react';
 
 const sizeClasses = {
   sm: 'h-7 text-xs px-2.5',
@@ -14,15 +14,13 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
   size?: 'sm' | 'md';
   leftIcon?: ReactNode;
   error?: string;
+  isLoading?: boolean;
 }
 
-export function Input({
-  size = 'md',
-  leftIcon,
-  error,
-  className = '',
-  ...props
-}: InputProps) {
+export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
+  { size = 'md', leftIcon, error, isLoading, className = '', ...props },
+  ref,
+) {
   const errorId = useId();
 
   return (
@@ -34,6 +32,7 @@ export function Input({
           </span>
         )}
         <input
+          ref={ref}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? errorId : undefined}
           className={`
@@ -53,4 +52,4 @@ export function Input({
       )}
     </div>
   );
-}
+});

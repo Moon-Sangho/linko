@@ -11,7 +11,11 @@ export function getDatabase(): Database.Database {
   const dbPath = path.join(app.getPath('userData'), 'linko.db');
   _db = new Database(dbPath);
 
-  // Enable WAL mode and foreign keys, then apply schema
+  // better-sqlite3 requires pragma() for connection-level settings
+  _db.pragma('journal_mode = WAL');
+  _db.pragma('foreign_keys = ON');
+
+  // Apply schema
   _db.exec(CREATE_TABLES_SQL);
 
   // Track schema version for future migrations
@@ -19,6 +23,9 @@ export function getDatabase(): Database.Database {
   if (currentVersion < SCHEMA_VERSION) {
     _db.pragma(`user_version = ${SCHEMA_VERSION}`);
   }
+
+  // Clean up orphaned tags left over from before cascade-delete was enforced
+  _db.prepare(`DELETE FROM tags WHERE id NOT IN (SELECT DISTINCT tag_id FROM bookmark_tags)`).run();
 
   return _db;
 }
