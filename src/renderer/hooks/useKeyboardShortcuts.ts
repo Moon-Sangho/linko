@@ -5,11 +5,26 @@ import { useUIStore } from '../store/useUIStore';
 const isMac = navigator.userAgent.toUpperCase().includes('MAC');
 
 export function useKeyboardShortcuts() {
-  const { isAddModalOpen, isEditModalOpen, openAddModal, closeAddModal, closeEditModal } = useUIStore();
+  const {
+    isAddModalOpen,
+    isEditModalOpen,
+    isCommandPaletteOpen,
+    openAddModal,
+    closeAddModal,
+    closeEditModal,
+    openCommandPalette,
+    closeCommandPalette,
+  } = useUIStore();
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       const modifier = isMac ? e.metaKey : e.ctrlKey;
+
+      if (modifier && e.key === 'k') {
+        e.preventDefault();
+        isCommandPaletteOpen ? closeCommandPalette() : openCommandPalette();
+        return;
+      }
 
       if (modifier && e.key === 'n') {
         e.preventDefault();
@@ -18,7 +33,9 @@ export function useKeyboardShortcuts() {
       }
 
       if (e.key === 'Escape') {
-        if (isEditModalOpen) {
+        if (isCommandPaletteOpen) {
+          closeCommandPalette();
+        } else if (isEditModalOpen) {
           closeEditModal();
         } else if (isAddModalOpen) {
           closeAddModal();
@@ -28,5 +45,14 @@ export function useKeyboardShortcuts() {
 
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [isAddModalOpen, isEditModalOpen, openAddModal, closeAddModal, closeEditModal]);
+  }, [
+    isAddModalOpen,
+    isEditModalOpen,
+    isCommandPaletteOpen,
+    openAddModal,
+    closeAddModal,
+    closeEditModal,
+    openCommandPalette,
+    closeCommandPalette,
+  ]);
 }
