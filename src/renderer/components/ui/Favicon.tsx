@@ -1,15 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Globe } from 'lucide-react';
 
-interface FaviconProps {
+export interface FaviconProps {
   src?: string | null;
   size?: number;
+}
+
+function isSafeUrl(url: string): boolean {
+  return url.startsWith('https://') || url.startsWith('http://');
 }
 
 export function Favicon({ src, size = 16 }: FaviconProps) {
   const [errored, setErrored] = useState(false);
 
-  if (!src || errored) {
+  useEffect(() => {
+    setErrored(false);
+  }, [src]);
+
+  const safeSrc = src && isSafeUrl(src) ? src : null;
+
+  if (!safeSrc || errored) {
     return (
       <Globe
         width={size}
@@ -22,7 +32,7 @@ export function Favicon({ src, size = 16 }: FaviconProps) {
 
   return (
     <img
-      src={src}
+      src={safeSrc}
       width={size}
       height={size}
       alt=""

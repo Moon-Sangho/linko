@@ -1,7 +1,7 @@
-export { Badge } from './Badge';
-export { Button } from './Button';
-export { EmptyState } from './EmptyState';
-export { Favicon } from './Favicon';
-export { Input } from './Input';
-export { Modal } from './Modal';
-export { Spinner } from './Spinner';
+export { Badge, type BadgeProps } from './Badge';
+export { Button, type ButtonProps } from './Button';
+export { EmptyState, type EmptyStateProps } from './EmptyState';
+export { Favicon, type FaviconProps } from './Favicon';
+export { Input, type InputProps } from './Input';
+export { Modal, type ModalProps } from './Modal';
+export { Spinner, type SpinnerProps } from './Spinner';

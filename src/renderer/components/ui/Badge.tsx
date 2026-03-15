@@ -13,7 +13,7 @@ const sizeClasses = {
   md: 'px-2.5 py-1 text-sm',
 };
 
-interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
+export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   variant?: 'default' | 'blue' | 'green' | 'red' | 'gray';
   size?: 'sm' | 'md';
   onRemove?: () => void;
@@ -43,7 +43,7 @@ export function Badge({
           onClick={(e) => { e.stopPropagation(); onRemove(); }}
           className="ml-0.5 flex items-center justify-center rounded-full opacity-60 hover:opacity-100 focus:outline-none"
         >
-          <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor" aria-hidden="true">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
             <path d="M7.5 2.5L2.5 7.5M2.5 2.5L7.5 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
           </svg>
         </button>

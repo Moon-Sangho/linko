@@ -6,7 +6,7 @@ const sizeClasses = {
   lg: 'h-6 w-6 border-2',
 };
 
-interface SpinnerProps extends HTMLAttributes<HTMLDivElement> {
+export interface SpinnerProps extends HTMLAttributes<HTMLDivElement> {
   size?: 'sm' | 'md' | 'lg';
 }
 
