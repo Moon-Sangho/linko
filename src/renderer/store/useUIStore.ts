@@ -28,7 +28,7 @@ export const useUIStore = create<UIStore>((set) => ({
   openAddModal: () => set({ isAddModalOpen: true }),
   closeAddModal: () => set({ isAddModalOpen: false }),
   openEditModal: (id) => set({ isEditModalOpen: true, selectedBookmarkId: id }),
-  closeEditModal: () => set({ isEditModalOpen: false }),
+  closeEditModal: () => set({ isEditModalOpen: false, selectedBookmarkId: null }),
   setSearchQuery: (query) => set({ searchQuery: query }),
   toggleTag: (id) =>
     set(state => ({

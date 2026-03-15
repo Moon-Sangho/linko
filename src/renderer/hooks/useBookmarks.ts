@@ -2,8 +2,13 @@ import { useEffect, useMemo } from 'react';
 import { useBookmarkStore } from '../store/useBookmarkStore';
 import { useTagStore } from '../store/useTagStore';
 import { useUIStore } from '../store/useUIStore';
-import type { Bookmark, CreateBookmarkInput, UpdateBookmarkInput } from '../../shared/types';
+import type { Bookmark } from '../../shared/types';
 
+/**
+ * Primary hook for the bookmark list view.
+ * Provides the full bookmark list with client-side filtering by searchQuery and selectedTagIds.
+ * For server-side FTS ranked results, use useSearch instead.
+ */
 export function useBookmarks() {
   const { bookmarks, isLoading, error, fetchAll, create, update, delete: deleteBookmark, openUrl } = useBookmarkStore();
   const { fetchAll: fetchTags } = useTagStore();
@@ -12,7 +17,7 @@ export function useBookmarks() {
   useEffect(() => {
     fetchAll();
     fetchTags();
-  }, []);
+  }, [fetchAll, fetchTags]);
 
   const filteredBookmarks = useMemo<Bookmark[]>(() => {
     let result = bookmarks;
@@ -40,10 +45,10 @@ export function useBookmarks() {
     filteredBookmarks,
     isLoading,
     error,
-    create: (input: CreateBookmarkInput) => create(input),
-    update: (id: number, input: UpdateBookmarkInput) => update(id, input),
-    delete: (id: number) => deleteBookmark(id),
-    openUrl: (id: number) => openUrl(id),
+    create,
+    update,
+    delete: deleteBookmark,
+    openUrl,
     refetch: fetchAll,
   };
 }

@@ -35,35 +35,57 @@ export const useBookmarkStore = create<BookmarkStore>((set) => ({
   },
 
   create: async (input: CreateBookmarkInput) => {
-    const result = await window.electron.invoke(IpcChannels.BOOKMARK_CREATE, input) as IpcResult<Bookmark>;
-    if (result.success && result.data) {
-      set(state => ({ bookmarks: [result.data!, ...state.bookmarks] }));
-      return result.data;
+    try {
+      const result = await window.electron.invoke(IpcChannels.BOOKMARK_CREATE, input) as IpcResult<Bookmark>;
+      if (result.success && result.data) {
+        const bookmark = result.data;
+        set(state => ({ bookmarks: [bookmark, ...state.bookmarks], error: null }));
+        return bookmark;
+      }
+      set({ error: result.error ?? 'Failed to create bookmark' });
+    } catch (err) {
+      set({ error: String(err) });
     }
     return null;
   },
 
   update: async (id: number, input: UpdateBookmarkInput) => {
-    const result = await window.electron.invoke(IpcChannels.BOOKMARK_UPDATE, id, input) as IpcResult<Bookmark>;
-    if (result.success && result.data) {
-      set(state => ({
-        bookmarks: state.bookmarks.map(b => b.id === id ? result.data! : b),
-      }));
-      return result.data;
+    try {
+      const result = await window.electron.invoke(IpcChannels.BOOKMARK_UPDATE, id, input) as IpcResult<Bookmark>;
+      if (result.success && result.data) {
+        const bookmark = result.data;
+        set(state => ({
+          bookmarks: state.bookmarks.map(b => b.id === id ? bookmark : b),
+          error: null,
+        }));
+        return bookmark;
+      }
+      set({ error: result.error ?? 'Failed to update bookmark' });
+    } catch (err) {
+      set({ error: String(err) });
     }
     return null;
   },
 
   delete: async (id: number) => {
-    const result = await window.electron.invoke(IpcChannels.BOOKMARK_DELETE, id) as IpcResult;
-    if (result.success) {
-      set(state => ({ bookmarks: state.bookmarks.filter(b => b.id !== id) }));
-      return true;
+    try {
+      const result = await window.electron.invoke(IpcChannels.BOOKMARK_DELETE, id) as IpcResult;
+      if (result.success) {
+        set(state => ({ bookmarks: state.bookmarks.filter(b => b.id !== id), error: null }));
+        return true;
+      }
+      set({ error: result.error ?? 'Failed to delete bookmark' });
+    } catch (err) {
+      set({ error: String(err) });
     }
     return false;
   },
 
   openUrl: async (id: number) => {
-    await window.electron.invoke(IpcChannels.BOOKMARK_OPEN, id);
+    try {
+      await window.electron.invoke(IpcChannels.BOOKMARK_OPEN, id);
+    } catch (err) {
+      set({ error: String(err) });
+    }
   },
 }));

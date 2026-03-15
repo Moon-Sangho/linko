@@ -1,12 +1,14 @@
 import { useEffect } from 'react';
 import { useUIStore } from '../store/useUIStore';
 
+// Computed once at module load — stable in Electron where process.platform is fixed
+const isMac = navigator.userAgent.toUpperCase().includes('MAC');
+
 export function useKeyboardShortcuts() {
   const { isAddModalOpen, isEditModalOpen, openAddModal, closeAddModal, closeEditModal } = useUIStore();
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      const isMac = navigator.userAgent.toUpperCase().includes('MAC');
       const modifier = isMac ? e.metaKey : e.ctrlKey;
 
       if (modifier && e.key === 'n') {
