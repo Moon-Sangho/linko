@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { ExternalLink, Pencil, Trash2 } from 'lucide-react';
 import { Bookmark } from '../../../shared/types';
 import { useBookmarkStore } from '../../store/useBookmarkStore';
@@ -15,37 +15,12 @@ interface BookmarkItemProps {
 export function BookmarkItem({ bookmark, isSelected, onClick }: BookmarkItemProps) {
   // Select only the needed actions to avoid re-renders on unrelated store changes
   const openUrl = useBookmarkStore((s) => s.openUrl);
-  const deleteBookmark = useBookmarkStore((s) => s.deleteBookmark);
+  const deleteBookmark = useBookmarkStore((s) => s.removeBookmark);
   const openEditModal = useUIStore((s) => s.openEditModal);
 
-  const [deletePopoverOpen, setDeletePopoverOpen] = useState(false);
+  const [deleteConfirming, setDeleteConfirming] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState('');
-  const popoverRef = useRef<HTMLDivElement>(null);
-
-  // M4: Close popover on outside click or Escape
-  useEffect(() => {
-    if (!deletePopoverOpen) return;
-
-    function handleOutsideClick(e: MouseEvent) {
-      if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
-        setDeletePopoverOpen(false);
-      }
-    }
-
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') {
-        setDeletePopoverOpen(false);
-      }
-    }
-
-    document.addEventListener('mousedown', handleOutsideClick);
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [deletePopoverOpen]);
 
   // m3: Memoize formatted date — avoids recomputing on every render
   const formattedDate = useMemo(
@@ -85,21 +60,24 @@ export function BookmarkItem({ bookmark, isSelected, onClick }: BookmarkItemProp
   const handleDeleteClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     setDeleteError('');
-    setDeletePopoverOpen(true);
+    setDeleteConfirming(true);
   }, []);
 
-  // C2: Inline delete — success path unmounts this item, so no state update needed.
-  // Failure path re-enables the button and shows an error.
-  const handleDeleteConfirm = useCallback(async () => {
+  const handleDeleteCancel = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDeleteConfirming(false);
+    setDeleteError('');
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async (e: React.MouseEvent) => {
+    e.stopPropagation();
     setDeleting(true);
     setDeleteError('');
     try {
       await deleteBookmark(bookmark.id);
-      // On success the store removes this bookmark → BookmarkList unmounts us.
-      // No state updates here; they would be no-ops at best.
     } catch {
       setDeleting(false);
-      setDeleteError('Failed to delete. Try again.');
+      setDeleteError('Failed');
     }
   }, [deleteBookmark, bookmark.id]);
 
@@ -125,13 +103,7 @@ export function BookmarkItem({ bookmark, isSelected, onClick }: BookmarkItemProp
 
       {/* Main content */}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-[var(--color-text-primary)] truncate leading-5">
-          {bookmark.title ?? bookmark.url}
-        </p>
-        <div className="flex items-center gap-2 mt-0.5">
-          <span className="text-xs text-[var(--color-text-secondary)] truncate">
-            {bookmark.url}
-          </span>
+        <div className="flex items-center gap-1.5">
           {visibleTags.length > 0 && (
             <div className="flex items-center gap-1 flex-shrink-0">
               {visibleTags.map((tag) => (
@@ -142,71 +114,68 @@ export function BookmarkItem({ bookmark, isSelected, onClick }: BookmarkItemProp
                   {tag.name}
                 </span>
               ))}
-              {extraTagCount > 0 && <Badge count={extraTagCount} />}
+              {extraTagCount > 0 && <Badge variant="gray">+{extraTagCount}</Badge>}
             </div>
           )}
-        </div>
-      </div>
-
-      {/* Date — hidden on hover to make room for actions */}
-      <span className="flex-shrink-0 text-xs text-[var(--color-text-tertiary)] group-hover:hidden sm:block">
-        {formattedDate}
-      </span>
-
-      {/* Hover actions */}
-      <div className="flex-shrink-0 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-[80ms]">
-        <button
-          onClick={handleOpenClick}
-          className="p-1.5 rounded text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-overlay)] transition-colors"
-          title="Open in browser"
-        >
-          <ExternalLink size={14} strokeWidth={1.5} />
-        </button>
-        <button
-          onClick={handleEditClick}
-          className="p-1.5 rounded text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-overlay)] transition-colors"
-          title="Edit"
-        >
-          <Pencil size={14} strokeWidth={1.5} />
-        </button>
-        <button
-          onClick={handleDeleteClick}
-          className="p-1.5 rounded text-[var(--color-text-secondary)] hover:text-[var(--color-danger)] hover:bg-[var(--color-bg-overlay)] transition-colors"
-          title="Delete"
-        >
-          <Trash2 size={14} strokeWidth={1.5} />
-        </button>
-      </div>
-
-      {/* Delete confirm popover — M4: closes on outside-click/Escape via effect */}
-      {deletePopoverOpen && (
-        <div
-          ref={popoverRef}
-          className="absolute right-4 top-full mt-1 z-50 w-64 bg-[var(--color-bg-overlay)] border border-[var(--color-border)] rounded-md shadow-md p-3"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <p className="text-sm text-[var(--color-text-primary)] mb-1">
-            Delete this bookmark? This cannot be undone.
+          <p className="text-sm font-medium text-[var(--color-text-primary)] truncate leading-5">
+            {bookmark.title ?? bookmark.url}
           </p>
-          {deleteError && (
-            <p className="text-xs text-[var(--color-danger)] mb-2">{deleteError}</p>
-          )}
-          <div className="flex justify-end gap-2 mt-3">
-            <button
-              onClick={() => setDeletePopoverOpen(false)}
-              disabled={deleting}
-              className="px-3 py-1 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors disabled:opacity-50"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleDeleteConfirm}
-              disabled={deleting}
-              className="px-3 py-1 text-sm bg-[var(--color-danger)] text-white rounded hover:opacity-90 transition-opacity disabled:opacity-50"
-            >
-              {deleting ? 'Deleting…' : 'Delete'}
-            </button>
-          </div>
+        </div>
+        <span className="text-xs text-[var(--color-text-secondary)] truncate block mt-0.5">
+          {bookmark.url}
+        </span>
+      </div>
+
+      {/* Date — hidden on hover or when confirm is active */}
+      {!deleteConfirming && (
+        <span className="flex-shrink-0 text-xs text-[var(--color-text-tertiary)] group-hover:hidden sm:block">
+          {formattedDate}
+        </span>
+      )}
+
+      {/* Actions */}
+      {deleteConfirming ? (
+        <div className="flex-shrink-0 flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+          {deleteError && <span className="text-xs text-red-400">{deleteError}</span>}
+          <span className="text-xs text-gray-400">Delete?</span>
+          <button
+            onClick={handleDeleteCancel}
+            disabled={deleting}
+            className="px-2 py-1 text-xs text-gray-400 hover:text-white transition-colors disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleDeleteConfirm}
+            disabled={deleting}
+            className="px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-500 transition-colors disabled:opacity-50"
+          >
+            {deleting ? '…' : 'Delete'}
+          </button>
+        </div>
+      ) : (
+        <div className="flex-shrink-0 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-[80ms]">
+          <button
+            onClick={handleOpenClick}
+            className="p-1.5 rounded text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-overlay)] transition-colors"
+            title="Open in browser"
+          >
+            <ExternalLink size={14} strokeWidth={1.5} />
+          </button>
+          <button
+            onClick={handleEditClick}
+            className="p-1.5 rounded text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-overlay)] transition-colors"
+            title="Edit"
+          >
+            <Pencil size={14} strokeWidth={1.5} />
+          </button>
+          <button
+            onClick={handleDeleteClick}
+            className="p-1.5 rounded text-[var(--color-text-secondary)] hover:text-red-400 hover:bg-[var(--color-bg-overlay)] transition-colors"
+            title="Delete"
+          >
+            <Trash2 size={14} strokeWidth={1.5} />
+          </button>
         </div>
       )}
     </div>

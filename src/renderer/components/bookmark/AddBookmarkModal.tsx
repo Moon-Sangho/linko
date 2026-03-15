@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { useBookmarkStore } from '../../store/useBookmarkStore';
 import { useUIStore } from '../../store/useUIStore';
@@ -8,6 +8,8 @@ import { Modal } from '../ui/Modal';
 import { Input } from '../ui/Input';
 import { Spinner } from '../ui/Spinner';
 import { TagCheckboxList } from '../ui/TagCheckboxList';
+import { IpcChannels } from '@shared/ipc-channels';
+import type { IpcResult, UrlMetadata } from '@shared/types';
 
 export function AddBookmarkModal() {
   const isAddModalOpen = useUIStore((s) => s.isAddModalOpen);
@@ -16,8 +18,21 @@ export function AddBookmarkModal() {
   const tags = useTagStore((s) => s.tags);
   const fetchTags = useTagStore((s) => s.fetchAll);
 
+  const createTag = useTagStore((s) => s.create);
   const form = useBookmarkForm();
   const urlRef = useRef<HTMLInputElement>(null);
+  const [newTagName, setNewTagName] = useState('');
+  const [isCreatingTag, setIsCreatingTag] = useState(false);
+
+  const handleCreateTag = useCallback(async () => {
+    const name = newTagName.trim();
+    if (!name || isCreatingTag) return;
+    setIsCreatingTag(true);
+    const tag = await createTag({ name });
+    setIsCreatingTag(false);
+    setNewTagName('');
+    if (tag) form.toggleTag(tag.id);
+  }, [newTagName, isCreatingTag, createTag, form]);
 
   // M1: fetchTags and form.reset are stable references — safe in dep array.
   // Using requestAnimationFrame instead of setTimeout for reliable focus (m6 fix).
@@ -40,18 +55,38 @@ export function AddBookmarkModal() {
       return;
     }
 
+    // Cancel any in-flight blur-triggered fetch to avoid racing
+    form.cancel();
     form.setSaveError('');
     form.setIsSaving(true);
+
     try {
+      // Always fetch metadata to get favicon; prefer form title if already filled
+      let title = form.title || null;
+      let faviconUrl: string | null = null;
+
+      try {
+        const meta = await window.electron.invoke(
+          IpcChannels.BOOKMARK_FETCH_METADATA,
+          form.url,
+        ) as IpcResult<UrlMetadata>;
+        if (meta.success && meta.data) {
+          if (!title) title = meta.data.title;
+          faviconUrl = meta.data.favicon_url ?? null;
+        }
+      } catch {
+        // Ignore — save without favicon
+      }
+
       await create({
         url: form.url,
-        title: form.title || null,
+        title,
         notes: form.notes || null,
+        favicon_url: faviconUrl,
         tagIds: form.selectedTagIds,
       });
       closeAddModal();
     } catch {
-      // M3: Show error to user instead of silently failing
       form.setSaveError('Failed to save bookmark. Please try again.');
     } finally {
       form.setIsSaving(false);
@@ -153,18 +188,37 @@ export function AddBookmarkModal() {
         </div>
 
         {/* Tags */}
-        {tags.length > 0 && (
-          <div>
-            <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5">
-              Tags
-            </label>
-            <TagCheckboxList
-              tags={tags}
-              selectedIds={form.selectedTagIds}
-              onToggle={form.toggleTag}
+        <div>
+          <label className="block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5">
+            Tags
+          </label>
+          {tags.length > 0 && (
+            <div className="mb-2">
+              <TagCheckboxList
+                tags={tags}
+                selectedIds={form.selectedTagIds}
+                onToggle={form.toggleTag}
+              />
+            </div>
+          )}
+          <div className="flex gap-1.5">
+            <input
+              type="text"
+              value={newTagName}
+              onChange={(e) => setNewTagName(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleCreateTag(); } }}
+              placeholder="New tag…"
+              className="flex-1 h-7 text-xs bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded px-2 text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:border-[var(--color-border-focus)] transition-colors"
             />
+            <button
+              onClick={handleCreateTag}
+              disabled={!newTagName.trim() || isCreatingTag}
+              className="h-7 px-2.5 text-xs bg-[var(--color-accent)] text-white rounded hover:bg-[var(--color-accent-hover)] disabled:opacity-40 transition-colors"
+            >
+              {isCreatingTag ? '…' : '+ Create'}
+            </button>
           </div>
-        )}
+        </div>
       </div>
     </Modal>
   );

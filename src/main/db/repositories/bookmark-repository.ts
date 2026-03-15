@@ -114,7 +114,11 @@ export class LocalBookmarkRepository implements BookmarkRepository {
   }
 
   delete(id: number): void {
+    this.db.prepare(`DELETE FROM bookmark_tags WHERE bookmark_id = ?`).run(id);
     this.db.prepare(`DELETE FROM bookmarks WHERE id = ?`).run(id);
+    this.db
+      .prepare(`DELETE FROM tags WHERE id NOT IN (SELECT DISTINCT tag_id FROM bookmark_tags)`)
+      .run();
   }
 
   search(input: SearchBookmarksInput): Bookmark[] {
@@ -207,5 +211,10 @@ export class LocalBookmarkRepository implements BookmarkRepository {
     for (const tagId of tagIds) {
       insert.run(bookmarkId, tagId);
     }
+
+    // Remove tags that are no longer associated with any bookmark
+    this.db
+      .prepare(`DELETE FROM tags WHERE id NOT IN (SELECT DISTINCT tag_id FROM bookmark_tags)`)
+      .run();
   }
 }

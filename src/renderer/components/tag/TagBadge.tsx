@@ -11,7 +11,7 @@ export function TagBadge({ tag, isActive, onClick }: TagBadgeProps) {
     <button
       onClick={onClick}
       className={`
-        text-xs rounded px-2 py-0.5 transition-colors duration-75 cursor-pointer
+        w-full text-left text-xs rounded px-2 py-0.5 transition-colors duration-75 cursor-pointer
         ${isActive
           ? 'bg-blue-500 text-white'
           : 'bg-gray-800 text-gray-300 hover:bg-gray-700'

@@ -22,7 +22,7 @@ export function CommandPalette() {
   if (!isCommandPaletteOpen) return null;
 
   const handleSelect = (bookmark: Bookmark) => {
-    openUrl(bookmark.id);
+    openUrl(bookmark.url);
     closeCommandPalette();
   };
 
