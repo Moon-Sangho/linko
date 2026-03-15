@@ -12,6 +12,14 @@ import { registerFileSystemHandlers } from './ipc/file-system';
 import { registerAppHandlers } from './ipc/app';
 import type { WindowState } from '../shared/types';
 
+const isDev = is.dev;
+
+// Keep dev data isolated from packaged app data.
+if (isDev) {
+  const devUserData = path.join(app.getPath('appData'), 'Linko-Dev');
+  app.setPath('userData', devUserData);
+}
+
 // ─── App Store (settings / window state) ─────────────────────────────────────
 
 const store = new Store<{ windowState: WindowState }>();
@@ -68,7 +76,7 @@ function createWindow(): BrowserWindow {
     console.error('Renderer process gone:', details.reason);
   });
 
-  if (is.dev) {
+  if (isDev) {
     win.loadURL('http://localhost:5173');
     win.webContents.openDevTools();
   } else {
