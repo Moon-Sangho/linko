@@ -1,59 +1,46 @@
 import { create } from 'zustand';
-import type { Bookmark } from '@shared/types';
 
 interface UIStore {
-  // Search
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
-
-  // Tag filtering
-  selectedTagIds: number[];
-  toggleTag: (tagId: number) => void;
-  clearTags: () => void;
-
-  // Modals
+  selectedBookmarkId: number | null;
   isAddModalOpen: boolean;
+  isEditModalOpen: boolean;
+  isCommandPaletteOpen: boolean;
+  searchQuery: string;
+  selectedTagIds: number[];
+
+  setSelectedBookmark: (id: number | null) => void;
   openAddModal: () => void;
   closeAddModal: () => void;
-
-  isEditModalOpen: boolean;
-  editingBookmark: Bookmark | null;
-  openEditModal: (bookmark: Bookmark) => void;
+  openEditModal: (id: number) => void;
   closeEditModal: () => void;
-
-  // Command palette
-  isCommandPaletteOpen: boolean;
   openCommandPalette: () => void;
   closeCommandPalette: () => void;
+  setSearchQuery: (query: string) => void;
+  toggleTag: (id: number) => void;
+  clearTags: () => void;
 }
 
 export const useUIStore = create<UIStore>((set) => ({
-  // Search
-  searchQuery: '',
-  setSearchQuery: (query) => set({ searchQuery: query }),
-
-  // Tag filtering
-  selectedTagIds: [],
-  toggleTag: (tagId) =>
-    set((state) => ({
-      selectedTagIds: state.selectedTagIds.includes(tagId)
-        ? state.selectedTagIds.filter((id) => id !== tagId)
-        : [...state.selectedTagIds, tagId],
-    })),
-  clearTags: () => set({ selectedTagIds: [] }),
-
-  // Modals
+  selectedBookmarkId: null,
   isAddModalOpen: false,
+  isEditModalOpen: false,
+  isCommandPaletteOpen: false,
+  searchQuery: '',
+  selectedTagIds: [],
+
+  setSelectedBookmark: (id) => set({ selectedBookmarkId: id }),
   openAddModal: () => set({ isAddModalOpen: true }),
   closeAddModal: () => set({ isAddModalOpen: false }),
-
-  isEditModalOpen: false,
-  editingBookmark: null,
-  openEditModal: (bookmark) => set({ isEditModalOpen: true, editingBookmark: bookmark }),
-  closeEditModal: () => set({ isEditModalOpen: false, editingBookmark: null }),
-
-  // Command palette
-  isCommandPaletteOpen: false,
+  openEditModal: (id) => set({ isEditModalOpen: true, selectedBookmarkId: id }),
+  closeEditModal: () => set({ isEditModalOpen: false, selectedBookmarkId: null }),
   openCommandPalette: () => set({ isCommandPaletteOpen: true }),
   closeCommandPalette: () => set({ isCommandPaletteOpen: false }),
+  setSearchQuery: (query) => set({ searchQuery: query }),
+  toggleTag: (id) =>
+    set(state => ({
+      selectedTagIds: state.selectedTagIds.includes(id)
+        ? state.selectedTagIds.filter(t => t !== id)
+        : [...state.selectedTagIds, id],
+    })),
+  clearTags: () => set({ selectedTagIds: [] }),
 }));

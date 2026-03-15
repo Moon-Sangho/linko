@@ -1,29 +1,58 @@
 import { useEffect } from 'react';
 import { useUIStore } from '../store/useUIStore';
 
+// Computed once at module load — stable in Electron where process.platform is fixed
+const isMac = navigator.userAgent.toUpperCase().includes('MAC');
+
 export function useKeyboardShortcuts() {
-  const { openCommandPalette, openAddModal } = useUIStore();
+  const {
+    isAddModalOpen,
+    isEditModalOpen,
+    isCommandPaletteOpen,
+    openAddModal,
+    closeAddModal,
+    closeEditModal,
+    openCommandPalette,
+    closeCommandPalette,
+  } = useUIStore();
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const isMeta = e.metaKey || e.ctrlKey;
+    const handler = (e: KeyboardEvent) => {
+      const modifier = isMac ? e.metaKey : e.ctrlKey;
 
-      // Cmd+K — open command palette
-      if (isMeta && e.key === 'k') {
+      if (modifier && e.key === 'k') {
         e.preventDefault();
-        openCommandPalette();
+        isCommandPaletteOpen ? closeCommandPalette() : openCommandPalette();
         return;
       }
 
-      // Cmd+N — open add modal
-      if (isMeta && e.key === 'n') {
+      if (modifier && e.key === 'n') {
         e.preventDefault();
         openAddModal();
         return;
       }
+
+      if (e.key === 'Escape') {
+        if (isCommandPaletteOpen) {
+          closeCommandPalette();
+        } else if (isEditModalOpen) {
+          closeEditModal();
+        } else if (isAddModalOpen) {
+          closeAddModal();
+        }
+      }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [openCommandPalette, openAddModal]);
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [
+    isAddModalOpen,
+    isEditModalOpen,
+    isCommandPaletteOpen,
+    openAddModal,
+    closeAddModal,
+    closeEditModal,
+    openCommandPalette,
+    closeCommandPalette,
+  ]);
 }

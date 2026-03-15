@@ -7,7 +7,7 @@ import type { Bookmark } from '@shared/types';
 
 export function CommandPalette() {
   const { isCommandPaletteOpen, closeCommandPalette } = useUIStore();
-  const { bookmarks, open } = useBookmarkStore();
+  const { bookmarks, openUrl } = useBookmarkStore();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -22,7 +22,7 @@ export function CommandPalette() {
   if (!isCommandPaletteOpen) return null;
 
   const handleSelect = (bookmark: Bookmark) => {
-    open(bookmark.url);
+    openUrl(bookmark.id);
     closeCommandPalette();
   };
 
