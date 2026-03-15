@@ -5,6 +5,7 @@
   "main": "out/main/index.js",
   "author": "Linko",
   "private": true,
+  "packageManager": "pnpm@10.29.3",
   "scripts": {
     "dev": "electron-vite dev",
     "build": "electron-vite build",
