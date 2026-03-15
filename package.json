@@ -16,8 +16,10 @@
   },
   "dependencies": {
     "@electron-toolkit/utils": "^3.0.0",
+    "@radix-ui/react-dialog": "^1.1.15",
     "better-sqlite3": "^9.4.3",
-    "electron-store": "^8.2.0"
+    "electron-store": "^8.2.0",
+    "lucide-react": "^0.577.0"
   },
   "devDependencies": {
     "@electron/rebuild": "^4.0.3",
