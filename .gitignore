@@ -1,2 +1,9 @@
+node_modules
+out/
+dist/
+
 # AI generated files
 docs
+
+# Force-include .context/ even if Conductor adds it to info/exclude
+!.context/
