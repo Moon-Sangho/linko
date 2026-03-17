@@ -87,7 +87,7 @@ Linko is a local-first desktop bookmark manager for power users who want fast, d
 | NF-3  | UI thread never blocked by SQLite operations (use async IPC) |
 | NF-4  | All IPC calls validated on the main process; renderer is untrusted |
 | NF-5  | Electron contextIsolation enabled; no nodeIntegration in renderer |
-| NF-6  | Supports macOS 12+ and Windows 10+ |
+| NF-6  | Supports macOS 12+ |
 | NF-7  | App bundle under 150MB |
 
 ---
