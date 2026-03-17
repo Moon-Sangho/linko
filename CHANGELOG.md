@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/Moon-Sangho/linko/compare/v0.1.1...v0.1.2) (2026-03-17)
+
+
+### Bug Fixes
+
+* **renderer:** Improve URL input UX and re-fetch title on URL change ([#25](https://github.com/Moon-Sangho/linko/issues/25)) ([f6220d0](https://github.com/Moon-Sangho/linko/commit/f6220d05d17824cda35197c0e4032ceb43f2f4d7))
+
 ## [0.1.1](https://github.com/Moon-Sangho/linko/compare/v0.1.0...v0.1.1) (2026-03-17)
 
 
