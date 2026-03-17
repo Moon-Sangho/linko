@@ -2,6 +2,8 @@
 
 A local-first bookmark manager for macOS, built with Electron.
 
+![Linko screenshot](assets/app.webp)
+
 ---
 
 ## Background
