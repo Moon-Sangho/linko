@@ -13,7 +13,7 @@ fi
 errors=()
 
 # --- Validate PR title ---
-title=$(echo "$command" | grep -oP "(?<=--title \")[^\"]+(?=\")")
+title=$(echo "$command" | grep -o '\-\-title "[^"]*"' | sed 's/--title "\(.*\)"/\1/')
 
 TITLE_REGEX='^(feat|fix|perf|test|docs|refactor|build|ci|chore|revert)(\([a-zA-Z0-9]+\))?!?: [A-Z].+[^.]$'
 if [ -z "$title" ]; then
