@@ -2,13 +2,18 @@ import { useCallback, useState } from 'react';
 import { Plus, Upload } from 'lucide-react';
 import { SearchBar } from '../search/SearchBar';
 import { TagFilter } from '../tag/TagFilter';
-import { useUIStore } from '../../store/useUIStore';
+import { overlay } from '@renderer/overlay/control';
+import { AddBookmarkModal } from '@renderer/components/bookmark/AddBookmarkModal';
 import { useBookmarkStore } from '../../store/useBookmarkStore';
 import { IpcChannels } from '@shared/ipc-channels';
 import type { ImportSummary, IpcResult } from '@shared/types';
 
 export function Sidebar() {
-  const { openAddModal } = useUIStore();
+  const openAddModal = () => {
+    overlay.open(({ isOpen, close }) => (
+      <AddBookmarkModal isOpen={isOpen} onClose={close} />
+    ));
+  };
   const { fetchAll } = useBookmarkStore();
   const [importStatus, setImportStatus] = useState<string | null>(null);
 

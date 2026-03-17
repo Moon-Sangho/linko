@@ -1,35 +1,38 @@
 import { useEffect } from 'react';
 import { Command } from 'cmdk';
 import { Search, ExternalLink, X } from 'lucide-react';
-import { useUIStore } from '../../store/useUIStore';
-import { useBookmarkStore } from '../../store/useBookmarkStore';
+import { useBookmarkStore } from '@renderer/store/useBookmarkStore';
 import type { Bookmark } from '@shared/types';
 
-export function CommandPalette() {
-  const { isCommandPaletteOpen, closeCommandPalette } = useUIStore();
+interface CommandPaletteProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   const { bookmarks, openUrl } = useBookmarkStore();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isCommandPaletteOpen) {
-        closeCommandPalette();
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isCommandPaletteOpen, closeCommandPalette]);
+  }, [isOpen, onClose]);
 
-  if (!isCommandPaletteOpen) return null;
+  if (!isOpen) return null;
 
   const handleSelect = (bookmark: Bookmark) => {
     openUrl(bookmark.url);
-    closeCommandPalette();
+    onClose();
   };
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-start justify-center pt-[20vh]"
-      onClick={closeCommandPalette}
+      onClick={onClose}
     >
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
@@ -52,7 +55,7 @@ export function CommandPalette() {
               autoFocus
             />
             <button
-              onClick={closeCommandPalette}
+              onClick={onClose}
               className="text-gray-500 hover:text-gray-300"
               aria-label="Close"
             >

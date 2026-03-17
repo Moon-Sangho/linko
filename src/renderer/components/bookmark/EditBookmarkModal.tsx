@@ -1,26 +1,28 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
-import { useBookmarkStore } from '../../store/useBookmarkStore';
-import { useUIStore } from '../../store/useUIStore';
-import { useTagStore } from '../../store/useTagStore';
-import { useBookmarkForm } from '../../hooks/useBookmarkForm';
-import { Modal } from '../ui/Modal';
-import { Input } from '../ui/Input';
-import { Spinner } from '../ui/Spinner';
-import { TagCheckboxList } from '../ui/TagCheckboxList';
+import { useBookmarkStore } from '@renderer/store/useBookmarkStore';
+import { useTagStore } from '@renderer/store/useTagStore';
+import { useBookmarkForm } from '@renderer/hooks/useBookmarkForm';
+import { Modal } from '@renderer/components/ui/Modal';
+import { Input } from '@renderer/components/ui/Input';
+import { Spinner } from '@renderer/components/ui/Spinner';
+import { TagCheckboxList } from '@renderer/components/ui/TagCheckboxList';
 
-export function EditBookmarkModal() {
-  const isEditModalOpen = useUIStore((s) => s.isEditModalOpen);
-  const selectedBookmarkId = useUIStore((s) => s.selectedBookmarkId);
-  const closeEditModal = useUIStore((s) => s.closeEditModal);
+interface EditBookmarkModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  bookmarkId: number;
+}
+
+export function EditBookmarkModal({ isOpen, onClose, bookmarkId }: EditBookmarkModalProps) {
   const bookmarks = useBookmarkStore((s) => s.bookmarks);
   const update = useBookmarkStore((s) => s.update);
   const deleteBookmark = useBookmarkStore((s) => s.removeBookmark);
   const tags = useTagStore((s) => s.tags);
   const fetchTags = useTagStore((s) => s.fetchAll);
 
-  // m8: Stable lookup — only re-runs when bookmarks array or selectedId changes
-  const bookmark = bookmarks.find((b) => b.id === selectedBookmarkId) ?? null;
+  // m8: Stable lookup — only re-runs when bookmarks array or bookmarkId changes
+  const bookmark = bookmarks.find((b) => b.id === bookmarkId) ?? null;
 
   const createTag = useTagStore((s) => s.create);
   const form = useBookmarkForm();
@@ -42,7 +44,7 @@ export function EditBookmarkModal() {
 
   // M2: Pre-fill when modal opens with a valid bookmark. fetchTags is stable.
   useEffect(() => {
-    if (isEditModalOpen && bookmark) {
+    if (isOpen && bookmark) {
       form.prefill({
         url: bookmark.url,
         title: bookmark.title ?? '',
@@ -55,7 +57,7 @@ export function EditBookmarkModal() {
       fetchTags();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isEditModalOpen, bookmark?.id, fetchTags]);
+  }, [isOpen, bookmark?.id, fetchTags]);
 
   const handleSave = useCallback(async () => {
     if (!form.url) {
@@ -77,16 +79,16 @@ export function EditBookmarkModal() {
         notes: form.notes || null,
         tagIds: form.selectedTagIds,
       });
-      closeEditModal();
+      onClose();
     } catch {
       // M3: Surface error to user
       form.setSaveError('Failed to save changes. Please try again.');
     } finally {
       form.setIsSaving(false);
     }
-  }, [form, bookmark, update, closeEditModal]);
+  }, [form, bookmark, update, onClose]);
 
-  // C3: Reset local state BEFORE calling closeEditModal so no updates happen
+  // C3: Reset local state BEFORE calling onClose so no updates happen
   // after the component potentially unmounts.
   const handleDelete = useCallback(async () => {
     if (!bookmark) return;
@@ -97,14 +99,14 @@ export function EditBookmarkModal() {
       // Success: reset state then close while component is still mounted
       setIsDeleting(false);
       setShowDeleteConfirm(false);
-      closeEditModal();
+      onClose();
     } catch {
       // M3: Surface error; keep modal open so user can retry
       setIsDeleting(false);
       setShowDeleteConfirm(false);
       setDeleteError('Failed to delete bookmark. Please try again.');
     }
-  }, [bookmark, deleteBookmark, closeEditModal]);
+  }, [bookmark, deleteBookmark, onClose]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -121,8 +123,8 @@ export function EditBookmarkModal() {
 
   return (
     <Modal
-      isOpen={isEditModalOpen}
-      onClose={closeEditModal}
+      isOpen={isOpen}
+      onClose={onClose}
       title="Edit Bookmark"
       width={520}
       footer={
@@ -162,7 +164,7 @@ export function EditBookmarkModal() {
           {/* Save / Cancel */}
           <div className="flex gap-2">
             <button
-              onClick={closeEditModal}
+              onClick={onClose}
               className="px-4 py-2 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
             >
               Cancel
