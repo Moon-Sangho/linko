@@ -1,10 +1,12 @@
 # Linko - Bookmark Manager Desktop App
 
 ## Project Overview
+
 Electron-based local bookmark management desktop app.
 Focus: simple, fast, distraction-free bookmark management.
 
 ## Tech Stack
+
 - **Framework**: Electron
 - **Frontend**: React + TypeScript
 - **Storage**: SQLite (via better-sqlite3)
@@ -12,6 +14,7 @@ Focus: simple, fast, distraction-free bookmark management.
 - **Build**: electron-builder
 
 ## Architecture
+
 ```
 Main Process (Node.js)
   ├── SQLite DB (local storage)
@@ -23,6 +26,7 @@ Renderer Process (React)
 ```
 
 ## Data Layer Abstraction (for future extensibility)
+
 ```
 BookmarkRepository (interface)
   ├── LocalRepository  ← current
@@ -30,6 +34,7 @@ BookmarkRepository (interface)
 ```
 
 ## Project Structure
+
 ```
 linko/
 ├── src/
@@ -44,12 +49,12 @@ linko/
 │   │   ├── hooks/
 │   │   └── store/
 │   └── shared/        # Shared types between main/renderer
-├── .context/          # Agent collaboration files (gitignored)
-├── docs/              # Design docs, specs
+├── .context/          # Agent collaboration files
 └── CLAUDE.md
 ```
 
 ## Coding Conventions
+
 - TypeScript strict mode
 - Named exports only
 - Shared types live in `src/shared/types.ts`
@@ -57,9 +62,6 @@ linko/
 - Repository pattern for all data access
 
 ## Documentation Language
+
 - **All AI-generated documentation must be written in English** — applies to all files in `.context/`, `.claude/`, `docs/`, and any other project documentation
 - This ensures consistency and readability across all agents
-
-## Current Status
-- Phase: Planning & Design
-- Agents: PM, Designer, Main Process, UI, QA/Build

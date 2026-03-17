@@ -21,16 +21,16 @@ This directory is git-tracked.
 │   └── qa/
 │       └── qa-checklist.md
 └── versions/         ← snapshots at milestone boundaries
-    ├── v0.1/
-    │   ├── planning/
-    │   ├── design/
-    │   ├── implementation/
-    │   └── qa/
-    └── v0.2/
+    └── v0.1/
         ├── planning/
         ├── design/
         ├── implementation/
-        └── qa/
+        ├── qa/
+        └── patches/  ← bug fixes and small improvements within this release
+            ├── 001-short-description/
+            │   └── spec.md
+            └── 002-short-description/
+                └── spec.md
 ```
 
 ## Versioning Rule
@@ -62,6 +62,47 @@ The phases within it (planning → design → implementation → qa) build up to
 | design | `versions/v0.X/design/` | /agent-designer outputs complete |
 | implementation | `versions/v0.X/implementation/` | /agent-dev-core + dev-ui complete |
 | qa | `versions/v0.X/qa/` | /agent-dev-qa complete |
+
+## Patches
+
+A patch is any change that does **not** start a new feature release cycle —
+bug fixes, small UX improvements, hardening, minor refactors.
+
+### When to create a patch
+
+Create a new `NNN-description/` directory under `current/patches/` (= the active version's patches folder) for each logical unit of work.
+
+### Numbering and naming
+
+- 3-digit zero-padded sequence: `001`, `002`, ...
+- Hyphenated, describes the concern — not the action
+  - ✅ `005-url-suggest`
+  - ❌ `005-fix-url-input-bug`
+
+### spec.md format
+
+```markdown
+# Patch NNN — <Title>
+
+**Date:** YYYY-MM-DD
+**Agents involved:** <Dev UI / Dev Core / ...>
+
+## Problem
+## Decision
+## Changes
+
+### `path/to/file.ts`
+- what changed and why
+```
+
+**Rules:**
+- No commit hash or PR number — use `git log` / GitLens for history
+- All changes belonging to the same logical fix go under `## Changes` at the
+  same heading level — do not add sub-sections like "Follow-up Changes"
+- Follow-ups to the same concern → add to the existing patch
+- Different concern → new patch number
+
+---
 
 ## Output Files
 

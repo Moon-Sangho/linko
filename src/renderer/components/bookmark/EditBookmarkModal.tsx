@@ -211,6 +211,19 @@ export function EditBookmarkModal({ isOpen, onClose, bookmarkId }: EditBookmarkM
             onBlur={() => form.handleUrlBlur(bookmark.url)}
             error={form.urlError}
           />
+          {form.suggestedUrl && (
+            <div className="mt-1.5 text-xs text-[var(--color-text-secondary)]">
+              Did you mean{' '}
+              <button
+                type="button"
+                onClick={() => form.applySuggestion(bookmark.url)}
+                className="text-[var(--color-accent)] hover:underline font-medium"
+              >
+                {form.suggestedUrl}
+              </button>
+              ?
+            </div>
+          )}
           {form.isDuplicate && (
             <div className="mt-1.5 flex items-center gap-1.5 text-xs text-[var(--color-warning)]">
               <AlertTriangle size={12} strokeWidth={1.5} />
@@ -226,9 +239,9 @@ export function EditBookmarkModal({ isOpen, onClose, bookmarkId }: EditBookmarkM
           </label>
           <Input
             type="text"
-            placeholder={form.isFetchingMeta ? 'Fetching title…' : 'Page title'}
+            placeholder={form.isFetchingMeta ? 'Fetching title…' : 'Auto-filled from URL'}
             value={form.title}
-            onChange={(e) => form.setTitle(e.target.value)}
+            onChange={(e) => form.handleTitleChange(e.target.value)}
             disabled={form.isFetchingMeta}
             isLoading={form.isFetchingMeta}
           />
