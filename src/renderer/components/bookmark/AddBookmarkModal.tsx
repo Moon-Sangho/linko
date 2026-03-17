@@ -1,24 +1,26 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
-import { useBookmarkStore } from '../../store/useBookmarkStore';
-import { useUIStore } from '../../store/useUIStore';
-import { useTagStore } from '../../store/useTagStore';
-import { useBookmarkForm } from '../../hooks/useBookmarkForm';
-import { Modal } from '../ui/Modal';
-import { Input } from '../ui/Input';
-import { Spinner } from '../ui/Spinner';
-import { TagCheckboxList } from '../ui/TagCheckboxList';
+import { useBookmarkStore } from '@renderer/store/useBookmarkStore';
+import { useTagStore } from '@renderer/store/useTagStore';
+import { useBookmarkForm } from '@renderer/hooks/useBookmarkForm';
+import { Modal } from '@renderer/components/ui/Modal';
+import { Input } from '@renderer/components/ui/Input';
+import { Spinner } from '@renderer/components/ui/Spinner';
+import { TagCheckboxList } from '@renderer/components/ui/TagCheckboxList';
 import { IpcChannels } from '@shared/ipc-channels';
 import type { IpcResult, UrlMetadata } from '@shared/types';
 
-export function AddBookmarkModal() {
-  const isAddModalOpen = useUIStore((s) => s.isAddModalOpen);
-  const closeAddModal = useUIStore((s) => s.closeAddModal);
+interface AddBookmarkModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export function AddBookmarkModal({ isOpen, onClose }: AddBookmarkModalProps) {
   const create = useBookmarkStore((s) => s.create);
   const tags = useTagStore((s) => s.tags);
   const fetchTags = useTagStore((s) => s.fetchAll);
-
   const createTag = useTagStore((s) => s.create);
+
   const form = useBookmarkForm();
   const urlRef = useRef<HTMLInputElement>(null);
   const [newTagName, setNewTagName] = useState('');
@@ -37,13 +39,13 @@ export function AddBookmarkModal() {
   // M1: fetchTags and form.reset are stable references — safe in dep array.
   // Using requestAnimationFrame instead of setTimeout for reliable focus (m6 fix).
   useEffect(() => {
-    if (isAddModalOpen) {
+    if (isOpen) {
       form.reset();
       fetchTags();
       requestAnimationFrame(() => urlRef.current?.focus());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAddModalOpen, fetchTags]);
+  }, [isOpen, fetchTags]);
 
   const handleSave = useCallback(async () => {
     if (!form.url) {
@@ -85,13 +87,13 @@ export function AddBookmarkModal() {
         favicon_url: faviconUrl,
         tagIds: form.selectedTagIds,
       });
-      closeAddModal();
+      onClose();
     } catch {
       form.setSaveError('Failed to save bookmark. Please try again.');
     } finally {
       form.setIsSaving(false);
     }
-  }, [form, create, closeAddModal]);
+  }, [form, create, onClose]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -104,14 +106,14 @@ export function AddBookmarkModal() {
 
   return (
     <Modal
-      isOpen={isAddModalOpen}
-      onClose={closeAddModal}
+      isOpen={isOpen}
+      onClose={onClose}
       title="Add Bookmark"
       width={520}
       footer={
         <div className="flex justify-end gap-2">
           <button
-            onClick={closeAddModal}
+            onClick={onClose}
             className="px-4 py-2 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
           >
             Cancel

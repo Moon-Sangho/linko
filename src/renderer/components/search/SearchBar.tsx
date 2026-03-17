@@ -1,8 +1,16 @@
 import { Search, X } from 'lucide-react';
 import { useUIStore } from '../../store/useUIStore';
+import { overlay } from '@renderer/overlay/control';
+import { CommandPalette } from '@renderer/components/search/CommandPalette';
 
 export function SearchBar() {
-  const { searchQuery, setSearchQuery, openCommandPalette } = useUIStore();
+  const { searchQuery, setSearchQuery } = useUIStore();
+
+  const openCommandPalette = () => {
+    overlay.open(({ isOpen, close }) => (
+      <CommandPalette isOpen={isOpen} onClose={close} />
+    ));
+  };
 
   return (
     <div className="px-3 py-2">

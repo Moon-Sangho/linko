@@ -2,7 +2,8 @@ import { useCallback, useMemo, useState } from 'react';
 import { ExternalLink, Pencil, Trash2 } from 'lucide-react';
 import { Bookmark } from '../../../shared/types';
 import { useBookmarkStore } from '../../store/useBookmarkStore';
-import { useUIStore } from '../../store/useUIStore';
+import { overlay } from '@renderer/overlay/control';
+import { EditBookmarkModal } from './EditBookmarkModal';
 import { Favicon } from '../ui/Favicon';
 import { Badge } from '../ui/Badge';
 
@@ -16,7 +17,6 @@ export function BookmarkItem({ bookmark, isSelected, onClick }: BookmarkItemProp
   // Select only the needed actions to avoid re-renders on unrelated store changes
   const openUrl = useBookmarkStore((s) => s.openUrl);
   const deleteBookmark = useBookmarkStore((s) => s.removeBookmark);
-  const openEditModal = useUIStore((s) => s.openEditModal);
 
   const [deleteConfirming, setDeleteConfirming] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -52,9 +52,11 @@ export function BookmarkItem({ bookmark, isSelected, onClick }: BookmarkItemProp
   const handleEditClick = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      openEditModal(bookmark.id);
+      overlay.open(({ isOpen, close }) => (
+        <EditBookmarkModal isOpen={isOpen} onClose={close} bookmarkId={bookmark.id} />
+      ));
     },
-    [openEditModal, bookmark.id],
+    [bookmark.id],
   );
 
   const handleDeleteClick = useCallback((e: React.MouseEvent) => {

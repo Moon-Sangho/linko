@@ -1,9 +1,7 @@
 import { AppShell } from './components/layout/AppShell';
-import { CommandPalette } from './components/search/CommandPalette';
-import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { BookmarkList } from './components/bookmark/BookmarkList';
-import { AddBookmarkModal } from './components/bookmark/AddBookmarkModal';
-import { EditBookmarkModal } from './components/bookmark/EditBookmarkModal';
+import { OverlayProvider } from './overlay/OverlayProvider';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 export default function App() {
   useKeyboardShortcuts();
@@ -14,10 +12,7 @@ export default function App() {
         <BookmarkList />
       </AppShell>
 
-      <AddBookmarkModal />
-      <EditBookmarkModal />
-
-      <CommandPalette />
+      <OverlayProvider />
     </>
   );
 }

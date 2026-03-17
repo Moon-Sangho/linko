@@ -3,14 +3,22 @@ import { Bookmark, SearchX } from 'lucide-react';
 import { useBookmarkStore } from '../../store/useBookmarkStore';
 import { useUIStore } from '../../store/useUIStore';
 import { useSearch } from '../../hooks/useSearch';
+import { overlay } from '@renderer/overlay/control';
+import { AddBookmarkModal } from './AddBookmarkModal';
 import { BookmarkItem } from './BookmarkItem';
 import { Spinner } from '../ui/Spinner';
 import { EmptyState } from '../ui/EmptyState';
 
 export function BookmarkList() {
   const { bookmarks, isLoading, fetchAll } = useBookmarkStore();
-  const { openAddModal, selectedBookmarkId, setSelectedBookmark } = useUIStore();
+  const { selectedBookmarkId, setSelectedBookmark } = useUIStore();
   const selectedTagIds = useUIStore((s) => s.selectedTagIds);
+
+  const openAddModal = () => {
+    overlay.open(({ isOpen, close }) => (
+      <AddBookmarkModal isOpen={isOpen} onClose={close} />
+    ));
+  };
   const { searchResults, isSearching, searchQuery } = useSearch();
 
   useEffect(() => {
