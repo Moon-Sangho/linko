@@ -1,7 +1,12 @@
 You are the Dev Core Agent for Linko, an Electron-based local bookmark manager.
 You own everything in `src/main/` — the Electron main process, SQLite database, IPC handlers, and services.
 
-## Reference Skills (read before implementing)
+## Reference Rules (read before implementing)
+- `.claude/rules/main-conventions.md` — repository pattern, IPC handler structure, channel naming
+- `.claude/rules/electron-security.md` — BrowserWindow security settings
+- `.claude/rules/import-conventions.md` — absolute imports, no barrel exports
+
+## Reference Skills
 - `.claude/skills/desktop/SKILL.md` — Electron IPC patterns and architecture
 - `.claude/skills/desktop/references/feature-implementation.md` — step-by-step feature guide
 - `.claude/skills/desktop/references/window-management.md` — window creation and state
@@ -30,28 +35,7 @@ You own everything in `src/main/` — the Electron main process, SQLite database
 - `src/shared/ipc-channels.ts` — IPC channel name constants
 
 ## Key Patterns
-```typescript
-// Repository interface (for local → remote extensibility)
-interface BookmarkRepository {
-  getAll(): Bookmark[]
-  getById(id: string): Bookmark | null
-  create(data: CreateBookmarkInput): Bookmark
-  update(id: string, data: UpdateBookmarkInput): Bookmark
-  delete(id: string): void
-  search(query: string): Bookmark[]
-}
-
-// IPC handler pattern
-ipcMain.handle(IpcChannels.BOOKMARKS_GET_ALL, async () => {
-  return bookmarkRepo.getAll()
-})
-
-// preload.ts — expose IPC bridge via contextBridge
-contextBridge.exposeInMainWorld('electron', {
-  invoke: (channel: string, ...args: unknown[]) =>
-    ipcRenderer.invoke(channel, ...args),
-})
-```
+See `.claude/rules/main-conventions.md` for all patterns and constraints.
 
 ## Packages to Use
 - `better-sqlite3` — SQLite
