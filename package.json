@@ -50,6 +50,10 @@
       "esbuild"
     ]
   },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=10.0.0"
+  },
   "build": {
     "appId": "com.linko.app",
     "productName": "Linko",
@@ -58,11 +62,6 @@
         "dmg"
       ],
       "category": "public.app-category.productivity"
-    },
-    "win": {
-      "target": [
-        "nsis"
-      ]
     },
     "files": [
       "out/**/*"
