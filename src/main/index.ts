@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, dialog } from 'electron';
 import path from 'path';
 import { is } from '@electron-toolkit/utils';
 import Store from 'electron-store';
@@ -89,7 +89,16 @@ function createWindow(): BrowserWindow {
 // ─── App Lifecycle ────────────────────────────────────────────────────────────
 
 app.whenReady().then(() => {
-  registerIpcHandlers();
+  try {
+    registerIpcHandlers();
+  } catch (error) {
+    dialog.showErrorBox(
+      'Database Error',
+      `Failed to initialize the database:\n${(error as Error).message}\n\nThe application will now quit.`,
+    );
+    app.exit(1);
+    return;
+  }
   createWindow();
 
   app.on('activate', () => {

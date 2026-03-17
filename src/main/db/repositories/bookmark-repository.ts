@@ -47,7 +47,7 @@ export class LocalBookmarkRepository implements BookmarkRepository {
       )
       .all();
 
-    return rows.map((row) => this.attachTags(row));
+    return this.bulkAttachTags(rows);
   }
 
   getById(id: number): Bookmark | null {
@@ -170,7 +170,7 @@ export class LocalBookmarkRepository implements BookmarkRepository {
       rows = rows.filter((r) => taggedIds.has(r.id));
     }
 
-    return rows.map((row) => this.attachTags(row));
+    return this.bulkAttachTags(rows);
   }
 
   isDuplicate(url: string, excludeId?: number): boolean {
@@ -199,6 +199,32 @@ export class LocalBookmarkRepository implements BookmarkRepository {
       .all(row.id);
 
     return { ...row, tags };
+  }
+
+  private bulkAttachTags(rows: BookmarkRow[]): Bookmark[] {
+    if (rows.length === 0) return [];
+
+    const ids = rows.map((r) => r.id);
+    const placeholders = ids.map(() => '?').join(', ');
+
+    const tagRows = this.db
+      .prepare<number[], { bookmark_id: number; id: number; name: string }>(
+        `SELECT bt.bookmark_id, t.id, t.name
+         FROM tags t
+         JOIN bookmark_tags bt ON bt.tag_id = t.id
+         WHERE bt.bookmark_id IN (${placeholders})
+         ORDER BY t.name`,
+      )
+      .all(...ids);
+
+    const tagMap = new Map<number, Tag[]>();
+    for (const { bookmark_id, id, name } of tagRows) {
+      const list = tagMap.get(bookmark_id) ?? [];
+      list.push({ id, name });
+      tagMap.set(bookmark_id, list);
+    }
+
+    return rows.map((row) => ({ ...row, tags: tagMap.get(row.id) ?? [] }));
   }
 
   private setTags(bookmarkId: number, tagIds: number[]): void {

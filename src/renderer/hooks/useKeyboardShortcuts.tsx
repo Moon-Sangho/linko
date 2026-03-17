@@ -3,8 +3,7 @@ import { overlay } from '@renderer/overlay/control';
 import { AddBookmarkModal } from '@renderer/components/bookmark/AddBookmarkModal';
 import { CommandPalette } from '@renderer/components/search/CommandPalette';
 
-// Computed once at module load — stable in Electron where process.platform is fixed
-const isMac = navigator.userAgent.toUpperCase().includes('MAC');
+const isMac = window.electron.platform === 'darwin';
 
 export function useKeyboardShortcuts() {
   // Track the command palette overlay ID so we can toggle it closed

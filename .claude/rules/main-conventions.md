@@ -99,7 +99,7 @@ Channel names follow `domain:action` format, defined in `src/shared/ipc-channels
 
 ## preload.ts — contextBridge
 
-The preload script exposes only `invoke` — nothing else.
+The preload script exposes `invoke` for all IPC calls. Static, non-sensitive process values (e.g. `process.platform`) may also be exposed directly — they are set at process start and cannot be mutated.
 
 ```typescript
 // ✅ src/main/preload.ts
@@ -108,10 +108,11 @@ import { contextBridge, ipcRenderer } from 'electron'
 contextBridge.exposeInMainWorld('electron', {
   invoke: (channel: string, ...args: unknown[]) =>
     ipcRenderer.invoke(channel, ...args),
+  platform: process.platform,  // static value — safe to expose directly
 })
 ```
 
-Do NOT expose `ipcRenderer` directly or add extra methods without explicit reason.
+Do NOT expose `ipcRenderer` directly. Do NOT expose functions or APIs that grant elevated access beyond what `invoke` already provides.
 
 ---
 
