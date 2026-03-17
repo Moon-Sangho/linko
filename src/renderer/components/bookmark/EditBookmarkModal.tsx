@@ -59,34 +59,21 @@ export function EditBookmarkModal({ isOpen, onClose, bookmarkId }: EditBookmarkM
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, bookmark?.id, fetchTags]);
 
-  const handleSave = useCallback(async () => {
-    if (!form.url) {
-      form.setUrlError('URL is required');
-      return;
-    }
-    if (!form.isValidUrl(form.url)) {
-      form.setUrlError('Please enter a valid URL (https:// or http://)');
-      return;
-    }
+  const handleSave = form.handleSubmit(async (data) => {
     if (!bookmark) return;
-
-    form.setSaveError('');
-    form.setIsSaving(true);
     try {
       await update(bookmark.id, {
-        url: form.url,
-        title: form.title || null,
-        notes: form.notes || null,
+        url: data.url,
+        title: data.title || null,
+        notes: data.notes || null,
         tagIds: form.selectedTagIds,
       });
       onClose();
     } catch {
       // M3: Surface error to user
-      form.setSaveError('Failed to save changes. Please try again.');
-    } finally {
-      form.setIsSaving(false);
+      form.setError('root', { message: 'Failed to save changes. Please try again.' });
     }
-  }, [form, bookmark, update, onClose]);
+  });
 
   // C3: Reset local state BEFORE calling onClose so no updates happen
   // after the component potentially unmounts.
@@ -183,10 +170,10 @@ export function EditBookmarkModal({ isOpen, onClose, bookmarkId }: EditBookmarkM
     >
       <div className="space-y-4" onKeyDown={handleKeyDown}>
         {/* Save error banner */}
-        {form.saveError && (
+        {form.formState.errors.root && (
           <div className="flex items-center gap-2 text-xs text-[var(--color-danger)] bg-[var(--color-danger-subtle)] rounded-md px-3 py-2">
             <AlertTriangle size={12} strokeWidth={1.5} />
-            {form.saveError}
+            {form.formState.errors.root.message}
           </div>
         )}
 
@@ -209,7 +196,7 @@ export function EditBookmarkModal({ isOpen, onClose, bookmarkId }: EditBookmarkM
             value={form.url}
             onChange={(e) => form.handleUrlChange(e.target.value)}
             onBlur={() => form.handleUrlBlur(bookmark.url)}
-            error={form.urlError}
+            error={form.formState.errors.url?.message}
           />
           {form.suggestedUrl && (
             <div className="mt-1.5 text-xs text-[var(--color-text-secondary)]">
@@ -255,8 +242,7 @@ export function EditBookmarkModal({ isOpen, onClose, bookmarkId }: EditBookmarkM
           <textarea
             rows={3}
             placeholder="Optional notes…"
-            value={form.notes}
-            onChange={(e) => form.setNotes(e.target.value)}
+            {...form.register('notes')}
             className="w-full bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-md text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] px-3 py-2 resize-none focus:outline-none focus:border-[var(--color-border-focus)] focus:ring-1 focus:ring-[var(--color-accent)]/20 transition-colors"
           />
         </div>

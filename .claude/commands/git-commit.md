@@ -74,6 +74,50 @@ BREAKING CHANGE:  ← breaking change description + migration guide
 
 ---
 
+## Patch Record Rule
+
+Per release-please convention:
+
+| Commit type | Semver level | Patch doc required? |
+|---|---|---|
+| `feat` | minor | No |
+| `feat!` / `BREAKING CHANGE` | major | No |
+| everything else (`fix`, `perf`, `refactor`, `docs`, `build`, `ci`, `chore`, `test`) | patch | **Yes** |
+
+Before a patch-level commit, `.claude/hooks/check-patch-record.sh` will ask:
+
+> **"Shall I write the patch document for you?"**
+
+- **Yes** → inspect staged changes (`git diff HEAD`, `git status`), create
+  the patch record, then retry the commit
+- **No** → proceed with the commit as-is
+
+**Patch record structure** — see `.context/README.md` (Patches section) for full rules:
+
+```
+.context/current/patches/
+└── NNN-<kebab-description>/   ← 3-digit zero-padded, describes concern not action
+    └── spec.md
+```
+
+**File naming**: `.context/patches/YYYY-MM-DD-<scope>-<short-description>.md`
+
+**Template**:
+```markdown
+# Patch: <short description>
+Date: YYYY-MM-DD
+Type: fix | perf
+Scope: <scope>
+
+## Problem
+<what was broken or needed improvement>
+
+## Fix
+<what was changed and why>
+```
+
+---
+
 ## Steps
 
 1. **Check what changed**:

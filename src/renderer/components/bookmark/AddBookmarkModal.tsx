@@ -47,53 +47,40 @@ export function AddBookmarkModal({ isOpen, onClose }: AddBookmarkModalProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, fetchTags]);
 
-  const handleSave = useCallback(async () => {
-    if (!form.url) {
-      form.setUrlError('URL is required');
-      return;
-    }
-    if (!form.isValidUrl(form.url)) {
-      form.setUrlError('Please enter a valid URL (https:// or http://)');
-      return;
-    }
-
+  const handleSave = form.handleSubmit(async (data) => {
     // Cancel any in-flight blur-triggered fetch to avoid racing
     form.cancel();
-    form.setSaveError('');
-    form.setIsSaving(true);
+
+    // Always fetch metadata to get favicon; prefer form title if already filled
+    let title = data.title || null;
+    let faviconUrl: string | null = null;
 
     try {
-      // Always fetch metadata to get favicon; prefer form title if already filled
-      let title = form.title || null;
-      let faviconUrl: string | null = null;
-
-      try {
-        const meta = await window.electron.invoke(
-          IpcChannels.BOOKMARK_FETCH_METADATA,
-          form.url,
-        ) as IpcResult<UrlMetadata>;
-        if (meta.success && meta.data) {
-          if (!title) title = meta.data.title;
-          faviconUrl = meta.data.favicon_url ?? null;
-        }
-      } catch {
-        // Ignore — save without favicon
+      const meta = (await window.electron.invoke(
+        IpcChannels.BOOKMARK_FETCH_METADATA,
+        data.url,
+      )) as IpcResult<UrlMetadata>;
+      if (meta.success && meta.data) {
+        if (!title) title = meta.data.title;
+        faviconUrl = meta.data.favicon_url ?? null;
       }
+    } catch {
+      // Ignore — save without favicon
+    }
 
+    try {
       await create({
-        url: form.url,
+        url: data.url,
         title,
-        notes: form.notes || null,
+        notes: data.notes || null,
         favicon_url: faviconUrl,
         tagIds: form.selectedTagIds,
       });
       onClose();
     } catch {
-      form.setSaveError('Failed to save bookmark. Please try again.');
-    } finally {
-      form.setIsSaving(false);
+      form.setError('root', { message: 'Failed to save bookmark. Please try again.' });
     }
-  }, [form, create, onClose]);
+  });
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -131,10 +118,10 @@ export function AddBookmarkModal({ isOpen, onClose }: AddBookmarkModalProps) {
     >
       <div className="space-y-4" onKeyDown={handleKeyDown}>
         {/* Save error banner */}
-        {form.saveError && (
+        {form.formState.errors.root && (
           <div className="flex items-center gap-2 text-xs text-[var(--color-danger)] bg-[var(--color-danger-subtle)] rounded-md px-3 py-2">
             <AlertTriangle size={12} strokeWidth={1.5} />
-            {form.saveError}
+            {form.formState.errors.root.message}
           </div>
         )}
 
@@ -150,7 +137,7 @@ export function AddBookmarkModal({ isOpen, onClose }: AddBookmarkModalProps) {
             value={form.url}
             onChange={(e) => form.handleUrlChange(e.target.value)}
             onBlur={() => form.handleUrlBlur()}
-            error={form.urlError}
+            error={form.formState.errors.url?.message}
           />
           {form.suggestedUrl && (
             <div className="mt-1.5 text-xs text-[var(--color-text-secondary)]">
@@ -196,8 +183,7 @@ export function AddBookmarkModal({ isOpen, onClose }: AddBookmarkModalProps) {
           <textarea
             rows={3}
             placeholder="Optional notes…"
-            value={form.notes}
-            onChange={(e) => form.setNotes(e.target.value)}
+            {...form.register('notes')}
             className="w-full bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-md text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] px-3 py-2 resize-none focus:outline-none focus:border-[var(--color-border-focus)] focus:ring-1 focus:ring-[var(--color-accent)]/20 transition-colors"
           />
         </div>

@@ -1,9 +1,31 @@
 import { useRef, useState } from 'react';
-import { IpcChannels } from '../../shared/ipc-channels';
-import { IpcResult, UrlMetadata } from '../../shared/types';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { IpcChannels } from '@shared/ipc-channels';
+import type { IpcResult, UrlMetadata } from '@shared/types';
+
+const bookmarkSchema = z.object({
+  url: z
+    .string()
+    .min(1, 'URL is required')
+    .refine((val) => {
+      try {
+        const u = new URL(val);
+        return u.protocol === 'http:' || u.protocol === 'https:';
+      } catch {
+        return false;
+      }
+    }, 'Please enter a valid URL (https:// or http://)'),
+  title: z.string(),
+  notes: z.string(),
+});
+
+export type BookmarkFormValues = z.infer<typeof bookmarkSchema>;
 
 /**
  * Shared form state + URL-field logic for Add and Edit bookmark modals.
+ * Uses react-hook-form + Zod for validation and form state management.
  * Uses a session counter to discard stale async IPC results when the modal
  * is closed/reopened before in-flight calls resolve (race condition fix).
  */
@@ -12,16 +34,16 @@ export function useBookmarkForm() {
   /** True when title was set by auto-fetch (not manually typed). Re-fetch on URL change. */
   const titleAutoFilledRef = useRef(false);
 
-  const [url, setUrl] = useState('');
-  const [title, setTitle] = useState('');
-  const [notes, setNotes] = useState('');
+  const rhf = useForm<BookmarkFormValues>({
+    resolver: zodResolver(bookmarkSchema),
+    defaultValues: { url: '', title: '', notes: '' },
+    mode: 'onSubmit',
+  });
+
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
   const [isFetchingMeta, setIsFetchingMeta] = useState(false);
   const [isDuplicate, setIsDuplicate] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [urlError, setUrlError] = useState('');
   const [suggestedUrl, setSuggestedUrl] = useState('');
-  const [saveError, setSaveError] = useState('');
 
   /** Only accepts http: and https: to prevent javascript:, file:, etc. */
   function isValidUrl(value: string): boolean {
@@ -49,7 +71,8 @@ export function useBookmarkForm() {
     if (session !== sessionRef.current) return;
     setIsDuplicate(dupResult.success && dupResult.data === true);
 
-    if (!title || titleAutoFilledRef.current) {
+    const currentTitle = rhf.getValues('title');
+    if (!currentTitle || titleAutoFilledRef.current) {
       if (session !== sessionRef.current) return;
       setIsFetchingMeta(true);
       try {
@@ -59,7 +82,7 @@ export function useBookmarkForm() {
         )) as IpcResult<UrlMetadata>;
         if (session !== sessionRef.current) return;
         if (metaResult.success && metaResult.data?.title) {
-          setTitle(metaResult.data.title);
+          rhf.setValue('title', metaResult.data.title);
           titleAutoFilledRef.current = true;
         }
       } finally {
@@ -77,17 +100,17 @@ export function useBookmarkForm() {
    * is skipped when the URL hasn't changed.
    */
   async function handleUrlBlur(skipDupCheckForUrl?: string) {
-    const trimmed = url.trim();
+    const trimmed = rhf.getValues('url').trim();
 
     // Bare domain — no protocol at all
     if (trimmed && !/^https?:\/\//i.test(trimmed)) {
       const isIp = /^(\d{1,3}\.){3}\d{1,3}(:\d+)?$/.test(trimmed);
       const suggested = `${isIp ? 'http' : 'https'}://${trimmed}`;
       if (isValidUrl(suggested)) {
-        setUrlError('URL must start with https:// or http://');
+        rhf.setError('url', { message: 'URL must start with https:// or http://' });
         setSuggestedUrl(suggested);
       } else {
-        setUrlError('Please enter a valid URL (https:// or http://)');
+        rhf.setError('url', { message: 'Please enter a valid URL (https:// or http://)' });
       }
       return;
     }
@@ -104,15 +127,16 @@ export function useBookmarkForm() {
   async function applySuggestion(skipDupCheckForUrl?: string) {
     if (!suggestedUrl) return;
     const accepted = suggestedUrl;
-    setUrl(accepted);
+    rhf.setValue('url', accepted);
+    rhf.clearErrors('url');
     setSuggestedUrl('');
-    setUrlError('');
+    setIsDuplicate(false);
     await runBlurChecks(accepted, skipDupCheckForUrl);
   }
 
   function handleUrlChange(value: string) {
-    setUrl(value);
-    setUrlError('');
+    rhf.setValue('url', value);
+    rhf.clearErrors('url');
     setSuggestedUrl('');
     setIsDuplicate(false);
   }
@@ -120,7 +144,7 @@ export function useBookmarkForm() {
   /** Marks title as manually typed, so URL changes won't auto-overwrite it. */
   function handleTitleChange(value: string) {
     titleAutoFilledRef.current = false;
-    setTitle(value);
+    rhf.setValue('title', value);
   }
 
   function toggleTag(tagId: number) {
@@ -133,32 +157,22 @@ export function useBookmarkForm() {
   function reset() {
     sessionRef.current += 1;
     titleAutoFilledRef.current = false;
-    setUrl('');
-    setTitle('');
-    setNotes('');
+    rhf.reset({ url: '', title: '', notes: '' });
     setSelectedTagIds([]);
     setIsFetchingMeta(false);
     setIsDuplicate(false);
-    setIsSaving(false);
-    setUrlError('');
     setSuggestedUrl('');
-    setSaveError('');
   }
 
   /** Pre-fills form for edit mode and cancels in-flight async calls. */
   function prefill(data: { url: string; title: string; notes: string; tagIds: number[] }) {
     sessionRef.current += 1;
     titleAutoFilledRef.current = false;
-    setUrl(data.url);
-    setTitle(data.title);
-    setNotes(data.notes);
+    rhf.reset({ url: data.url, title: data.title, notes: data.notes });
     setSelectedTagIds(data.tagIds);
     setIsFetchingMeta(false);
     setIsDuplicate(false);
-    setIsSaving(false);
-    setUrlError('');
     setSuggestedUrl('');
-    setSaveError('');
   }
 
   /** Cancels any in-flight async operations (blur-triggered fetch). */
@@ -167,33 +181,31 @@ export function useBookmarkForm() {
     setIsFetchingMeta(false);
   }
 
-  const canSave = url.length > 0 && isValidUrl(url) && !isSaving;
+  const watchedUrl = rhf.watch('url');
+  const watchedTitle = rhf.watch('title');
+  const canSave = watchedUrl.length > 0 && isValidUrl(watchedUrl) && !rhf.formState.isSubmitting;
 
   return {
-    // Field values
-    url,
-    title,
-    notes,
+    // RHF-proxied (selective)
+    handleSubmit: rhf.handleSubmit,
+    formState: rhf.formState,
+    register: rhf.register,
+    setError: rhf.setError,
+    // Controlled field values
+    url: watchedUrl,
+    title: watchedTitle,
+    // Form-specific state (not in RHF)
     selectedTagIds,
-    // Async/validation state
     isFetchingMeta,
     isDuplicate,
-    isSaving,
-    setIsSaving,
-    urlError,
-    setUrlError,
+    isSaving: rhf.formState.isSubmitting,
     suggestedUrl,
-    applySuggestion,
-    saveError,
-    setSaveError,
     canSave,
-    // Setters
-    setTitle,
-    setNotes,
     // Handlers
-    handleUrlBlur,
     handleUrlChange,
+    handleUrlBlur,
     handleTitleChange,
+    applySuggestion,
     toggleTag,
     isValidUrl,
     // Lifecycle
