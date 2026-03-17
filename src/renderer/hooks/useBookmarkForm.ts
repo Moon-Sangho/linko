@@ -2,8 +2,8 @@ import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { IpcChannels } from '../../shared/ipc-channels';
-import type { IpcResult, UrlMetadata } from '../../shared/types';
+import { IpcChannels } from '@shared/ipc-channels';
+import type { IpcResult, UrlMetadata } from '@shared/types';
 
 const bookmarkSchema = z.object({
   url: z
