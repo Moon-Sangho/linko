@@ -110,7 +110,6 @@ linko/
 │   │   └── store/     # Zustand stores
 │   └── shared/        # Types and IPC channel names
 ├── .context/          # Agent collaboration files (see below)
-├── docs/              # Design docs, specs
 └── CLAUDE.md
 ```
 
@@ -124,7 +123,7 @@ Linko is being developed almost entirely through **agentic engineering** — mul
 
 | Agent                | Responsibility                                        |
 | -------------------- | ----------------------------------------------------- |
-| `/agent-pm`          | Requirements, user stories, MVP scope                 |
+| `/agent-pm`          | Requirements, user stories, work scope                |
 | `/agent-designer`    | Design system, screen layouts, component specs        |
 | `/agent-dev-core`    | Main process, SQLite, IPC handlers                    |
 | `/agent-dev-ui`      | React renderer, components, Zustand stores            |
@@ -215,6 +214,30 @@ docs(shared): Update IPC channel naming conventions
 ```
 
 All checklist items are verified and marked `[x]` before the PR is opened — not after.
+
+---
+
+## Release Process
+
+Releases are automated with **[Release Please](https://github.com/googleapis/release-please)**.
+
+Every merge to `main` triggers the `release-please` GitHub Actions workflow. It reads the conventional commit history and maintains a **Release PR** that:
+
+- bumps `version` in `package.json`
+- updates `CHANGELOG.md` with grouped, linked entries
+
+When the Release PR is merged, a GitHub Release is created automatically with the generated changelog as its body.
+
+### How commits feed into releases
+
+| Commit type | Effect on version |
+| ----------- | ----------------- |
+| `feat`      | Minor bump (0.x.0) |
+| `fix`, `perf` | Patch bump (0.0.x) |
+| `feat!` / `BREAKING CHANGE` | Major bump (x.0.0) |
+| `chore`, `docs`, `refactor`, `ci` | No version bump |
+
+This means the version is always derived from what actually shipped — no manual version management needed.
 
 ---
 
