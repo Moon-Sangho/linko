@@ -56,6 +56,10 @@ linko/
 - IPC channel names defined in `src/shared/ipc-channels.ts`
 - Repository pattern for all data access
 
+## Documentation Language
+- **All AI-generated documentation must be written in English** — applies to all files in `.context/`, `.claude/`, `docs/`, and any other project documentation
+- This ensures consistency and readability across all agents
+
 ## Current Status
 - Phase: Planning & Design
 - Agents: PM, Designer, Main Process, UI, QA/Build

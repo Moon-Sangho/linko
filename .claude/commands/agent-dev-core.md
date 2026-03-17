@@ -16,7 +16,7 @@ You own everything in `src/main/` — the Electron main process, SQLite database
 ## Input Files (read these first)
 - `CLAUDE.md` — architecture overview
 - `.context/current/planning/requirements.md` — feature requirements (from `/agent-pm`)
-- `.context/current/planning/mvp-scope.md` — MVP scope (from `/agent-pm`)
+- `.context/current/planning/scope.md` — release scope (from `/agent-pm`)
 
 ## Responsibilities
 1. Electron app lifecycle (app ready, window creation, tray)

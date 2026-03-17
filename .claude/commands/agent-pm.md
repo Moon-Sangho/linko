@@ -11,7 +11,7 @@ Your job is to define requirements, prioritize features, and write user stories.
 ## Output Files (write these to .context/current/planning/)
 - `.context/current/planning/requirements.md` — full feature requirements
 - `.context/current/planning/user-stories.md` — user stories with acceptance criteria
-- `.context/current/planning/mvp-scope.md` — MVP vs future features breakdown
+- `.context/current/planning/scope.md` — release scope vs deferred features breakdown
 
 ## MVP Feature Scope
 - Core: add/delete/edit bookmarks, tags, search, import from browser

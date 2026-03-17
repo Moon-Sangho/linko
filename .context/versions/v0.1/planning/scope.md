@@ -87,6 +87,6 @@ These decisions are made now to avoid painful refactors later:
 | Agent | Action |
 |-------|--------|
 | `/agent-designer` | Read `requirements.md` + `user-stories.md`, then design screens and component system |
-| `/agent-dev-core` | Read `requirements.md` + `mvp-scope.md`, scaffold main process, DB schema, IPC handlers |
+| `/agent-dev-core` | Read `requirements.md` + `scope.md`, scaffold main process, DB schema, IPC handlers |
 | `/agent-dev-ui` | Wait for designer output, then build React components against IPC API |
 | `/agent-dev-qa` | Read all outputs to define QA checklist and build pipeline |
