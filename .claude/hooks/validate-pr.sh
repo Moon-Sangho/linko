@@ -24,6 +24,24 @@ elif ! echo "$title" | grep -qE "$TITLE_REGEX"; then
   errors+=("  Expected: type(scope): Summary  (e.g. feat(renderer): Add search)")
 fi
 
+# --- Validate PR body structure ---
+body=$(echo "$command" | python3 -c "
+import sys, re
+cmd = sys.stdin.read()
+m = re.search(r\"--body \\\"\$(cat <<'EOF'\n(.*?)\nEOF\n)\\\"\", cmd, re.DOTALL)
+if not m:
+    m = re.search(r'--body \"\$\(cat <<\'EOF\'\n(.*?)\nEOF', cmd, re.DOTALL)
+if m:
+    print(m.group(1))
+" 2>/dev/null)
+
+required_sections=("## Summary" "## Changes" "## Checklist")
+for section in "${required_sections[@]}"; do
+  if ! echo "$command" | grep -qF "$section"; then
+    errors+=("PR body is missing required section: $section")
+  fi
+done
+
 # --- Check for unchecked checklist items ---
 if echo "$command" | grep -q '\- \[ \]'; then
   errors+=("PR body contains unchecked checklist items (- [ ]).")

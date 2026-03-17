@@ -171,6 +171,51 @@ All agents always read from and write to `current/` — they never need to know 
 
 Steps 3a and 3b can run in parallel because the IPC contract is frozen before both start — each agent knows exactly what interface it is building to or consuming.
 
+### `/git-create-pr` — How PR Creation Works
+
+Calling `/git-create-pr` in any workspace triggers the following sequence automatically:
+
+```
+1. Inspect current state
+   └── git status + git log origin/main..HEAD
+
+2. Analyze diff
+   └── Determine conventional commit type, scope, and summary
+       from the actual changes
+
+3. Pre-flight checklist (resolved before PR is created)
+   ├── PR title format — validated against regex:
+   │     ^(feat|fix|perf|test|docs|refactor|build|ci|chore|revert)(\([a-zA-Z0-9]+\))?!?: [A-Z].+[^.]$
+   ├── PR body structure — required sections must all be present:
+   │     ## Summary, ## Changes, ## Checklist
+   ├── No unchecked items — body must not contain "- [ ]"
+   ├── Security review — diff is scanned against all rules in .claude/rules/
+   │     (electron-security, renderer-conventions, main-conventions, etc.)
+   └── Related issues — gh issue list is checked; Closes #<n> added if relevant
+
+4. Push branch
+   └── git push -u origin HEAD  (only if not already pushed)
+
+5. Create PR
+   └── gh pr create with verified title, summary, changes list,
+       and pre-checked checklist
+```
+
+**PR title format** follows [git-conventions.md](.claude/rules/git-conventions.md):
+
+```
+<type>(<scope>): <summary>
+```
+
+Examples:
+```
+feat(renderer): Add bookmark search with tag filtering
+fix(main): Resolve SQLite connection leak on app quit
+docs(shared): Update IPC channel naming conventions
+```
+
+All checklist items are verified and marked `[x]` before the PR is opened — not after.
+
 ---
 
 ## Roadmap
