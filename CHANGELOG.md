@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/Moon-Sangho/linko/compare/v0.1.0...v0.1.1) (2026-03-17)
+
+
+### Bug Fixes
+
+* **main,renderer:** Improve IPC validation, error handling, and platform detection ([#22](https://github.com/Moon-Sangho/linko/issues/22)) ([920ed33](https://github.com/Moon-Sangho/linko/commit/920ed33c91a90bc1af73b00481a5080f3867a1f1)), closes [#1](https://github.com/Moon-Sangho/linko/issues/1)
+
 ## [0.1.0] - 2026-03-17
 
 ### Features
