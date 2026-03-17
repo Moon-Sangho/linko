@@ -9,4 +9,5 @@ import type { IpcChannel } from '../shared/ipc-channels';
 contextBridge.exposeInMainWorld('electron', {
   invoke: (channel: IpcChannel, ...args: unknown[]): Promise<unknown> =>
     ipcRenderer.invoke(channel, ...args),
+  platform: process.platform,
 });

@@ -38,6 +38,7 @@ export function registerBookmarkHandlers(repo: BookmarkRepository): void {
     IpcChannels.BOOKMARK_GET_BY_ID,
     (_, id: number): IpcResult<Bookmark | null> => {
       try {
+        if (!isValidId(id)) return { success: false, error: 'Invalid id' };
         return { success: true, data: repo.getById(id) };
       } catch (error) {
         return { success: false, error: (error as Error).message };
@@ -63,6 +64,7 @@ export function registerBookmarkHandlers(repo: BookmarkRepository): void {
     IpcChannels.BOOKMARK_UPDATE,
     (_, id: number, input: UpdateBookmarkInput): IpcResult<Bookmark> => {
       try {
+        if (!isValidId(id)) return { success: false, error: 'Invalid id' };
         if (input.url !== undefined && !isValidUrl(input.url)) {
           return { success: false, error: 'Invalid URL' };
         }
@@ -77,6 +79,7 @@ export function registerBookmarkHandlers(repo: BookmarkRepository): void {
     IpcChannels.BOOKMARK_DELETE,
     (_, id: number): IpcResult => {
       try {
+        if (!isValidId(id)) return { success: false, error: 'Invalid id' };
         repo.delete(id);
         return { success: true };
       } catch (error) {
@@ -89,6 +92,7 @@ export function registerBookmarkHandlers(repo: BookmarkRepository): void {
     IpcChannels.BOOKMARK_OPEN,
     async (_, url: string): Promise<IpcResult> => {
       try {
+        if (!isValidUrl(url)) return { success: false, error: 'Invalid URL' };
         await shell.openExternal(url);
         return { success: true };
       } catch (error) {
@@ -119,6 +123,10 @@ export function registerBookmarkHandlers(repo: BookmarkRepository): void {
       }
     },
   );
+}
+
+function isValidId(id: unknown): id is number {
+  return typeof id === 'number' && Number.isInteger(id) && id > 0;
 }
 
 function isValidUrl(url: string): boolean {

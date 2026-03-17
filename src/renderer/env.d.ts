@@ -4,6 +4,7 @@ declare global {
   interface Window {
     electron: {
       invoke: (channel: IpcChannel, ...args: unknown[]) => Promise<unknown>;
+      platform: NodeJS.Platform;
     };
   }
 }
