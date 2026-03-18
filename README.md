@@ -139,7 +139,7 @@ Linko is being developed almost entirely through **agentic engineering** — mul
 | `/agent-designer`    | Design system, screen layouts, component specs        |
 | `/agent-dev-core`    | Main process, SQLite, IPC handlers                    |
 | `/agent-dev-ui`      | React renderer, components, Zustand stores            |
-| `/agent-dev-qa`      | QA checklist, build pipeline, electron-builder config |
+| `/agent-dev-qa`      | Orchestrates 5 parallel QA sub-agents, aggregates results into a unified report |
 | `/agent-orchestrate` | Coordinates parallel agent work, resolves conflicts   |
 
 ### Parallel Work with Conductor
@@ -177,10 +177,17 @@ All agents always read from and write to `current/` — they never need to know 
 2. /agent-designer    → design/
 3. /agent-dev-core    → src/main/  +  implementation/ipc-api.md
    /agent-dev-ui      → src/renderer/  (runs in parallel with dev-core)
-4. /agent-dev-qa      → build config + qa/
+4. /agent-dev-qa      → spawns 5 sub-agents in parallel → qa/qa-checklist.md
+                         ├── security    (Electron security settings)
+                         ├── ipc         (channel coverage, response shapes)
+                         ├── functional  (CRUD flow traces)
+                         ├── build       (electron-vite, electron-builder, tsconfig)
+                         └── architecture (repository pattern, import conventions)
 ```
 
 Steps 3a and 3b can run in parallel because the IPC contract is frozen before both start — each agent knows exactly what interface it is building to or consuming.
+
+Step 4 runs each QA category as a separate sub-agent in parallel (defined in `.claude/agents/qa/`), then the orchestrator aggregates all results into a single report. This reduces QA time from ~4 minutes to roughly the duration of the slowest sub-agent.
 
 ### `/git-create-pr` — How PR Creation Works
 
