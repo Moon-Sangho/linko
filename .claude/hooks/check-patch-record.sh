@@ -12,7 +12,7 @@
 # Exit 0: allow. Exit 2: block with message to Claude.
 
 input=$(cat)
-command=$(echo "$input" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('tool_input',{}).get('command',''))")
+command=$(echo "$input" | python3 -c "import sys,json; d=json.load(sys.stdin, strict=False); print(d.get('tool_input',{}).get('command',''))")
 
 # Only intercept git commit commands
 if ! echo "$command" | grep -qE 'git commit'; then

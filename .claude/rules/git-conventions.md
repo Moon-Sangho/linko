@@ -90,6 +90,10 @@ Separate each section with a **blank line**.
 | `build`    | electron-vite, electron-builder   |
 | `ui`       | UI components                     |
 
+#### Scope Rules
+
+- Omit the scope when it is identical to the type (e.g. use `build:` not `build(build):`)
+
 #### Summary Rules
 
 - Imperative present tense: "Add" not "Added"
@@ -173,4 +177,32 @@ docs: Restructure .context/ with versioned milestones and update agent paths
 - Add versions/v0.1/planning/ snapshot of PM outputs
 - Update all agent commands to reference new .context paths
 - Add git-commit command referencing git-conventions.md
+```
+
+---
+
+## Commit Command Format
+
+Always pass the commit message as a single `-m` string — **no heredoc, no line breaks**.
+
+```bash
+# ✅ Good — single-line -m flag
+git commit -m "build: Support npm and yarn in addition to pnpm"
+
+# ❌ Bad — heredoc causes JSON parse failure in PreToolUse hooks
+git commit -m "$(cat <<'EOF'
+build: Support npm and yarn in addition to pnpm
+...
+EOF
+)"
+```
+
+**Why**: PreToolUse hooks receive the command as JSON. A heredoc with literal
+newlines breaks JSON parsing, causing hooks to silently exit 0 and be bypassed.
+
+Body and footer lines are omitted when the header is self-explanatory.
+If a body is truly needed, append it as additional `-m` flags:
+
+```bash
+git commit -m "fix(db): Resolve connection leak on app quit" -m "The connection was not closed on before-quit, causing corruption."
 ```
