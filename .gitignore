@@ -9,3 +9,4 @@ yarn.lock
 # AI generated files
 # Force-include .context/ even if Conductor adds it to info/exclude
 !.context/
+.agents/

@@ -5,6 +5,16 @@
       "source": "lobehub/lobehub",
       "sourceType": "github",
       "computedHash": "25047b2eedc315aa9f6688f69511a48b8cec40d44bc50a6abcebb6ec6d93a0de"
+    },
+    "find-skills": {
+      "source": "vercel-labs/skills",
+      "sourceType": "github",
+      "computedHash": "d31e234f0c90694a670222cdd1dafa853e051d7066beda389f1097c22dadd461"
+    },
+    "typescript-react-reviewer": {
+      "source": "dotneet/claude-code-marketplace",
+      "sourceType": "github",
+      "computedHash": "7f86cd28e11d2b4b120b635d18814b82cd655a2b9d9ba8a105b3ee06c478cf38"
     }
   }
 }
