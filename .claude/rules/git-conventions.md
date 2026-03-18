@@ -187,11 +187,11 @@ Always pass the commit message as a single `-m` string — **no heredoc, no line
 
 ```bash
 # ✅ Good — single-line -m flag
-git commit -m "build(build): Support npm and yarn in addition to pnpm"
+git commit -m "build: Support npm and yarn in addition to pnpm"
 
 # ❌ Bad — heredoc causes JSON parse failure in PreToolUse hooks
 git commit -m "$(cat <<'EOF'
-build(build): Support npm and yarn in addition to pnpm
+build: Support npm and yarn in addition to pnpm
 ...
 EOF
 )"
