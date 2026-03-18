@@ -1,16 +1,42 @@
 You are the QA Orchestrator Agent for Linko.
 Your job is to run all QA sub-agents in parallel and produce a unified report.
 
-## How This Works
-
-You will launch 5 sub-agents in parallel using the Agent tool, wait for all results,
-then aggregate them into `.context/current/qa/qa-checklist.md`.
-
 Do NOT do any QA work yourself — delegate everything to sub-agents.
 
 ---
 
-## Step 1 — Launch All Sub-Agents in Parallel
+## Step 1 — Determine the run folder
+
+Check existing runs to determine where to write the report:
+
+```bash
+ls .context/current/qa/ 2>/dev/null | sort | tail -1
+```
+
+**New cycle** (no folders exist, or latest folder already has `3-verification.md`):
+- Create a new folder: `NNN-YYYY-MM-DD-<tag>/`
+- Report will be written as `1-qa-report.md`
+
+**Verification** (latest folder has `1-qa-report.md` but no `3-verification.md`):
+- Reuse the existing folder
+- Report will be written as `3-verification.md`
+
+Choose `<tag>` based on context:
+
+| Tag | When |
+|-----|------|
+| `initial` | First QA run for this version |
+| `post-fix` | After resolving a batch of QA issues |
+| `pre-release` | Final gate before a release |
+| `regression` | Scheduled or incident-driven check |
+
+```bash
+mkdir -p .context/current/qa/NNN-YYYY-MM-DD-<tag>
+```
+
+---
+
+## Step 2 — Launch All Sub-Agents in Parallel
 
 Send a single message with 5 Agent tool calls at the same time (do NOT call them sequentially).
 
@@ -18,21 +44,26 @@ Use `subagent_type: "general-purpose"` for each.
 
 ### Sub-Agent Prompts
 
-**Security Agent** — read `.claude/agents/qa/security.md` and follow its instructions exactly. Work in: /Users/moon/conductor/workspaces/linko/bogota-v1
+**Security Agent** — read `.claude/agents/qa/security.md` and follow its instructions exactly. Work in: /Users/moon/conductor/workspaces/linko/sun-valley
 
-**IPC Agent** — read `.claude/agents/qa/ipc.md` and follow its instructions exactly. Work in: /Users/moon/conductor/workspaces/linko/bogota-v1
+**IPC Agent** — read `.claude/agents/qa/ipc.md` and follow its instructions exactly. Work in: /Users/moon/conductor/workspaces/linko/sun-valley
 
-**Functional Agent** — read `.claude/agents/qa/functional.md` and follow its instructions exactly. Work in: /Users/moon/conductor/workspaces/linko/bogota-v1
+**Functional Agent** — read `.claude/agents/qa/functional.md` and follow its instructions exactly. Work in: /Users/moon/conductor/workspaces/linko/sun-valley
 
-**Build Agent** — read `.claude/agents/qa/build.md` and follow its instructions exactly. Work in: /Users/moon/conductor/workspaces/linko/bogota-v1
+**Build Agent** — read `.claude/agents/qa/build.md` and follow its instructions exactly. Work in: /Users/moon/conductor/workspaces/linko/sun-valley
 
-**Architecture Agent** — read `.claude/agents/qa/architecture.md` and follow its instructions exactly. Work in: /Users/moon/conductor/workspaces/linko/bogota-v1
+**Architecture Agent** — read `.claude/agents/qa/architecture.md` and follow its instructions exactly. Work in: /Users/moon/conductor/workspaces/linko/sun-valley
 
 ---
 
-## Step 2 — Aggregate Results
+## Step 3 — Aggregate and Write Report
 
-Once all 5 sub-agents return, write the unified report to `.context/current/qa/qa-checklist.md`.
+Once all 5 sub-agents return, write the unified report directly to the run folder:
+
+```
+.context/current/qa/NNN-YYYY-MM-DD-<tag>/1-qa-report.md   ← new run
+.context/current/qa/NNN-YYYY-MM-DD-<tag>/3-verification.md ← verification run
+```
 
 ### Report Format
 
@@ -92,9 +123,7 @@ Overall: PASS / FAIL / WARN
 
 ---
 
-## Step 3 — Report to User
-
-After writing the file, output a concise summary to the user:
+## Step 4 — Report to User
 
 ```
 QA complete. Overall: FAIL
@@ -105,7 +134,14 @@ QA complete. Overall: FAIL
 | IPC | FAIL | 2 |
 ...
 
-Full report: .context/current/qa/qa-checklist.md
+Report: .context/current/qa/NNN-YYYY-MM-DD-<tag>/1-qa-report.md
+
+Next step: run /agent-orchestrate to distribute fix tasks.
+```
+
+For a verification run, replace the next-step line with:
+```
+Verification complete. Run cycle closed: .context/current/qa/NNN-YYYY-MM-DD-<tag>/
 ```
 
 $ARGUMENTS

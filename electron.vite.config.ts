@@ -5,11 +5,15 @@ import react from '@vitejs/plugin-react';
 const sharedAlias = {
   '@shared': resolve(__dirname, 'src/shared'),
 };
+const mainAlias = {
+  ...sharedAlias,
+  '@main': resolve(__dirname, 'src/main'),
+};
 
 export default defineConfig({
   main: {
     plugins: [externalizeDepsPlugin()],
-    resolve: { alias: sharedAlias },
+    resolve: { alias: mainAlias },
     build: {
       rollupOptions: {
         input: {
@@ -20,7 +24,7 @@ export default defineConfig({
   },
   preload: {
     plugins: [externalizeDepsPlugin()],
-    resolve: { alias: sharedAlias },
+    resolve: { alias: mainAlias },
     build: {
       rollupOptions: {
         input: {

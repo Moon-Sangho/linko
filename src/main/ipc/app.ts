@@ -1,6 +1,6 @@
 import { ipcMain, app } from 'electron';
-import { IpcChannels } from '../../shared/ipc-channels';
-import type { IpcResult } from '../../shared/types';
+import { IpcChannels } from '@shared/ipc-channels';
+import type { IpcResult } from '@shared/types';
 
 export function registerAppHandlers(): void {
   ipcMain.handle(

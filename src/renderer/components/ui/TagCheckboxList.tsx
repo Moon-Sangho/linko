@@ -1,4 +1,4 @@
-import { Tag } from '../../../shared/types';
+import type { Tag } from '@shared/types';
 
 interface TagCheckboxListProps {
   tags: Tag[];

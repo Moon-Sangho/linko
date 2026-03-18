@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { ExternalLink, Pencil, Trash2 } from 'lucide-react';
-import { Bookmark } from '../../../shared/types';
-import { useBookmarkStore } from '../../store/useBookmarkStore';
+import type { Bookmark } from '@shared/types';
+import { useBookmarkStore } from '@renderer/store/useBookmarkStore';
 import { overlay } from '@renderer/overlay/control';
 import { EditBookmarkModal } from './EditBookmarkModal';
 import { Favicon } from '../ui/Favicon';

@@ -5,7 +5,7 @@ import type {
   CreateBookmarkInput,
   UpdateBookmarkInput,
   SearchBookmarksInput,
-} from '../../../shared/types';
+} from '@shared/types';
 
 // ─── Repository Interface ─────────────────────────────────────────────────────
 

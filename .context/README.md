@@ -19,13 +19,18 @@ This directory is git-tracked.
 │   ├── implementation/
 │   │   └── ipc-api.md
 │   └── qa/
-│       └── qa-checklist.md
+│       └── NNN-YYYY-MM-DD-<tag>/  ← full cycle history (never deleted)
+│           ├── 1-qa-report.md       ← agent-dev-qa: issues found
+│           ├── 2-contracts.md       ← agent-orchestrate: interface contracts
+│           ├── 2-file-ownership.md  ← agent-orchestrate: file boundaries
+│           └── 3-verification.md    ← agent-dev-qa: issues resolved
 └── versions/         ← snapshots at milestone boundaries
     └── v0.1/
         ├── planning/
         ├── design/
         ├── implementation/
         ├── qa/
+        │   └── NNN-YYYY-MM-DD-<tag>/  ← 1-qa-report, 2-contracts, 2-file-ownership, 3-verification
         └── patches/  ← bug fixes and small improvements within this release
             ├── 001-short-description/
             │   └── spec.md
@@ -55,6 +60,59 @@ ln -s versions/v0.2 .context/current
 
 Each version (v0.1, v0.2, ...) represents a product release.
 The phases within it (planning → design → implementation → qa) build up to a single release.
+
+## QA Runs
+
+A QA run is the full fix cycle: issue report → task distribution → verification.
+Each run lives in `current/qa/` (resolved: `versions/vX.X/qa/`) as a numbered folder.
+
+### Folder naming
+
+```
+NNN-YYYY-MM-DD-<tag>/
+```
+
+- `NNN` — zero-padded sequence (001, 002, ...)
+- `<tag>` — describes the trigger
+
+| Tag | When |
+|-----|------|
+| `initial` | First QA run for this version |
+| `post-fix` | After resolving a batch of issues |
+| `pre-release` | Final gate before a release |
+| `regression` | Scheduled or incident-driven check |
+
+### Files within a run
+
+| File | Written by | When |
+|------|-----------|------|
+| `1-qa-report.md` | `agent-dev-qa` | Step 1 — issues found |
+| `2-contracts.md` | `agent-orchestrate` | Phase 1 — component/store interface contracts |
+| `2-file-ownership.md` | `agent-orchestrate` | Phase 1 — per-agent file boundaries |
+| `3-verification.md` | `agent-dev-qa` | Step 3 — issues resolved confirmation |
+
+Files `2-*.md` and `3-verification.md` are optional — a run may stop at `1-qa-report.md` if no fixes were needed or if the cycle is in progress.
+
+Working files `current/implementation/contracts.md` and `current/implementation/file-ownership.md` remain the source of truth for sub-agents during active work. The `2-*.md` files are snapshots saved after Phase 1 completes.
+
+### Examples
+
+```
+versions/v0.1/qa/001-2026-03-18-initial/
+versions/v0.1/qa/002-2026-03-25-post-fix/
+versions/v0.1/qa/003-2026-04-01-pre-release/
+```
+
+### What goes where
+
+| Location | What it holds |
+|----------|---------------|
+| `current/qa/NNN-YYYY-MM-DD-<tag>/` | Full cycle record — issue → fix plan → verification |
+| `versions/vX.X/qa/` | All QA cycles for that release (never deleted) |
+
+Working files `contracts.md` and `file-ownership.md` stay in `current/implementation/` for sub-agents to read. Only the snapshot goes into the run folder at Step 9 of orchestration.
+
+The latest QA result is always the highest-numbered run folder's most recent file.
 
 | Milestone | Snapshot path | Completion criteria |
 |-----------|--------------|---------------------|
@@ -115,7 +173,7 @@ Create a new `NNN-description/` directory under `current/patches/` (= the active
 | `design/screens.md` | `/agent-designer` | dev-ui |
 | `design/components.md` | `/agent-designer` | dev-ui |
 | `implementation/ipc-api.md` | `/agent-dev-core` | dev-ui, dev-qa |
-| `qa/qa-checklist.md` | `/agent-dev-qa` | — |
+| `qa/NNN-.../1-qa-report.md` | `/agent-dev-qa` | `/agent-orchestrate` |
 
 ## Agent Execution Order
 
@@ -124,7 +182,7 @@ Create a new `NNN-description/` directory under `current/patches/` (= the active
 2. /agent-designer    → design-system.md, screens.md, components.md
 3. /agent-dev-core    → src/main/, src/shared/, .context/ipc-api.md
    /agent-dev-ui      → src/renderer/  (can run in parallel with dev-core)
-4. /agent-dev-qa      → electron.vite.config.ts, electron-builder.yml, qa-checklist.md
+4. /agent-dev-qa      → qa/NNN-YYYY-MM-DD-<tag>/1-qa-report.md
 ```
 
 ---
@@ -178,6 +236,8 @@ current/implementation/
 ├── file-ownership.md  ← written by orchestrator in Phase 1
 └── ipc-api.md         ← written by /agent-dev-core (existing)
 ```
+
+When orchestration is triggered by a QA report, Phase 1 artifacts are also copied to the active run folder as `2-contracts.md` and `2-file-ownership.md` (Step 9).
 
 ### Core Rules
 

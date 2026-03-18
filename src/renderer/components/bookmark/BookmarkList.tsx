@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { Bookmark, SearchX } from 'lucide-react';
-import { useBookmarkStore } from '../../store/useBookmarkStore';
-import { useUIStore } from '../../store/useUIStore';
-import { useSearch } from '../../hooks/useSearch';
+import { useBookmarkStore } from '@renderer/store/useBookmarkStore';
+import { useUIStore } from '@renderer/store/useUIStore';
+import { useSearch } from '@renderer/hooks/useSearch';
 import { overlay } from '@renderer/overlay/control';
 import { AddBookmarkModal } from './AddBookmarkModal';
 import { BookmarkItem } from './BookmarkItem';

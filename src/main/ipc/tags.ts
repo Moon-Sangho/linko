@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron';
-import { IpcChannels } from '../../shared/ipc-channels';
-import type { Tag, CreateTagInput, IpcResult } from '../../shared/types';
+import { IpcChannels } from '@shared/ipc-channels';
+import type { Tag, CreateTagInput, IpcResult } from '@shared/types';
 import type { TagRepository } from '../db/repositories/tag-repository';
 
 export function registerTagHandlers(repo: TagRepository): void {
@@ -33,6 +33,7 @@ export function registerTagHandlers(repo: TagRepository): void {
     IpcChannels.TAG_DELETE,
     (_, id: number): IpcResult => {
       try {
+        if (!isValidId(id)) return { success: false, error: 'Invalid id' };
         repo.delete(id);
         return { success: true };
       } catch (error) {
@@ -40,4 +41,8 @@ export function registerTagHandlers(repo: TagRepository): void {
       }
     },
   );
+}
+
+function isValidId(id: unknown): id is number {
+  return typeof id === 'number' && Number.isInteger(id) && id > 0;
 }
