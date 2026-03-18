@@ -90,6 +90,10 @@ Separate each section with a **blank line**.
 | `build`    | electron-vite, electron-builder   |
 | `ui`       | UI components                     |
 
+#### Scope Rules
+
+- Omit the scope when it is identical to the type (e.g. use `build:` not `build(build):`)
+
 #### Summary Rules
 
 - Imperative present tense: "Add" not "Added"
