@@ -1,6 +1,6 @@
 {
   "name": "linko",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Local-first bookmark manager",
   "main": "out/main/index.js",
   "author": "Linko",
@@ -65,7 +65,9 @@
       "category": "public.app-category.productivity"
     },
     "win": {
-      "target": ["nsis"]
+      "target": [
+        "nsis"
+      ]
     },
     "files": [
       "out/**/*"
