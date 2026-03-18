@@ -1,5 +1,5 @@
 import { ipcMain, shell } from 'electron';
-import { IpcChannels } from '../../shared/ipc-channels';
+import { IpcChannels } from '@shared/ipc-channels';
 import type {
   CreateBookmarkInput,
   UpdateBookmarkInput,
@@ -7,7 +7,7 @@ import type {
   IpcResult,
   Bookmark,
   UrlMetadata,
-} from '../../shared/types';
+} from '@shared/types';
 import type { BookmarkRepository } from '../db/repositories/bookmark-repository';
 import { fetchUrlMetadata } from '../services/url-fetcher';
 
@@ -105,6 +105,7 @@ export function registerBookmarkHandlers(repo: BookmarkRepository): void {
     IpcChannels.BOOKMARK_FETCH_METADATA,
     async (_, url: string): Promise<IpcResult<UrlMetadata>> => {
       try {
+        if (!isValidUrl(url)) return { success: false, error: 'Invalid URL' };
         const metadata = await fetchUrlMetadata(url);
         return { success: true, data: metadata };
       } catch (error) {

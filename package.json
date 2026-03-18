@@ -64,6 +64,9 @@
       ],
       "category": "public.app-category.productivity"
     },
+    "win": {
+      "target": ["nsis"]
+    },
     "files": [
       "out/**/*"
     ],

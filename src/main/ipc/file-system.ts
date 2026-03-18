@@ -1,6 +1,6 @@
 import { ipcMain, dialog } from 'electron';
-import { IpcChannels } from '../../shared/ipc-channels';
-import type { Bookmark, ImportSummary, IpcResult } from '../../shared/types';
+import { IpcChannels } from '@shared/ipc-channels';
+import type { ImportSummary, IpcResult } from '@shared/types';
 import type { BookmarkRepository } from '../db/repositories/bookmark-repository';
 import { importFromHtmlFile } from '../services/importer';
 import fs from 'fs/promises';
@@ -30,7 +30,10 @@ export function registerFileSystemHandlers(bookmarkRepo: BookmarkRepository): vo
 
   ipcMain.handle(
     IpcChannels.FS_EXPORT_BOOKMARKS,
-    async (_, bookmarks: Bookmark[]): Promise<IpcResult> => {
+    async (_, bookmarks: unknown): Promise<IpcResult> => {
+      if (!Array.isArray(bookmarks)) {
+        return { success: false, error: 'Invalid bookmarks payload' };
+      }
       const { canceled, filePath } = await dialog.showSaveDialog({
         title: 'Export Bookmarks',
         defaultPath: 'linko-bookmarks.json',

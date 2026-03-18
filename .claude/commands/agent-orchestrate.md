@@ -156,8 +156,26 @@ Wire all components into `src/renderer/App.tsx`:
 Run `pnpm build` and fix any TypeScript or bundler errors.
 Do not mark the task complete until the build passes.
 
-### Step 9 — Write completion summary
-Output a brief summary:
+### Step 9 — Save to QA run folder (QA context only)
+
+**Only perform this step if triggered by a QA report** (i.e. `1-qa-report.md` exists in the latest run folder).
+
+Find the latest run folder:
+
+```bash
+ls .context/current/qa/ | sort | tail -1
+```
+
+Copy Phase 1 artifacts as snapshots:
+
+```bash
+RUN=.context/current/qa/<run-folder>
+cp .context/current/implementation/contracts.md      $RUN/2-contracts.md
+cp .context/current/implementation/file-ownership.md $RUN/2-file-ownership.md
+```
+
+Then output completion summary:
+
 ```
 ## Integration Complete
 
@@ -169,7 +187,15 @@ Output a brief summary:
 
 ### Build status
 ✅ pnpm build passed
+
+QA run snapshots saved:
+  .context/current/qa/<run-folder>/2-contracts.md
+  .context/current/qa/<run-folder>/2-file-ownership.md
+
+Next step: run /agent-dev-qa to verify issues are resolved (writes 3-verification.md).
 ```
+
+If **not** triggered by QA, skip the copy and output a standard completion summary without the run folder references.
 
 ---
 

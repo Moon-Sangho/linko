@@ -1,5 +1,5 @@
 import Database from 'better-sqlite3';
-import type { Tag, CreateTagInput } from '../../../shared/types';
+import type { Tag, CreateTagInput } from '@shared/types';
 
 // ─── Repository Interface ─────────────────────────────────────────────────────
 
