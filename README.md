@@ -67,21 +67,21 @@ The renderer never touches SQLite directly. All data flows through typed IPC cha
 
 ## Getting Started
 
-Requires Node.js 20+ and pnpm.
+Requires Node.js 20+. Use pnpm, npm, or yarn.
 
 ```bash
 # Install dependencies
-pnpm install
+pnpm install   # or: npm install / yarn install
 
 # Run in development
-pnpm dev
+pnpm dev       # or: npm run dev / yarn dev
 ```
 
 ### Build & Install on macOS
 
 ```bash
 # Build and package as a DMG installer
-pnpm package
+pnpm package   # or: npm run package / yarn package
 ```
 
 This produces a `.dmg` file under `dist/`. To install:

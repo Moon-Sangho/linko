@@ -2,6 +2,10 @@ node_modules
 out/
 dist/
 
+# Lockfiles for other package managers (pnpm-lock.yaml is the canonical lockfile)
+package-lock.json
+yarn.lock
+
 # AI generated files
 # Force-include .context/ even if Conductor adds it to info/exclude
 !.context/

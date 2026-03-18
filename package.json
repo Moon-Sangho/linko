@@ -5,7 +5,6 @@
   "main": "out/main/index.js",
   "author": "Linko",
   "private": true,
-  "packageManager": "pnpm@10.29.3",
   "scripts": {
     "dev": "electron-vite dev",
     "build": "electron-vite build",
@@ -54,8 +53,7 @@
     ]
   },
   "engines": {
-    "node": ">=20.0.0 <=24.x",
-    "pnpm": ">=10.0.0"
+    "node": ">=20.0.0 <=24.x"
   },
   "build": {
     "appId": "com.linko.app",
