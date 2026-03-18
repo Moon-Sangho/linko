@@ -92,6 +92,18 @@ This produces a `.dmg` file under `dist/`. To install:
 
 ---
 
+## Keyboard Shortcuts
+
+| Action | Shortcut |
+| ------ | -------- |
+| Open command palette (search) | `⌘K` |
+| Add new bookmark | `⌘N` |
+| Save bookmark (in modal) | `⌘↵` |
+| Close command palette | `Esc` |
+| Create tag (in tag input) | `↵` |
+
+---
+
 ## Project Structure
 
 ```
