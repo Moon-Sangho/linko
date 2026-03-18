@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/Moon-Sangho/linko/compare/v0.1.2...v0.1.3) (2026-03-18)
+
+
+### Bug Fixes
+
+* **ui:** Remove barrel exports and fix import conventions across codebase ([#32](https://github.com/Moon-Sangho/linko/issues/32)) ([455a8b7](https://github.com/Moon-Sangho/linko/commit/455a8b799921515591438496f44100a8d6650645))
+
 ## [0.1.2](https://github.com/Moon-Sangho/linko/compare/v0.1.1...v0.1.2) (2026-03-17)
 
 
