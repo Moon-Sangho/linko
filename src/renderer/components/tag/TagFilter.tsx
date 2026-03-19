@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { useTagStore } from '../../store/useTagStore';
-import { useUIStore } from '../../store/useUIStore';
+import { useTagStore } from '@renderer/store/useTagStore';
+import { useUIStore } from '@renderer/store/useUIStore';
 import { TagBadge } from './TagBadge';
 
 export function TagFilter() {

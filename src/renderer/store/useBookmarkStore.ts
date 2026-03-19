@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { IpcChannels } from '../../shared/ipc-channels';
-import type { Bookmark, CreateBookmarkInput, IpcResult, UpdateBookmarkInput } from '../../shared/types';
+import { IpcChannels } from '@shared/ipc-channels';
+import type { Bookmark, CreateBookmarkInput, IpcResult, UpdateBookmarkInput } from '@shared/types';
 import { useTagStore } from './useTagStore';
 
 interface BookmarkStore {
@@ -11,6 +11,7 @@ interface BookmarkStore {
   create: (input: CreateBookmarkInput) => Promise<Bookmark | null>;
   update: (id: number, input: UpdateBookmarkInput) => Promise<Bookmark | null>;
   removeBookmark: (id: number) => Promise<void>;
+  removeBulk: (ids: number[]) => Promise<void>;
   openUrl: (url: string) => Promise<void>;
 }
 
@@ -87,6 +88,27 @@ export const useBookmarkStore = create<BookmarkStore>((set, get) => ({
       }));
     } else {
       throw new Error(result.error ?? 'Failed to delete bookmark');
+    }
+  },
+
+  removeBulk: async (ids: number[]): Promise<void> => {
+    const remaining = get().bookmarks.filter((b) => !ids.includes(b.id));
+    set({ bookmarks: remaining, error: null });
+
+    const usedTagIds = new Set(remaining.flatMap((b) => b.tags.map((t) => t.id)));
+    useTagStore.setState((tagState) => ({
+      tags: tagState.tags.filter((tag) => usedTagIds.has(tag.id)),
+    }));
+
+    try {
+      await Promise.all(
+        ids.map((id) =>
+          window.electron.invoke(IpcChannels.BOOKMARK_DELETE, id) as Promise<IpcResult>,
+        ),
+      );
+    } catch {
+      await get().fetchAll();
+      throw new Error('Failed to delete some bookmarks');
     }
   },
 

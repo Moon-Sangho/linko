@@ -1,19 +1,29 @@
 import { useCallback, useMemo, useState } from 'react';
-import { ExternalLink, Pencil, Trash2 } from 'lucide-react';
+import { Check, ExternalLink, Pencil, Trash2 } from 'lucide-react';
 import type { Bookmark } from '@shared/types';
 import { useBookmarkStore } from '@renderer/store/useBookmarkStore';
 import { overlay } from '@renderer/overlay/control';
 import { EditBookmarkModal } from './EditBookmarkModal';
-import { Favicon } from '../ui/Favicon';
-import { Badge } from '../ui/Badge';
+import { Favicon } from '@renderer/components/ui/Favicon';
+import { Badge } from '@renderer/components/ui/Badge';
 
 interface BookmarkItemProps {
   bookmark: Bookmark;
   isSelected: boolean;
+  isChecked: boolean;
+  isSelectionMode: boolean;
   onClick: () => void;
+  onCheckToggle: (id: number) => void;
 }
 
-export function BookmarkItem({ bookmark, isSelected, onClick }: BookmarkItemProps) {
+export function BookmarkItem({
+  bookmark,
+  isSelected,
+  isChecked,
+  isSelectionMode,
+  onClick,
+  onCheckToggle,
+}: BookmarkItemProps) {
   // Select only the needed actions to avoid re-renders on unrelated store changes
   const openUrl = useBookmarkStore((s) => s.openUrl);
   const deleteBookmark = useBookmarkStore((s) => s.removeBookmark);
@@ -83,21 +93,44 @@ export function BookmarkItem({ bookmark, isSelected, onClick }: BookmarkItemProp
     }
   }, [deleteBookmark, bookmark.id]);
 
+  const handleCheckToggle = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onCheckToggle(bookmark.id);
+    },
+    [onCheckToggle, bookmark.id],
+  );
+
   return (
     <div
       className={`
         group relative flex items-center gap-3 py-3 px-4 cursor-pointer
         border-b border-[var(--color-border)] last:border-b-0
         transition-colors duration-[80ms] ease-out
-        ${
-          isSelected
-            ? 'bg-[var(--color-bg-elevated)] border-l-2 border-l-[var(--color-accent)]'
-            : 'hover:bg-[var(--color-bg-elevated)]'
-        }
+        border-l-2
+        ${isChecked ? 'border-l-[var(--color-accent)]' : 'border-l-transparent'}
+        ${isChecked ? 'bg-[var(--color-accent-subtle)]' : isSelected ? 'bg-[var(--color-bg-elevated)]' : 'hover:bg-[var(--color-bg-elevated)]'}
       `}
       onClick={onClick}
       onDoubleClick={handleDoubleClick}
     >
+      {/* Checkbox */}
+      <button
+        onClick={handleCheckToggle}
+        onDoubleClick={(e) => e.stopPropagation()}
+        className={`
+          flex-shrink-0 w-4 h-4 rounded-sm border flex items-center justify-center
+          transition-opacity duration-[80ms]
+          ${isSelectionMode ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}
+          ${isChecked
+            ? 'bg-[var(--color-accent)] border-[var(--color-accent)]'
+            : 'border-gray-600 bg-transparent hover:border-gray-400'
+          }
+        `}
+      >
+        {isChecked && <Check size={10} strokeWidth={2.5} className="text-white" />}
+      </button>
+
       {/* Favicon */}
       <div className="flex-shrink-0">
         <Favicon src={bookmark.favicon_url ?? undefined} size={16} />
@@ -128,15 +161,15 @@ export function BookmarkItem({ bookmark, isSelected, onClick }: BookmarkItemProp
         </span>
       </div>
 
-      {/* Date — hidden on hover or when confirm is active */}
-      {!deleteConfirming && (
+      {/* Date — hidden on hover, in selection mode, or when confirm is active */}
+      {!deleteConfirming && !isSelectionMode && (
         <span className="flex-shrink-0 text-xs text-[var(--color-text-tertiary)] group-hover:hidden sm:block">
           {formattedDate}
         </span>
       )}
 
-      {/* Actions */}
-      {deleteConfirming ? (
+      {/* Actions — hidden in selection mode */}
+      {!isSelectionMode && (deleteConfirming ? (
         <div className="flex-shrink-0 flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
           {deleteError && <span className="text-xs text-red-400">{deleteError}</span>}
           <span className="text-xs text-gray-400">Delete?</span>
@@ -179,7 +212,7 @@ export function BookmarkItem({ bookmark, isSelected, onClick }: BookmarkItemProp
             <Trash2 size={14} strokeWidth={1.5} />
           </button>
         </div>
-      )}
+      ))}
     </div>
   );
 }

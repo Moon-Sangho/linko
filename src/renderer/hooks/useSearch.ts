@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { IpcChannels } from '../../shared/ipc-channels';
-import type { Bookmark, IpcResult, SearchBookmarksInput } from '../../shared/types';
+import { IpcChannels } from '@shared/ipc-channels';
+import type { Bookmark, IpcResult, SearchBookmarksInput } from '@shared/types';
 import { useUIStore } from '../store/useUIStore';
 
 const DEBOUNCE_MS = 300;
