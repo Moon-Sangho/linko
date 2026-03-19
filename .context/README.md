@@ -17,7 +17,7 @@ This directory is git-tracked.
 │   │   ├── screens.md
 │   │   └── components.md
 │   ├── implementation/
-│   │   └── ipc-api.md
+│   │   └── ipc-api.md         ← written once at milestone start by /agent-dev-core
 │   └── qa/
 │       └── NNN-YYYY-MM-DD-<tag>/  ← full cycle history (never deleted)
 │           ├── 1-qa-report.md       ← agent-dev-qa: issues found
@@ -35,7 +35,9 @@ This directory is git-tracked.
             ├── 001-short-description/
             │   └── spec.md
             └── 002-short-description/
-                └── spec.md
+                ├── spec.md
+                ├── contracts.md       ← /agent-orchestrate: interface contracts (if parallel work)
+                └── file-ownership.md  ← /agent-orchestrate: file boundaries (if parallel work)
 ```
 
 ## Versioning Rule
@@ -93,7 +95,7 @@ NNN-YYYY-MM-DD-<tag>/
 
 Files `2-*.md` and `3-verification.md` are optional — a run may stop at `1-qa-report.md` if no fixes were needed or if the cycle is in progress.
 
-Working files `current/implementation/contracts.md` and `current/implementation/file-ownership.md` remain the source of truth for sub-agents during active work. The `2-*.md` files are snapshots saved after Phase 1 completes.
+For QA-triggered orchestration, `2-contracts.md` and `2-file-ownership.md` live in the active run folder and serve as both the working copy and the permanent record.
 
 ### Examples
 
@@ -110,16 +112,18 @@ versions/v0.1/qa/003-2026-04-01-pre-release/
 | `current/qa/NNN-YYYY-MM-DD-<tag>/` | Full cycle record — issue → fix plan → verification |
 | `versions/vX.X/qa/` | All QA cycles for that release (never deleted) |
 
-Working files `contracts.md` and `file-ownership.md` stay in `current/implementation/` for sub-agents to read. Only the snapshot goes into the run folder at Step 9 of orchestration.
+For QA-triggered orchestration, `2-contracts.md` and `2-file-ownership.md` live directly in the run folder — they are both the working copy and the permanent record. For patch-triggered orchestration, `contracts.md` and `file-ownership.md` live in the patch folder (e.g. `patches/010-bulk-select-delete/`).
 
 The latest QA result is always the highest-numbered run folder's most recent file.
 
-| Milestone | Snapshot path | Completion criteria |
-|-----------|--------------|---------------------|
-| planning | `versions/v0.X/planning/` | /agent-pm outputs complete |
-| design | `versions/v0.X/design/` | /agent-designer outputs complete |
-| implementation | `versions/v0.X/implementation/` | /agent-dev-core + dev-ui complete |
-| qa | `versions/v0.X/qa/` | /agent-dev-qa complete |
+| Milestone | Path | Written by | Immutable after |
+|-----------|------|------------|-----------------|
+| planning | `versions/v0.X/planning/` | `/agent-pm` | milestone start |
+| design | `versions/v0.X/design/` | `/agent-designer` | milestone start |
+| implementation | `versions/v0.X/implementation/` | `/agent-dev-core` | milestone start |
+| qa | `versions/v0.X/qa/` | `/agent-dev-qa` + `/agent-orchestrate` | never (append-only) |
+
+**Rule**: `planning/`, `design/`, and `implementation/` folders are written once at milestone start and never edited again. All subsequent changes are recorded exclusively in `patches/` or `qa/`.
 
 ## Patches
 
@@ -164,6 +168,8 @@ Create a new `NNN-description/` directory under `current/patches/` (= the active
 
 ## Output Files
 
+### Milestone-start files (written once, immutable after creation)
+
 | File | Written by | Read by |
 |------|------------|---------|
 | `planning/requirements.md` | `/agent-pm` | designer, dev-core, dev-ui, qa |
@@ -173,7 +179,23 @@ Create a new `NNN-description/` directory under `current/patches/` (= the active
 | `design/screens.md` | `/agent-designer` | dev-ui |
 | `design/components.md` | `/agent-designer` | dev-ui |
 | `implementation/ipc-api.md` | `/agent-dev-core` | dev-ui, dev-qa |
+
+### Patch-work files (per patch, in patches/NNN-description/)
+
+| File | Written by | Read by |
+|------|------------|---------|
+| `patches/NNN-.../spec.md` | any agent | reference |
+| `patches/NNN-.../contracts.md` | `/agent-orchestrate` | sub-agents during parallel work |
+| `patches/NNN-.../file-ownership.md` | `/agent-orchestrate` | sub-agents during parallel work |
+
+### QA-cycle files (per run, in qa/NNN-YYYY-MM-DD-tag/)
+
+| File | Written by | Read by |
+|------|------------|---------|
 | `qa/NNN-.../1-qa-report.md` | `/agent-dev-qa` | `/agent-orchestrate` |
+| `qa/NNN-.../2-contracts.md` | `/agent-orchestrate` | sub-agents during QA fix work |
+| `qa/NNN-.../2-file-ownership.md` | `/agent-orchestrate` | sub-agents during QA fix work |
+| `qa/NNN-.../3-verification.md` | `/agent-dev-qa` | reference |
 
 ## Agent Execution Order
 
@@ -230,14 +252,23 @@ Phase 4 — Fix + integration (orchestrator, sequential)
 
 ### Files Created During Parallel Work
 
+Contracts and file-ownership live in the **triggering context folder**, not in `implementation/`:
+
 ```
-current/implementation/
-├── contracts.md       ← written by orchestrator in Phase 1
-├── file-ownership.md  ← written by orchestrator in Phase 1
-└── ipc-api.md         ← written by /agent-dev-core (existing)
+Patch-triggered orchestration:
+  current/patches/NNN-description/
+  ├── spec.md
+  ├── contracts.md       ← written by orchestrator in Phase 1
+  └── file-ownership.md  ← written by orchestrator in Phase 1
+
+QA-triggered orchestration:
+  current/qa/NNN-YYYY-MM-DD-tag/
+  ├── 1-qa-report.md
+  ├── 2-contracts.md     ← written by orchestrator in Phase 1
+  └── 2-file-ownership.md
 ```
 
-When orchestration is triggered by a QA report, Phase 1 artifacts are also copied to the active run folder as `2-contracts.md` and `2-file-ownership.md` (Step 9).
+`implementation/` is touched only at milestone start (by `/agent-dev-core` writing `ipc-api.md`).
 
 ### Core Rules
 

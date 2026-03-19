@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { IpcChannels } from '../../shared/ipc-channels';
-import type { CreateTagInput, IpcResult, Tag } from '../../shared/types';
+import { IpcChannels } from '@shared/ipc-channels';
+import type { CreateTagInput, IpcResult, Tag } from '@shared/types';
 
 interface TagStore {
   tags: Tag[];

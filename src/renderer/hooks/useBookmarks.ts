@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { useBookmarkStore } from '../store/useBookmarkStore';
 import { useTagStore } from '../store/useTagStore';
 import { useUIStore } from '../store/useUIStore';
-import type { Bookmark } from '../../shared/types';
+import type { Bookmark } from '@shared/types';
 
 /**
  * Primary hook for the bookmark list view.

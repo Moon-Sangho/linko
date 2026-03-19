@@ -45,14 +45,22 @@ If any types/channels are missing for the requested feature, ADD THEM NOW.
 These must be frozen before parallel work begins.
 
 ### Step 2 — Extract contracts
-Create `.context/current/implementation/contracts.md` with:
+Determine the triggering context folder, then create `contracts.md` there:
+- Patch work → `.context/current/patches/NNN-description/contracts.md`
+- QA-triggered → `.context/current/qa/NNN-YYYY-MM-DD-tag/2-contracts.md`
+
+Include:
 - All component prop interfaces
 - All Zustand store shapes
 - All custom hook signatures
 - Exact naming (no agent should invent names)
 
 ### Step 3 — Define file ownership
-Create `.context/current/implementation/file-ownership.md` with:
+Create `file-ownership.md` in the same folder as `contracts.md`:
+- Patch work → `.context/current/patches/NNN-description/file-ownership.md`
+- QA-triggered → `.context/current/qa/NNN-YYYY-MM-DD-tag/2-file-ownership.md`
+
+Include:
 - Agent A: exact file list (components partition)
 - Agent B: exact file list (store/hooks partition)
 - Explicit MUST NOT TOUCH lists for each agent
@@ -166,15 +174,9 @@ Find the latest run folder:
 ls .context/current/qa/ | sort | tail -1
 ```
 
-Copy Phase 1 artifacts as snapshots:
+Phase 1 artifacts (`2-contracts.md`, `2-file-ownership.md`) were already written directly into the run folder in Steps 2–3 — no copy needed.
 
-```bash
-RUN=.context/current/qa/<run-folder>
-cp .context/current/implementation/contracts.md      $RUN/2-contracts.md
-cp .context/current/implementation/file-ownership.md $RUN/2-file-ownership.md
-```
-
-Then output completion summary:
+Output completion summary:
 
 ```
 ## Integration Complete

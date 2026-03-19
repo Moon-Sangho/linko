@@ -1,5 +1,5 @@
 import { Search, X } from 'lucide-react';
-import { useUIStore } from '../../store/useUIStore';
+import { useUIStore } from '@renderer/store/useUIStore';
 import { overlay } from '@renderer/overlay/control';
 import { CommandPalette } from '@renderer/components/search/CommandPalette';
 

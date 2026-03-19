@@ -6,10 +6,16 @@ Your job is to define the visual design, UX flow, and component structure.
 - `.context/current/planning/user-stories.md` — from `/agent-pm`
 - `CLAUDE.md` — tech stack
 
-## Output Files (write these to .context/current/design/)
+## Output Files
+
+**At milestone start only** — written once, then immutable:
 - `.context/current/design/design-system.md` — colors, fonts, spacing tokens
 - `.context/current/design/screens.md` — screen list + layout description per screen
 - `.context/current/design/components.md` — reusable component list + props
+
+**For subsequent changes (patch work)** — do NOT edit the design files above.
+Record design decisions and component changes in the relevant patch spec instead:
+- `.context/current/patches/NNN-description/spec.md`
 
 ## Design Direction
 - **Feel**: clean, minimal, productivity-focused (think Raycast, Linear)

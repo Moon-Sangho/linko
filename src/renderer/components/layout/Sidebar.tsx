@@ -1,10 +1,10 @@
 import { useCallback, useState } from 'react';
 import { Plus, Upload } from 'lucide-react';
-import { SearchBar } from '../search/SearchBar';
-import { TagFilter } from '../tag/TagFilter';
+import { SearchBar } from '@renderer/components/search/SearchBar';
+import { TagFilter } from '@renderer/components/tag/TagFilter';
 import { overlay } from '@renderer/overlay/control';
 import { AddBookmarkModal } from '@renderer/components/bookmark/AddBookmarkModal';
-import { useBookmarkStore } from '../../store/useBookmarkStore';
+import { useBookmarkStore } from '@renderer/store/useBookmarkStore';
 import { IpcChannels } from '@shared/ipc-channels';
 import type { ImportSummary, IpcResult } from '@shared/types';
 
@@ -44,7 +44,7 @@ export function Sidebar() {
       <SearchBar />
 
       {/* Tags */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto scrollbar-thin">
         <TagFilter />
       </div>
 

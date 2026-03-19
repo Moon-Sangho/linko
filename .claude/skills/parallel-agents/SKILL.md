@@ -36,7 +36,9 @@ Phase 3 (sequential) → Integrate
 Before spawning any parallel agents, one agent (the orchestrator) must:
 
 ### 1a. Extract all shared interfaces
-Write to `.context/current/implementation/contracts.md`:
+Write `contracts.md` to the **triggering context folder**:
+- Patch work → `.context/current/patches/NNN-description/contracts.md`
+- QA-triggered → `.context/current/qa/NNN-YYYY-MM-DD-tag/2-contracts.md`
 
 ```markdown
 ## Component Props Contracts
@@ -51,7 +53,7 @@ Write to `.context/current/implementation/contracts.md`:
 ```
 
 ### 1b. Assign file ownership
-Write to `.context/current/implementation/file-ownership.md`:
+Write `file-ownership.md` to the same triggering context folder as `contracts.md`.
 
 ```markdown
 ## Agent A — components
@@ -157,10 +159,21 @@ One agent (Integration Agent) runs after all parallel work is done:
 ## Quick Reference: What to Write Before Parallelizing
 
 ```
-.context/current/implementation/
-├── contracts.md        ← all shared interfaces, prop types, store shapes
-├── file-ownership.md   ← which agent owns which files
-└── ipc-api.md          ← available IPC calls (from /agent-dev-core)
+Patch-triggered:
+  .context/current/patches/NNN-description/
+  ├── spec.md
+  ├── contracts.md        ← all shared interfaces, prop types, store shapes
+  └── file-ownership.md   ← which agent owns which files
+
+QA-triggered:
+  .context/current/qa/NNN-YYYY-MM-DD-tag/
+  ├── 1-qa-report.md
+  ├── 2-contracts.md
+  └── 2-file-ownership.md
+
+Always available (milestone artifact, read-only during parallel work):
+  .context/current/implementation/ipc-api.md
 ```
 
-These three files are the prerequisite for any parallel agent work.
+`contracts.md` and `file-ownership.md` are the prerequisite for any parallel agent work.
+`implementation/` is only written to at milestone start by `/agent-dev-core`.
