@@ -13,8 +13,27 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve allowed version from .context/versions
+        id: ctx
+        run: |
+          # Latest milestone in .context/versions/ (e.g. "v0.1" → "0.1")
+          MILESTONE=$(ls .context/versions/ | grep -E '^v[0-9]+\.[0-9]+$' | sort -V | tail -1 | sed 's/^v//')
+
+          # Current minor from package.json (e.g. "0.1.3" → "0.1")
+          PKG_MINOR=$(node -p "require('./package.json').version" | grep -oE '^[0-9]+\.[0-9]+')
+
+          echo "milestone=$MILESTONE  pkg_minor=$PKG_MINOR"
+
+          # If milestone is ahead of current minor, inject release-as so the PR targets milestone.0
+          if [ "$(printf '%s\n' "$PKG_MINOR" "$MILESTONE" | sort -V | tail -1)" = "$MILESTONE" ] && [ "$MILESTONE" != "$PKG_MINOR" ]; then
+            echo "Injecting release-as: ${MILESTONE}.0"
+            jq --arg v "${MILESTONE}.0" '.packages["."]["release-as"] = $v' release-please-config.json > tmp.json && mv tmp.json release-please-config.json
+          fi
+
       - uses: googleapis/release-please-action@v4
-        id: release
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          release-type: node
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
