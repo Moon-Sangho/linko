@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/Moon-Sangho/linko/compare/v0.1.3...v0.2.0) (2026-03-19)
+
+
+### Features
+
+* **ui:** Add bulk select/delete, fix bookmark/tag scroll, and correct import conventions ([#34](https://github.com/Moon-Sangho/linko/issues/34)) ([f2ea7c2](https://github.com/Moon-Sangho/linko/commit/f2ea7c25d29ef6e77b1f3cfb4bfe8da7d41825ce))
+
 ## [0.1.3](https://github.com/Moon-Sangho/linko/compare/v0.1.2...v0.1.3) (2026-03-18)
 
 
