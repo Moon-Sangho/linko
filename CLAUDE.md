@@ -107,14 +107,19 @@ Reusable knowledge modules referenced by agents.
 
 | Skill | Purpose |
 |-------|---------|
-| `desktop/` | Electron IPC patterns, window management, file system |
-| `parallel-agents/` | Running agents in parallel with Conductor |
-| `react-hook-form-writer/` | React forms with react-hook-form + Zod |
+| [`desktop/`](.claude/skills/desktop/SKILL.md) | Electron IPC patterns, window management, file system |
+| [`parallel-agents/`](.claude/skills/parallel-agents/SKILL.md) | Running agents in parallel with Conductor |
+| [`react-hook-form-writer/`](.claude/skills/react-hook-form-writer/SKILL.md) | React forms with react-hook-form + Zod |
+| [`find-skills/`](.agents/skills/find-skills/SKILL.md) | Discover and install skills from the ecosystem |
+| [`typescript-react-reviewer/`](.agents/skills/typescript-react-reviewer/SKILL.md) | TypeScript + React code review and anti-pattern detection |
+| [`vercel-react-best-practices/`](.agents/skills/vercel-react-best-practices/SKILL.md) | React performance and best practices from Vercel |
+| [`vercel-composition-patterns/`](.agents/skills/vercel-composition-patterns/SKILL.md) | React composition patterns and component architecture |
 
 ---
 
 ## Engineering Principles
 
+- **No automatic commits or PRs** — never run `git commit` or `gh pr create` unless the user explicitly runs `/git-commit`, `/git-create-pr`, or gives a direct instruction to do so.
 - **Fix at the right layer** — prefer structural fixes over symptomatic workarounds. Ask "where should this concern actually live?" before patching. Example: a modal leaking keyboard events to a global listener should be fixed with `stopPropagation` at the modal boundary, not by checking `document.activeElement` in the listener.
 
 ## Documentation Language
