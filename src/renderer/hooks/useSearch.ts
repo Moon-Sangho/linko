@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { IpcChannels } from '@shared/ipc-channels';
 import type { Bookmark, IpcResult, SearchBookmarksInput } from '@shared/types';
-import { useUIStore } from '../store/useUIStore';
+import { useUIStore } from '@renderer/store/useUIStore';
+import { useBookmarkStore } from '@renderer/store/useBookmarkStore';
 
 const DEBOUNCE_MS = 300;
 
@@ -12,6 +13,7 @@ const DEBOUNCE_MS = 300;
  */
 export function useSearch() {
   const { searchQuery, setSearchQuery, selectedTagIds } = useUIStore();
+  const bookmarks = useBookmarkStore((s) => s.bookmarks);
   const [searchResults, setSearchResults] = useState<Bookmark[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -56,7 +58,7 @@ export function useSearch() {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [searchQuery, selectedTagIds, runSearch]);
+  }, [searchQuery, selectedTagIds, bookmarks, runSearch]);
 
   return {
     searchQuery,
