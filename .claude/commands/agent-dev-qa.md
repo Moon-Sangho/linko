@@ -44,15 +44,15 @@ Use `subagent_type: "general-purpose"` for each.
 
 ### Sub-Agent Prompts
 
-**Security Agent** — read `.claude/agents/qa/security.md` and follow its instructions exactly. Work in: /Users/moon/conductor/workspaces/linko/sun-valley
+**Security Agent** — read `.claude/agents/qa/security.md` and follow its instructions exactly. Work in: <workspace-path>
 
-**IPC Agent** — read `.claude/agents/qa/ipc.md` and follow its instructions exactly. Work in: /Users/moon/conductor/workspaces/linko/sun-valley
+**IPC Agent** — read `.claude/agents/qa/ipc.md` and follow its instructions exactly. Work in: <workspace-path>
 
-**Functional Agent** — read `.claude/agents/qa/functional.md` and follow its instructions exactly. Work in: /Users/moon/conductor/workspaces/linko/sun-valley
+**Functional Agent** — read `.claude/agents/qa/functional.md` and follow its instructions exactly. Work in: <workspace-path>
 
-**Build Agent** — read `.claude/agents/qa/build.md` and follow its instructions exactly. Work in: /Users/moon/conductor/workspaces/linko/sun-valley
+**Build Agent** — read `.claude/agents/qa/build.md` and follow its instructions exactly. Work in: <workspace-path>
 
-**Architecture Agent** — read `.claude/agents/qa/architecture.md` and follow its instructions exactly. Work in: /Users/moon/conductor/workspaces/linko/sun-valley
+**Architecture Agent** — read `.claude/agents/qa/architecture.md` and follow its instructions exactly. Work in: <workspace-path>
 
 ---
 

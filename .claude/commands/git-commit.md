@@ -89,17 +89,11 @@ BREAKING CHANGE:  ← breaking change description + migration guide
    git add <specific files>
    ```
 
-4. **Commit** using a heredoc:
+4. **Commit** using a single `-m` flag (no heredoc):
    ```bash
-   git commit -m "$(cat <<'EOF'
-   <type>(<scope>): <summary>
-
-   - <what changed and why>
-   - <what changed and why>
-
-   Closes #<n>
-   EOF
-   )"
+   git commit -m "<type>(<scope>): <summary>"
+   # If a body is needed, append additional -m flags:
+   git commit -m "<type>(<scope>): <summary>" -m "- <what changed and why>" -m "Closes #<n>"
    ```
 
 5. **Verify**:
