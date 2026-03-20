@@ -1,5 +1,6 @@
 ---
 model: claude-haiku-4-5-20251001
+description: Stage and commit changes following the project's git conventions
 ---
 
 # Git Commit
