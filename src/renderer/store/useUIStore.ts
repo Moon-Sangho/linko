@@ -12,6 +12,7 @@ interface UIStore {
   clearTags: () => void;
   toggleBookmarkSelection: (id: number) => void;
   selectAllBookmarks: (ids: number[]) => void;
+  selectRangeBookmarks: (ids: number[], checked: boolean) => void;
   clearSelection: () => void;
 }
 
@@ -35,5 +36,11 @@ export const useUIStore = create<UIStore>((set) => ({
         : [...state.selectedBookmarkIds, id],
     })),
   selectAllBookmarks: (ids) => set({ selectedBookmarkIds: ids }),
+  selectRangeBookmarks: (ids, checked) =>
+    set((state) => ({
+      selectedBookmarkIds: checked
+        ? [...new Set([...state.selectedBookmarkIds, ...ids])]
+        : state.selectedBookmarkIds.filter((x) => !ids.includes(x)),
+    })),
   clearSelection: () => set({ selectedBookmarkIds: [] }),
 }));

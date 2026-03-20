@@ -13,7 +13,7 @@ interface BookmarkItemProps {
   isChecked: boolean;
   isSelectionMode: boolean;
   onClick: () => void;
-  onCheckToggle: (id: number) => void;
+  onCheckToggle: (id: number, e: React.MouseEvent) => void;
 }
 
 export function BookmarkItem({
@@ -96,7 +96,7 @@ export function BookmarkItem({
   const handleCheckToggle = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      onCheckToggle(bookmark.id);
+      onCheckToggle(bookmark.id, e);
     },
     [onCheckToggle, bookmark.id],
   );
