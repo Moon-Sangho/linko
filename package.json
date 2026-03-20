@@ -9,6 +9,7 @@
     "dev": "electron-vite dev",
     "build": "electron-vite build",
     "preview": "electron-vite preview",
+    "build:icons": "node scripts/build-icons.mjs",
     "package": "electron-vite build && electron-builder",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -31,6 +32,7 @@
   },
   "devDependencies": {
     "@electron/rebuild": "^4.0.3",
+    "@resvg/resvg-js": "^2.6.2",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
@@ -72,13 +74,16 @@
   "build": {
     "appId": "com.linko.app",
     "productName": "Linko",
+    "icon": "resources/icon",
     "mac": {
+      "icon": "resources/icon.icns",
       "target": [
         "dmg"
       ],
       "category": "public.app-category.productivity"
     },
     "win": {
+      "icon": "resources/icon.ico",
       "target": [
         "nsis"
       ]

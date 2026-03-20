@@ -53,6 +53,8 @@ function createWindow(): BrowserWindow {
     minHeight: 600,
     show: false,
     titleBarStyle: "hiddenInset", // macOS: keep traffic lights, hide native titlebar
+    // icon is used by Windows/Linux; macOS reads it from the .app bundle at package time
+    icon: path.join(__dirname, "../../resources/icon.png"),
     webPreferences: {
       preload: path.join(__dirname, "../preload/index.js"),
       contextIsolation: true,
@@ -90,6 +92,11 @@ function createWindow(): BrowserWindow {
 // ─── App Lifecycle ────────────────────────────────────────────────────────────
 
 app.whenReady().then(async () => {
+  // Set dock icon on macOS (effective in dev/preview; packaged app uses .icns from bundle)
+  if (process.platform === "darwin" && app.dock) {
+    app.dock.setIcon(path.join(__dirname, "../../resources/icon.png"));
+  }
+
   const { default: Store } = await import("electron-store");
   store = new Store<{ windowState: WindowState }>();
 
