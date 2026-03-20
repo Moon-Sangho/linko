@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- Background gradient: deep indigo to rich blue-purple -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E1B4B"/>
+      <stop offset="50%" stop-color="#312E81"/>
+      <stop offset="100%" stop-color="#1D4ED8"/>
+    </linearGradient>
+
+    <!-- Bookmark fill gradient: white with soft glow -->
+    <linearGradient id="markFill" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#C7D2FE" stop-opacity="0.9"/>
+    </linearGradient>
+
+    <!-- Accent gradient for the back bookmark -->
+    <linearGradient id="markAccent" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#818CF8" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#6366F1" stop-opacity="0.4"/>
+    </linearGradient>
+
+    <!-- Subtle inner glow on background -->
+    <radialGradient id="glow" cx="40%" cy="35%" r="55%">
+      <stop offset="0%" stop-color="#4F46E5" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#1E1B4B" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Drop shadow for bookmarks -->
+    <filter id="shadow" x="-20%" y="-10%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="20" flood-color="#0F0A2E" flood-opacity="0.5"/>
+    </filter>
+
+    <!-- macOS squircle clip path -->
+    <clipPath id="squircle">
+      <rect x="0" y="0" width="1024" height="1024" rx="230" ry="230"/>
+    </clipPath>
+  </defs>
+
+  <!-- ── Background ── -->
+  <g clip-path="url(#squircle)">
+    <rect width="1024" height="1024" fill="url(#bg)"/>
+    <rect width="1024" height="1024" fill="url(#glow)"/>
+    <rect width="1024" height="1024" fill="#FFFFFF" fill-opacity="0.012"/>
+  </g>
+
+  <!-- ── Back bookmark: accent violet, tilted ~12°, offset right+up ── -->
+  <g transform="translate(572, 478) rotate(12)" filter="url(#shadow)">
+    <path
+      d="M-176,-310 L176,-310 L176,310 L0,210 L-176,310 Z"
+      fill="url(#markAccent)"
+      stroke="#818CF8"
+      stroke-width="8"
+      stroke-opacity="0.4"
+    />
+  </g>
+
+  <!-- ── Front bookmark: white, perfectly centered, no rotation ── -->
+  <g transform="translate(512, 512)" filter="url(#shadow)">
+    <path
+      d="M-176,-310 L176,-310 L176,310 L0,210 L-176,310 Z"
+      fill="url(#markFill)"
+    />
+
+  </g>
+
+</svg>
