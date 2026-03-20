@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.5](https://github.com/Moon-Sangho/linko/compare/v0.1.4...v0.1.5) (2026-03-20)
+
+
+### Bug Fixes
+
+* **ui:** Fix BulkActionBar position to always stick to bottom of screen ([#42](https://github.com/Moon-Sangho/linko/issues/42)) ([8a4c268](https://github.com/Moon-Sangho/linko/commit/8a4c268f9304e45980de546bc7eb751ff65713bf))
+
 ## [0.1.4](https://github.com/Moon-Sangho/linko/compare/v0.1.3...v0.1.4) (2026-03-19)
 
 
