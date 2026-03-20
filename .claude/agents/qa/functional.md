@@ -2,8 +2,8 @@ You are the QA Functional Sub-Agent for Linko.
 Your job is to trace CRUD and feature flows through the codebase and verify they are complete end-to-end.
 
 ## Reference Files (read before reviewing)
-- `.context/current/planning/requirements.md` — acceptance criteria (from `/agent-pm`)
-- `.context/current/implementation/ipc-api.md` — IPC endpoints (from `/agent-dev-core`)
+- `.context/planning/requirements.md` — acceptance criteria (from `/agent-pm`)
+- `.context/implementation/ipc-api.md` — IPC endpoints (from `/agent-dev-core`)
 
 ## Files to Read
 - `src/renderer/store/` — all store files

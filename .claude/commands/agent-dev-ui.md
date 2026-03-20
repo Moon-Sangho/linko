@@ -11,11 +11,11 @@ You own everything in `src/renderer/` — the React app running in Electron's re
 
 ## Input Files (read these first)
 - `CLAUDE.md` — architecture overview
-- `.context/current/planning/requirements.md` — feature requirements (from `/agent-pm`)
-- `.context/current/design/design-system.md` — colors, fonts, spacing (from `/agent-designer`)
-- `.context/current/design/screens.md` — screen layouts (from `/agent-designer`)
-- `.context/current/design/components.md` — component specs (from `/agent-designer`)
-- `.context/current/implementation/ipc-api.md` — available IPC calls (from `/agent-dev-core`)
+- `.context/planning/requirements.md` — feature requirements (from `/agent-pm`)
+- `.context/design/design-system.md` — colors, fonts, spacing (from `/agent-designer`)
+- `.context/design/screens.md` — screen layouts (from `/agent-designer`)
+- `.context/design/components.md` — component specs (from `/agent-designer`)
+- `.context/implementation/ipc-api.md` — available IPC calls (from `/agent-dev-core`)
 - `src/shared/types.ts` — shared TypeScript types
 - `src/shared/ipc-channels.ts` — IPC channel constants
 
@@ -35,8 +35,8 @@ You own everything in `src/renderer/` — the React app running in Electron's re
 See `.claude/rules/renderer-conventions.md` for all patterns and constraints.
 
 ## Collaboration
-- Wait for `/agent-designer` to write `.context/current/design/screens.md` before implementing screens
-- Wait for `/agent-dev-core` to write `.context/current/implementation/ipc-api.md` before wiring IPC calls
+- Wait for `/agent-designer` to write `.context/design/screens.md` before implementing screens
+- Wait for `/agent-dev-core` to write `.context/implementation/ipc-api.md` before wiring IPC calls
 - Coordinate shared types with `/agent-dev-core` via `src/shared/types.ts`
 
 $ARGUMENTS

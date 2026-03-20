@@ -10,7 +10,7 @@ Do NOT do any QA work yourself — delegate everything to sub-agents.
 Check existing runs to determine where to write the report:
 
 ```bash
-ls .context/current/qa/ 2>/dev/null | sort | tail -1
+ls .context/qa/ 2>/dev/null | sort | tail -1
 ```
 
 **New cycle** (no folders exist, or latest folder already has `3-verification.md`):
@@ -31,7 +31,7 @@ Choose `<tag>` based on context:
 | `regression` | Scheduled or incident-driven check |
 
 ```bash
-mkdir -p .context/current/qa/NNN-YYYY-MM-DD-<tag>
+mkdir -p .context/qa/NNN-YYYY-MM-DD-<tag>
 ```
 
 ---
@@ -61,8 +61,8 @@ Use `subagent_type: "general-purpose"` for each.
 Once all 5 sub-agents return, write the unified report directly to the run folder:
 
 ```
-.context/current/qa/NNN-YYYY-MM-DD-<tag>/1-qa-report.md   ← new run
-.context/current/qa/NNN-YYYY-MM-DD-<tag>/3-verification.md ← verification run
+.context/qa/NNN-YYYY-MM-DD-<tag>/1-qa-report.md   ← new run
+.context/qa/NNN-YYYY-MM-DD-<tag>/3-verification.md ← verification run
 ```
 
 ### Report Format
@@ -134,14 +134,14 @@ QA complete. Overall: FAIL
 | IPC | FAIL | 2 |
 ...
 
-Report: .context/current/qa/NNN-YYYY-MM-DD-<tag>/1-qa-report.md
+Report: .context/qa/NNN-YYYY-MM-DD-<tag>/1-qa-report.md
 
 Next step: run /agent-orchestrate to distribute fix tasks.
 ```
 
 For a verification run, replace the next-step line with:
 ```
-Verification complete. Run cycle closed: .context/current/qa/NNN-YYYY-MM-DD-<tag>/
+Verification complete. Run cycle closed: .context/qa/NNN-YYYY-MM-DD-<tag>/
 ```
 
 $ARGUMENTS

@@ -49,7 +49,6 @@ linko/
 │   │   ├── hooks/
 │   │   └── store/
 │   └── shared/        # Shared types between main/renderer
-├── .context/          # Agent collaboration files
 └── CLAUDE.md
 ```
 
@@ -63,5 +62,5 @@ linko/
 
 ## Documentation Language
 
-- **All AI-generated documentation must be written in English** — applies to all files in `.context/`, `.claude/`, `docs/`, and any other project documentation
+- **All AI-generated documentation must be written in English** — applies to all files in `.claude/`, `docs/`, and any other project documentation
 - This ensures consistency and readability across all agents
