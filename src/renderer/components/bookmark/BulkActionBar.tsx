@@ -24,7 +24,7 @@ export function BulkActionBar({
   const isIndeterminate = selectedCount > 0 && selectedCount < totalCount;
 
   return (
-    <div className="sticky bottom-0 flex items-center gap-3 px-4 h-12 bg-gray-800 border-t border-gray-700">
+    <div className="flex items-center gap-3 px-4 h-12 bg-gray-800 border-t border-gray-700">
       {/* Select all checkbox */}
       <button
         onClick={isAllSelected ? onDeselectAll : onSelectAll}

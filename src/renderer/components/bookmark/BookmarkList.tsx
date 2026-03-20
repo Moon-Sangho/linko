@@ -123,18 +123,18 @@ export function BookmarkList() {
             onCheckToggle={toggleBookmarkSelection}
           />
         ))}
-        {isSelectionMode && (
-          <BulkActionBar
-            selectedCount={selectedBookmarkIds.length}
-            totalCount={displayBookmarks.length}
-            isDeleting={isDeleting}
-            onSelectAll={() => selectAllBookmarks(displayBookmarks.map((b) => b.id))}
-            onDeselectAll={clearSelection}
-            onDeleteRequest={() => setShowDeleteModal(true)}
-            onClear={clearSelection}
-          />
-        )}
       </div>
+      {isSelectionMode && (
+        <BulkActionBar
+          selectedCount={selectedBookmarkIds.length}
+          totalCount={displayBookmarks.length}
+          isDeleting={isDeleting}
+          onSelectAll={() => selectAllBookmarks(displayBookmarks.map((b) => b.id))}
+          onDeselectAll={clearSelection}
+          onDeleteRequest={() => setShowDeleteModal(true)}
+          onClear={clearSelection}
+        />
+      )}
       <BulkDeleteModal
         isOpen={showDeleteModal}
         count={selectedBookmarkIds.length}
