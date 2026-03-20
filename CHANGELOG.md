@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.9](https://github.com/Moon-Sangho/linko/compare/v0.1.8...v0.1.9) (2026-03-20)
+
+
+### Bug Fixes
+
+* **main:** Remove dock icon call that fails in packaged app ([#58](https://github.com/Moon-Sangho/linko/issues/58)) ([079696f](https://github.com/Moon-Sangho/linko/commit/079696fdc85d45a890ee210b657aef5de86b7f2c))
+
 ## [0.1.8](https://github.com/Moon-Sangho/linko/compare/v0.1.7...v0.1.8) (2026-03-20)
 
 
