@@ -79,13 +79,6 @@ export function BookmarkList() {
   useEffect(() => {
     const isMac = window.electron.platform === 'darwin';
     const handler = (e: KeyboardEvent) => {
-      const active = document.activeElement;
-      const isTyping =
-        active instanceof HTMLInputElement ||
-        active instanceof HTMLTextAreaElement ||
-        (active instanceof HTMLElement && active.isContentEditable);
-      if (isTyping) return;
-
       const modifier = isMac ? e.metaKey : e.ctrlKey;
       if (modifier && e.key === 'a') {
         e.preventDefault();
