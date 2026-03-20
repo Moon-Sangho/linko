@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.7](https://github.com/Moon-Sangho/linko/compare/v0.1.6...v0.1.7) (2026-03-20)
+
+
+### Features
+
+* **ui:** Redesign sidebar tag filter with left-border active state ([#52](https://github.com/Moon-Sangho/linko/issues/52)) ([0461619](https://github.com/Moon-Sangho/linko/commit/04616193f3fb10b0a4c6b6a598a35fb42daa82d6))
+
 ## [0.1.6](https://github.com/Moon-Sangho/linko/compare/v0.1.5...v0.1.6) (2026-03-20)
 
 
