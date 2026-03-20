@@ -10,7 +10,7 @@ import type { Bookmark } from '@shared/types';
  * For server-side FTS ranked results, use useSearch instead.
  */
 export function useBookmarks() {
-  const { bookmarks, isLoading, error, fetchAll, create, update, delete: deleteBookmark, openUrl } = useBookmarkStore();
+  const { bookmarks, isLoading, error, fetchAll, create, update, removeBookmark, openUrl } = useBookmarkStore();
   const { fetchAll: fetchTags } = useTagStore();
   const { searchQuery, selectedTagIds } = useUIStore();
 
@@ -47,7 +47,7 @@ export function useBookmarks() {
     error,
     create,
     update,
-    delete: deleteBookmark,
+    delete: removeBookmark,
     openUrl,
     refetch: fetchAll,
   };
