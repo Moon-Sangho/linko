@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Bookmark, SearchX } from 'lucide-react';
 import { useBookmarkStore } from '@renderer/store/useBookmarkStore';
 import { useUIStore } from '@renderer/store/useUIStore';
@@ -18,22 +18,48 @@ export function BookmarkList() {
   const selectedBookmarkIds = useUIStore((s) => s.selectedBookmarkIds);
   const toggleBookmarkSelection = useUIStore((s) => s.toggleBookmarkSelection);
   const selectAllBookmarks = useUIStore((s) => s.selectAllBookmarks);
+  const selectRangeBookmarks = useUIStore((s) => s.selectRangeBookmarks);
   const clearSelection = useUIStore((s) => s.clearSelection);
 
   const isSelectionMode = selectedBookmarkIds.length > 0;
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const lastCheckedIndexRef = useRef<number | null>(null);
+
+  const { searchResults, isSearching, searchQuery } = useSearch();
+
+  const isSearchActive = searchQuery !== '' || selectedTagIds.length > 0;
+  const displayBookmarks = isSearchActive ? searchResults : bookmarks;
+  const showLoading = isSearchActive ? isSearching : isLoading;
+
+  useEffect(() => {
+    if (selectedBookmarkIds.length === 0) {
+      lastCheckedIndexRef.current = null;
+    }
+  }, [selectedBookmarkIds.length]);
+
+  const handleCheckToggle = useCallback(
+    (id: number, e: React.MouseEvent) => {
+      const currentIndex = displayBookmarks.findIndex((b) => b.id === id);
+      if (e.shiftKey && lastCheckedIndexRef.current !== null) {
+        const start = Math.min(lastCheckedIndexRef.current, currentIndex);
+        const end = Math.max(lastCheckedIndexRef.current, currentIndex);
+        const rangeIds = displayBookmarks.slice(start, end + 1).map((b) => b.id);
+        const willBeChecked = !selectedBookmarkIds.includes(id);
+        selectRangeBookmarks(rangeIds, willBeChecked);
+      } else {
+        toggleBookmarkSelection(id);
+      }
+      lastCheckedIndexRef.current = currentIndex;
+    },
+    [displayBookmarks, selectedBookmarkIds, selectRangeBookmarks, toggleBookmarkSelection],
+  );
 
   const openAddModal = () => {
     overlay.open(({ isOpen, close }) => (
       <AddBookmarkModal isOpen={isOpen} onClose={close} />
     ));
   };
-  const { searchResults, isSearching, searchQuery } = useSearch();
-
-  const isSearchActive = searchQuery !== '' || selectedTagIds.length > 0;
-  const displayBookmarks = isSearchActive ? searchResults : bookmarks;
-  const showLoading = isSearchActive ? isSearching : isLoading;
 
   const handleBulkDelete = async () => {
     setIsDeleting(true);
@@ -120,7 +146,7 @@ export function BookmarkList() {
             isChecked={selectedBookmarkIds.includes(bookmark.id)}
             isSelectionMode={isSelectionMode}
             onClick={() => setSelectedBookmark(bookmark.id)}
-            onCheckToggle={toggleBookmarkSelection}
+            onCheckToggle={handleCheckToggle}
           />
         ))}
       </div>
