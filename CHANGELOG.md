@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.8](https://github.com/Moon-Sangho/linko/compare/v0.1.7...v0.1.8) (2026-03-20)
+
+
+### Features
+
+* **build:** Add custom app icon with cross-platform icon build pipeline ([#56](https://github.com/Moon-Sangho/linko/issues/56)) ([0a120af](https://github.com/Moon-Sangho/linko/commit/0a120af9eafe0164da119f00a620ea4c58ba0630))
+
 ## [0.1.7](https://github.com/Moon-Sangho/linko/compare/v0.1.6...v0.1.7) (2026-03-20)
 
 
