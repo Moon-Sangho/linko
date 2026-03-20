@@ -1,5 +1,6 @@
 ---
 model: claude-haiku-4-5-20251001
+description: Create a GitHub PR with a conventional commit title and pre-verified checklist
 ---
 
 # Create Pull Request
