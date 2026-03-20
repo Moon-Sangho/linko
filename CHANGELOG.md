@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.6](https://github.com/Moon-Sangho/linko/compare/v0.1.5...v0.1.6) (2026-03-20)
+
+
+### Features
+
+* **ui:** Add shift-click range selection for bookmark checkboxes ([#50](https://github.com/Moon-Sangho/linko/issues/50)) ([f976569](https://github.com/Moon-Sangho/linko/commit/f97656968abe97ce09444c165cfa5a17fad186c8))
+
 ## [0.1.5](https://github.com/Moon-Sangho/linko/compare/v0.1.4...v0.1.5) (2026-03-20)
 
 

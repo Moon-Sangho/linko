@@ -1,6 +1,6 @@
 {
   "name": "linko",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Local-first bookmark manager",
   "main": "out/main/index.js",
   "author": "Linko",
