@@ -253,16 +253,6 @@ This means the version is always derived from what actually shipped — no manua
 
 ---
 
-## Roadmap
-
-| Version | Focus                                                             |
-| ------- | ----------------------------------------------------------------- |
-| v0.1    | Core bookmark management — add, edit, delete, tag, search, import |
-| v0.2    | Export, tag management, bulk operations, custom DB location       |
-| Future  | Browser extension, cloud sync, mobile companion                   |
-
----
-
 ## License
 
 MIT
