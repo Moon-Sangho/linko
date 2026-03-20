@@ -25,6 +25,11 @@
       "source": "vercel-labs/agent-skills",
       "sourceType": "github",
       "computedHash": "c858d2d9023e73edb4e5504868cb0e36313e58fd56af12ef888b43c5634a3c17"
+    },
+    "vitest": {
+      "source": "bobmatnyc/claude-mpm-skills",
+      "sourceType": "github",
+      "computedHash": "9d2eef62dbba4528c258222534cf2f1bfa37bdc1a00547add05e3367ac4946f3"
     }
   }
 }
