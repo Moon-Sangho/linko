@@ -10,7 +10,7 @@ Do NOT do any QA work yourself — delegate everything to sub-agents.
 Check existing runs to determine where to write the report:
 
 ```bash
-ls .context/current/qa/ 2>/dev/null | sort | tail -1
+ls .context/qa/ 2>/dev/null | sort | tail -1
 ```
 
 **New cycle** (no folders exist, or latest folder already has `3-verification.md`):
@@ -31,7 +31,7 @@ Choose `<tag>` based on context:
 | `regression` | Scheduled or incident-driven check |
 
 ```bash
-mkdir -p .context/current/qa/NNN-YYYY-MM-DD-<tag>
+mkdir -p .context/qa/NNN-YYYY-MM-DD-<tag>
 ```
 
 ---
@@ -44,15 +44,15 @@ Use `subagent_type: "general-purpose"` for each.
 
 ### Sub-Agent Prompts
 
-**Security Agent** — read `.claude/agents/qa/security.md` and follow its instructions exactly. Work in: /Users/moon/conductor/workspaces/linko/sun-valley
+**Security Agent** — read `.claude/agents/qa/security.md` and follow its instructions exactly. Work in: <workspace-path>
 
-**IPC Agent** — read `.claude/agents/qa/ipc.md` and follow its instructions exactly. Work in: /Users/moon/conductor/workspaces/linko/sun-valley
+**IPC Agent** — read `.claude/agents/qa/ipc.md` and follow its instructions exactly. Work in: <workspace-path>
 
-**Functional Agent** — read `.claude/agents/qa/functional.md` and follow its instructions exactly. Work in: /Users/moon/conductor/workspaces/linko/sun-valley
+**Functional Agent** — read `.claude/agents/qa/functional.md` and follow its instructions exactly. Work in: <workspace-path>
 
-**Build Agent** — read `.claude/agents/qa/build.md` and follow its instructions exactly. Work in: /Users/moon/conductor/workspaces/linko/sun-valley
+**Build Agent** — read `.claude/agents/qa/build.md` and follow its instructions exactly. Work in: <workspace-path>
 
-**Architecture Agent** — read `.claude/agents/qa/architecture.md` and follow its instructions exactly. Work in: /Users/moon/conductor/workspaces/linko/sun-valley
+**Architecture Agent** — read `.claude/agents/qa/architecture.md` and follow its instructions exactly. Work in: <workspace-path>
 
 ---
 
@@ -61,8 +61,8 @@ Use `subagent_type: "general-purpose"` for each.
 Once all 5 sub-agents return, write the unified report directly to the run folder:
 
 ```
-.context/current/qa/NNN-YYYY-MM-DD-<tag>/1-qa-report.md   ← new run
-.context/current/qa/NNN-YYYY-MM-DD-<tag>/3-verification.md ← verification run
+.context/qa/NNN-YYYY-MM-DD-<tag>/1-qa-report.md   ← new run
+.context/qa/NNN-YYYY-MM-DD-<tag>/3-verification.md ← verification run
 ```
 
 ### Report Format
@@ -134,14 +134,14 @@ QA complete. Overall: FAIL
 | IPC | FAIL | 2 |
 ...
 
-Report: .context/current/qa/NNN-YYYY-MM-DD-<tag>/1-qa-report.md
+Report: .context/qa/NNN-YYYY-MM-DD-<tag>/1-qa-report.md
 
 Next step: run /agent-orchestrate to distribute fix tasks.
 ```
 
 For a verification run, replace the next-step line with:
 ```
-Verification complete. Run cycle closed: .context/current/qa/NNN-YYYY-MM-DD-<tag>/
+Verification complete. Run cycle closed: .context/qa/NNN-YYYY-MM-DD-<tag>/
 ```
 
 $ARGUMENTS

@@ -7,10 +7,6 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/validate-pr.sh"
-          },
-          {
-            "type": "command",
-            "command": "bash .claude/hooks/check-patch-record.sh"
           }
         ]
       }

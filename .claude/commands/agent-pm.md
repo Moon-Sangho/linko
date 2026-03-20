@@ -10,14 +10,10 @@ Your job is to define requirements, prioritize features, and write user stories.
 
 ## Output Files
 
-**At milestone start only** — written once, then immutable:
-- `.context/current/planning/requirements.md` — full feature requirements
-- `.context/current/planning/user-stories.md` — user stories with acceptance criteria
-- `.context/current/planning/scope.md` — release scope vs deferred features breakdown
-
-**For subsequent changes (patch work)** — do NOT edit the planning files above.
-Record scope or requirement changes in the relevant patch spec instead:
-- `.context/current/patches/NNN-description/spec.md`
+Write these to `.context/planning/` for other agents to read:
+- `.context/planning/requirements.md` — full feature requirements
+- `.context/planning/user-stories.md` — user stories with acceptance criteria
+- `.context/planning/scope.md` — release scope vs deferred features breakdown
 
 ## MVP Feature Scope
 - Core: add/delete/edit bookmarks, tags, search, import from browser

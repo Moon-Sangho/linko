@@ -15,10 +15,10 @@ then review and merge their results.
 
 ## Input Files (read these first)
 - `CLAUDE.md` — architecture overview
-- `.context/current/planning/requirements.md` — feature requirements
-- `.context/current/design/components.md` — component specs
-- `.context/current/design/screens.md` — screen layouts
-- `.context/current/implementation/ipc-api.md` — available IPC calls
+- `.context/planning/requirements.md` — feature requirements
+- `.context/design/components.md` — component specs
+- `.context/design/screens.md` — screen layouts
+- `.context/implementation/ipc-api.md` — available IPC calls
 - `src/shared/types.ts` — existing types
 - `src/shared/ipc-channels.ts` — existing IPC channels
 
@@ -46,8 +46,8 @@ These must be frozen before parallel work begins.
 
 ### Step 2 — Extract contracts
 Determine the triggering context folder, then create `contracts.md` there:
-- Patch work → `.context/current/patches/NNN-description/contracts.md`
-- QA-triggered → `.context/current/qa/NNN-YYYY-MM-DD-tag/2-contracts.md`
+- Patch work → `.context/patches/NNN-description/contracts.md`
+- QA-triggered → `.context/qa/NNN-YYYY-MM-DD-tag/2-contracts.md`
 
 Include:
 - All component prop interfaces
@@ -57,8 +57,8 @@ Include:
 
 ### Step 3 — Define file ownership
 Create `file-ownership.md` in the same folder as `contracts.md`:
-- Patch work → `.context/current/patches/NNN-description/file-ownership.md`
-- QA-triggered → `.context/current/qa/NNN-YYYY-MM-DD-tag/2-file-ownership.md`
+- Patch work → `.context/patches/NNN-description/file-ownership.md`
+- QA-triggered → `.context/qa/NNN-YYYY-MM-DD-tag/2-file-ownership.md`
 
 Include:
 - Agent A: exact file list (components partition)
@@ -158,7 +158,7 @@ Priority order:
 Wire all components into `src/renderer/App.tsx`:
 - Import directly from each source file (no barrel index.ts)
 - Use `@renderer/...` aliases for all imports
-- Follow the screen layout in `.context/current/design/screens.md`
+- Follow the screen layout in `.context/design/screens.md`
 
 ### Step 8 — Build verification
 Run `pnpm build` and fix any TypeScript or bundler errors.
@@ -171,7 +171,7 @@ Do not mark the task complete until the build passes.
 Find the latest run folder:
 
 ```bash
-ls .context/current/qa/ | sort | tail -1
+ls .context/qa/ | sort | tail -1
 ```
 
 Phase 1 artifacts (`2-contracts.md`, `2-file-ownership.md`) were already written directly into the run folder in Steps 2–3 — no copy needed.
@@ -191,8 +191,8 @@ Output completion summary:
 ✅ pnpm build passed
 
 QA run snapshots saved:
-  .context/current/qa/<run-folder>/2-contracts.md
-  .context/current/qa/<run-folder>/2-file-ownership.md
+  .context/qa/<run-folder>/2-contracts.md
+  .context/qa/<run-folder>/2-file-ownership.md
 
 Next step: run /agent-dev-qa to verify issues are resolved (writes 3-verification.md).
 ```

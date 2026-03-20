@@ -170,15 +170,6 @@ BREAKING CHANGE: All IPC channel names have changed. Renderer must be
 updated to use the new channel constants from ipc-channels.ts.
 ```
 
-```
-docs: Restructure .context/ with versioned milestones and update agent paths
-
-- Add current/{planning,design,implementation,qa}/ folder structure
-- Add versions/v0.1/planning/ snapshot of PM outputs
-- Update all agent commands to reference new .context paths
-- Add git-commit command referencing git-conventions.md
-```
-
 ---
 
 ## Commit Command Format

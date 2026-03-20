@@ -15,8 +15,8 @@ You own everything in `src/main/` — the Electron main process, SQLite database
 
 ## Input Files (read these first)
 - `CLAUDE.md` — architecture overview
-- `.context/current/planning/requirements.md` — feature requirements (from `/agent-pm`)
-- `.context/current/planning/scope.md` — release scope (from `/agent-pm`)
+- `.context/planning/requirements.md` — feature requirements (from `/agent-pm`)
+- `.context/planning/scope.md` — release scope (from `/agent-pm`)
 
 ## Responsibilities
 1. Electron app lifecycle (app ready, window creation, tray)
@@ -45,8 +45,6 @@ See `.claude/rules/main-conventions.md` for all patterns and constraints.
 
 ## Collaboration
 - Define `src/shared/types.ts` and `src/shared/ipc-channels.ts` first — `/agent-dev-ui` depends on these
-- Write `.context/current/implementation/ipc-api.md` documenting all available IPC calls for `/agent-dev-ui`
-  — **written once at milestone start, then immutable**
-  — for patch work, record IPC changes in `.context/current/patches/NNN-description/spec.md` instead
+- Write `.context/implementation/ipc-api.md` documenting all available IPC calls for `/agent-dev-ui`
 
 $ARGUMENTS

@@ -74,50 +74,6 @@ BREAKING CHANGE:  ← breaking change description + migration guide
 
 ---
 
-## Patch Record Rule
-
-Per release-please convention:
-
-| Commit type | Semver level | Patch doc required? |
-|---|---|---|
-| `feat` | minor | No |
-| `feat!` / `BREAKING CHANGE` | major | No |
-| everything else (`fix`, `perf`, `refactor`, `docs`, `build`, `ci`, `chore`, `test`) | patch | **Yes** |
-
-Before a patch-level commit, `.claude/hooks/check-patch-record.sh` will ask:
-
-> **"Shall I write the patch document for you?"**
-
-- **Yes** → inspect staged changes (`git diff HEAD`, `git status`), create
-  the patch record, then retry the commit
-- **No** → proceed with the commit as-is
-
-**Patch record structure** — see `.context/README.md` (Patches section) for full rules:
-
-```
-.context/current/patches/
-└── NNN-<kebab-description>/   ← 3-digit zero-padded, describes concern not action
-    └── spec.md
-```
-
-**File naming**: `.context/patches/YYYY-MM-DD-<scope>-<short-description>.md`
-
-**Template**:
-```markdown
-# Patch: <short description>
-Date: YYYY-MM-DD
-Type: fix | perf
-Scope: <scope>
-
-## Problem
-<what was broken or needed improvement>
-
-## Fix
-<what was changed and why>
-```
-
----
-
 ## Steps
 
 1. **Check what changed**:
@@ -133,17 +89,11 @@ Scope: <scope>
    git add <specific files>
    ```
 
-4. **Commit** using a heredoc:
+4. **Commit** using a single `-m` flag (no heredoc):
    ```bash
-   git commit -m "$(cat <<'EOF'
-   <type>(<scope>): <summary>
-
-   - <what changed and why>
-   - <what changed and why>
-
-   Closes #<n>
-   EOF
-   )"
+   git commit -m "<type>(<scope>): <summary>"
+   # If a body is needed, append additional -m flags:
+   git commit -m "<type>(<scope>): <summary>" -m "- <what changed and why>" -m "Closes #<n>"
    ```
 
 5. **Verify**:
