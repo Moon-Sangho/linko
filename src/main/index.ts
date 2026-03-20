@@ -92,11 +92,6 @@ function createWindow(): BrowserWindow {
 // ─── App Lifecycle ────────────────────────────────────────────────────────────
 
 app.whenReady().then(async () => {
-  // Set dock icon on macOS (effective in dev/preview; packaged app uses .icns from bundle)
-  if (process.platform === "darwin" && app.dock) {
-    app.dock.setIcon(path.join(__dirname, "../../resources/icon.png"));
-  }
-
   const { default: Store } = await import("electron-store");
   store = new Store<{ windowState: WindowState }>();
 
