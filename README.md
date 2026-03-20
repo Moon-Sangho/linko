@@ -146,31 +146,24 @@ Linko is being developed almost entirely through **agentic engineering** — mul
 
 Claude's Agent Teams feature requires a higher-tier plan. To achieve parallel agent execution on Claude Pro, this project uses **[Conductor](https://docs.conductor.build/)** — a Mac app that runs multiple Claude Code workspaces side by side.
 
-Each agent runs in its own isolated workspace. They coordinate by reading and writing files under `.context/`, which acts as a shared communication layer between agents. This gives us genuine parallel development without stepping on each other's work.
+Each task runs in its own isolated Conductor workspace. Workspaces are independent units — there is no shared coordination layer between them. Each workspace operates on its own `.context/` directory (gitignored, local only) as a scratch space for within-session agent handoffs.
 
-### `.context/` — The Agent Coordination System
+### `.context/` — Local Agent Scratch Space
 
-The `.context/` directory is how agents talk to each other across workspaces. It is version-controlled alongside the code.
+The `.context/` directory is a local-only scratch space for agents within a single workspace session. It is **gitignored** and not shared between team members or workspaces.
 
 ```
-.context/
-├── current/           ← symlink to the active version (e.g. versions/v0.2)
-├── versions/
-│   ├── v0.1/          ← immutable snapshot of v0.1 agent outputs
-│   │   ├── planning/  ← requirements, user stories, scope
-│   │   ├── design/    ← design system, screens, components
-│   │   ├── implementation/  ← IPC API contracts
-│   │   └── qa/        ← QA checklist
-│   └── v0.2/          ← v0.2 work in progress
-│       └── ...
-└── notes.md
+.context/               ← gitignored, local to each workspace
+├── planning/           ← written by /agent-pm, read by designer + dev agents
+├── design/             ← written by /agent-designer, read by dev-ui
+├── implementation/     ← ipc-api.md written by /agent-dev-core, read by dev-ui
+├── patches/            ← contracts + file-ownership for parallel patch work
+└── qa/                 ← QA run reports and verification artifacts
 ```
 
-**Versioning rule**: each product release gets its own directory under `versions/`. Past versions are immutable — never edited after the release boundary. At the start of a new version (e.g. v0.1 → v0.2), a new directory is created, the `current` symlink is updated to point to it, and agents write only to the new version.
+Because `.context/` is gitignored, its contents do not persist across workspaces or team members — each workspace starts fresh. Agents generate context on demand at the start of each session.
 
-All agents always read from and write to `current/` — they never need to know which version number is active.
-
-**Agent execution order within a version**:
+**Agent execution order**:
 
 ```
 1. /agent-pm          → planning/

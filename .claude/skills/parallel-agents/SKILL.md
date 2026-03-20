@@ -171,9 +171,9 @@ QA-triggered:
   ├── 2-contracts.md
   └── 2-file-ownership.md
 
-Always available (milestone artifact, read-only during parallel work):
+Always available (written by /agent-dev-core, read-only during parallel work):
   .context/implementation/ipc-api.md
 ```
 
 `contracts.md` and `file-ownership.md` are the prerequisite for any parallel agent work.
-`implementation/` is only written to at milestone start by `/agent-dev-core`.
+`implementation/ipc-api.md` is written by `/agent-dev-core` and must exist before parallel work begins.
