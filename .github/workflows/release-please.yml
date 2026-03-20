@@ -42,6 +42,8 @@ jobs:
 
       - name: Label release PR
         if: ${{ steps.release.outputs.pr }}
-        run: gh pr edit ${{ fromJson(steps.release.outputs.pr).number }} --add-label "autorelease: pending"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ fromJson(steps.release.outputs.pr).number }}
+        run: |
+          gh pr edit "$PR_NUMBER" --add-label "autorelease: pending"
