@@ -10,7 +10,13 @@ export const queryClient = new QueryClient({
       staleTime: Infinity,
       gcTime: Infinity,
       refetchOnWindowFocus: false,
+      // Queries run over IPC, not HTTP — online/offline status is irrelevant.
+      // Without this, TanStack Query pauses all queries when the system goes offline.
+      networkMode: 'always',
       retry: 1,
+    },
+    mutations: {
+      networkMode: 'always',
     },
   },
 });

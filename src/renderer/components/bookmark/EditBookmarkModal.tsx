@@ -18,14 +18,13 @@ interface EditBookmarkModalProps {
 }
 
 export function EditBookmarkModal({ isOpen, onClose, bookmarkId }: EditBookmarkModalProps) {
-  const { data: bookmarks = [] } = useBookmarksQuery();
+  const { data: bookmark = null } = useBookmarksQuery(
+    (bookmarks) => bookmarks.find((b) => b.id === bookmarkId) ?? null,
+  );
   const updateMutation = useUpdateBookmarkMutation();
   const deleteMutation = useDeleteBookmarkMutation();
   const { data: tags = [] } = useTagsQuery();
   const createTag = useCreateTagMutation();
-
-  // m8: Stable lookup — only re-runs when bookmarks array or bookmarkId changes
-  const bookmark = bookmarks.find((b) => b.id === bookmarkId) ?? null;
 
   const form = useBookmarkForm();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);

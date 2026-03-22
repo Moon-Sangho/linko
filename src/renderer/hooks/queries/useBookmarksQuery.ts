@@ -3,7 +3,9 @@ import { IpcChannels } from '@shared/ipc-channels';
 import type { Bookmark, IpcResult } from '@shared/types';
 import { queryKeys } from '@renderer/lib/queryKeys';
 
-export function useBookmarksQuery() {
+export function useBookmarksQuery<TData = Bookmark[]>(
+  select?: (data: Bookmark[]) => TData,
+) {
   return useQuery({
     queryKey: queryKeys.bookmark.all,
     queryFn: async () => {
@@ -11,5 +13,6 @@ export function useBookmarksQuery() {
       if (!result.success) throw new Error(result.error ?? 'Failed to fetch bookmarks');
       return result.data!;
     },
+    select,
   });
 }
