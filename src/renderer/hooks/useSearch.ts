@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { IpcChannels } from '@shared/ipc-channels';
 import type { Bookmark, IpcResult, SearchBookmarksInput } from '@shared/types';
 import { useUIStore } from '@renderer/store/useUIStore';
-import { useBookmarkStore } from '@renderer/store/useBookmarkStore';
+import { useBookmarksQuery } from '@renderer/hooks/queries/useBookmarksQuery';
 
 const DEBOUNCE_MS = 300;
 
@@ -13,7 +13,8 @@ const DEBOUNCE_MS = 300;
  */
 export function useSearch() {
   const { searchQuery, setSearchQuery, selectedTagIds } = useUIStore();
-  const bookmarks = useBookmarkStore((s) => s.bookmarks);
+  // Re-run search whenever the bookmark cache updates (e.g. after a mutation)
+  const { data: bookmarks } = useBookmarksQuery();
   const [searchResults, setSearchResults] = useState<Bookmark[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);

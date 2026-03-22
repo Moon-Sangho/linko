@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
-import { useBookmarkStore } from '@renderer/store/useBookmarkStore';
-import { useTagStore } from '@renderer/store/useTagStore';
+import { useCreateBookmarkMutation } from '@renderer/hooks/mutations/useCreateBookmarkMutation';
+import { useTagsQuery } from '@renderer/hooks/queries/useTagsQuery';
+import { useCreateTagMutation } from '@renderer/hooks/mutations/useCreateTagMutation';
 import { useBookmarkForm } from '@renderer/hooks/useBookmarkForm';
 import { Modal } from '@renderer/components/ui/Modal';
 import { Input } from '@renderer/components/ui/Input';
@@ -16,10 +17,9 @@ interface AddBookmarkModalProps {
 }
 
 export function AddBookmarkModal({ isOpen, onClose }: AddBookmarkModalProps) {
-  const create = useBookmarkStore((s) => s.create);
-  const tags = useTagStore((s) => s.tags);
-  const fetchTags = useTagStore((s) => s.fetchAll);
-  const createTag = useTagStore((s) => s.create);
+  const createBookmark = useCreateBookmarkMutation();
+  const { data: tags = [] } = useTagsQuery();
+  const createTag = useCreateTagMutation();
 
   const form = useBookmarkForm();
   const urlRef = useRef<HTMLInputElement>(null);
@@ -30,22 +30,22 @@ export function AddBookmarkModal({ isOpen, onClose }: AddBookmarkModalProps) {
     const name = newTagName.trim();
     if (!name || isCreatingTag) return;
     setIsCreatingTag(true);
-    const tag = await createTag({ name });
-    setIsCreatingTag(false);
-    setNewTagName('');
-    if (tag) form.toggleTag(tag.id);
+    try {
+      const tag = await createTag.mutateAsync({ name });
+      if (tag) form.toggleTag(tag.id);
+    } finally {
+      setIsCreatingTag(false);
+      setNewTagName('');
+    }
   }, [newTagName, isCreatingTag, createTag, form]);
 
-  // M1: fetchTags and form.reset are stable references — safe in dep array.
-  // Using requestAnimationFrame instead of setTimeout for reliable focus (m6 fix).
   useEffect(() => {
     if (isOpen) {
       form.reset();
-      fetchTags();
       requestAnimationFrame(() => urlRef.current?.focus());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, fetchTags]);
+  }, [isOpen]);
 
   const handleSave = form.handleSubmit(async (data) => {
     // Cancel any in-flight blur-triggered fetch to avoid racing
@@ -69,7 +69,7 @@ export function AddBookmarkModal({ isOpen, onClose }: AddBookmarkModalProps) {
     }
 
     try {
-      await create({
+      await createBookmark.mutateAsync({
         url: data.url,
         title,
         notes: data.notes || null,

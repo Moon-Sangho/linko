@@ -1,21 +1,23 @@
 import { useCallback, useState } from 'react';
 import { Plus, Upload } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { SearchBar } from '@renderer/components/search/SearchBar';
 import { TagFilter } from '@renderer/components/tag/TagFilter';
 import { overlay } from '@renderer/overlay/control';
 import { AddBookmarkModal } from '@renderer/components/bookmark/AddBookmarkModal';
-import { useBookmarkStore } from '@renderer/store/useBookmarkStore';
+import { queryKeys } from '@renderer/lib/queryKeys';
 import { IpcChannels } from '@shared/ipc-channels';
 import type { ImportSummary, IpcResult } from '@shared/types';
 
 export function Sidebar() {
+  const queryClient = useQueryClient();
+  const [importStatus, setImportStatus] = useState<string | null>(null);
+
   const openAddModal = () => {
     overlay.open(({ isOpen, close }) => (
       <AddBookmarkModal isOpen={isOpen} onClose={close} />
     ));
   };
-  const { fetchAll } = useBookmarkStore();
-  const [importStatus, setImportStatus] = useState<string | null>(null);
 
   const handleImport = useCallback(async () => {
     setImportStatus('Importing…');
@@ -24,7 +26,7 @@ export function Sidebar() {
       if (result.success && result.data) {
         const { added, skipped } = result.data;
         setImportStatus(`Imported ${added} (${skipped} skipped)`);
-        fetchAll();
+        queryClient.invalidateQueries({ queryKey: queryKeys.bookmark.all });
         setTimeout(() => setImportStatus(null), 4000);
       } else if (result.error && result.error !== 'No file selected') {
         setImportStatus('Import failed');
@@ -36,7 +38,7 @@ export function Sidebar() {
       setImportStatus('Import failed');
       setTimeout(() => setImportStatus(null), 3000);
     }
-  }, [fetchAll]);
+  }, [queryClient]);
 
   return (
     <div className="w-56 flex-shrink-0 flex flex-col bg-gray-900 border-r border-gray-800 h-full">

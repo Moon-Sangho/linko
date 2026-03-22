@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
-import { useBookmarkStore } from '@renderer/store/useBookmarkStore';
-import { useTagStore } from '@renderer/store/useTagStore';
+import { useBookmarksQuery } from '@renderer/hooks/queries/useBookmarksQuery';
+import { useTagsQuery } from '@renderer/hooks/queries/useTagsQuery';
+import { useUpdateBookmarkMutation } from '@renderer/hooks/mutations/useUpdateBookmarkMutation';
+import { useDeleteBookmarkMutation } from '@renderer/hooks/mutations/useDeleteBookmarkMutation';
+import { useCreateTagMutation } from '@renderer/hooks/mutations/useCreateTagMutation';
 import { useBookmarkForm } from '@renderer/hooks/useBookmarkForm';
 import { Modal } from '@renderer/components/ui/Modal';
 import { Input } from '@renderer/components/ui/Input';
@@ -15,16 +18,15 @@ interface EditBookmarkModalProps {
 }
 
 export function EditBookmarkModal({ isOpen, onClose, bookmarkId }: EditBookmarkModalProps) {
-  const bookmarks = useBookmarkStore((s) => s.bookmarks);
-  const update = useBookmarkStore((s) => s.update);
-  const deleteBookmark = useBookmarkStore((s) => s.removeBookmark);
-  const tags = useTagStore((s) => s.tags);
-  const fetchTags = useTagStore((s) => s.fetchAll);
+  const { data: bookmarks = [] } = useBookmarksQuery();
+  const updateMutation = useUpdateBookmarkMutation();
+  const deleteMutation = useDeleteBookmarkMutation();
+  const { data: tags = [] } = useTagsQuery();
+  const createTag = useCreateTagMutation();
 
   // m8: Stable lookup — only re-runs when bookmarks array or bookmarkId changes
   const bookmark = bookmarks.find((b) => b.id === bookmarkId) ?? null;
 
-  const createTag = useTagStore((s) => s.create);
   const form = useBookmarkForm();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -36,13 +38,16 @@ export function EditBookmarkModal({ isOpen, onClose, bookmarkId }: EditBookmarkM
     const name = newTagName.trim();
     if (!name || isCreatingTag) return;
     setIsCreatingTag(true);
-    const tag = await createTag({ name });
-    setIsCreatingTag(false);
-    setNewTagName('');
-    if (tag) form.toggleTag(tag.id);
+    try {
+      const tag = await createTag.mutateAsync({ name });
+      if (tag) form.toggleTag(tag.id);
+    } finally {
+      setIsCreatingTag(false);
+      setNewTagName('');
+    }
   }, [newTagName, isCreatingTag, createTag, form]);
 
-  // M2: Pre-fill when modal opens with a valid bookmark. fetchTags is stable.
+  // M2: Pre-fill when modal opens with a valid bookmark.
   useEffect(() => {
     if (isOpen && bookmark) {
       form.prefill({
@@ -54,19 +59,21 @@ export function EditBookmarkModal({ isOpen, onClose, bookmarkId }: EditBookmarkM
       setShowDeleteConfirm(false);
       setIsDeleting(false);
       setDeleteError('');
-      fetchTags();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, bookmark?.id, fetchTags]);
+  }, [isOpen, bookmark?.id]);
 
   const handleSave = form.handleSubmit(async (data) => {
     if (!bookmark) return;
     try {
-      await update(bookmark.id, {
-        url: data.url,
-        title: data.title || null,
-        notes: data.notes || null,
-        tagIds: form.selectedTagIds,
+      await updateMutation.mutateAsync({
+        id: bookmark.id,
+        input: {
+          url: data.url,
+          title: data.title || null,
+          notes: data.notes || null,
+          tagIds: form.selectedTagIds,
+        },
       });
       onClose();
     } catch {
@@ -82,7 +89,7 @@ export function EditBookmarkModal({ isOpen, onClose, bookmarkId }: EditBookmarkM
     setDeleteError('');
     setIsDeleting(true);
     try {
-      await deleteBookmark(bookmark.id);
+      await deleteMutation.mutateAsync(bookmark.id);
       // Success: reset state then close while component is still mounted
       setIsDeleting(false);
       setShowDeleteConfirm(false);
@@ -93,7 +100,7 @@ export function EditBookmarkModal({ isOpen, onClose, bookmarkId }: EditBookmarkM
       setShowDeleteConfirm(false);
       setDeleteError('Failed to delete bookmark. Please try again.');
     }
-  }, [bookmark, deleteBookmark, onClose]);
+  }, [bookmark, deleteMutation, onClose]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
