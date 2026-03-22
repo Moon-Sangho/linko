@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { Command } from 'cmdk';
 import { Search, ExternalLink, X } from 'lucide-react';
-import { useBookmarkStore } from '@renderer/store/useBookmarkStore';
+import { useBookmarksQuery } from '@renderer/hooks/queries/useBookmarksQuery';
+import { useOpenUrlMutation } from '@renderer/hooks/mutations/useOpenUrlMutation';
 import type { Bookmark } from '@shared/types';
 
 interface CommandPaletteProps {
@@ -10,7 +11,8 @@ interface CommandPaletteProps {
 }
 
 export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
-  const { bookmarks, openUrl } = useBookmarkStore();
+  const { data: bookmarks = [] } = useBookmarksQuery();
+  const openUrlMutation = useOpenUrlMutation();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -25,7 +27,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   if (!isOpen) return null;
 
   const handleSelect = (bookmark: Bookmark) => {
-    openUrl(bookmark.url);
+    openUrlMutation.mutate(bookmark.url);
     onClose();
   };
 

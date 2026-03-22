@@ -1,7 +1,8 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Check, ExternalLink, Pencil, Trash2 } from 'lucide-react';
 import type { Bookmark } from '@shared/types';
-import { useBookmarkStore } from '@renderer/store/useBookmarkStore';
+import { useDeleteBookmarkMutation } from '@renderer/hooks/mutations/useDeleteBookmarkMutation';
+import { useOpenUrlMutation } from '@renderer/hooks/mutations/useOpenUrlMutation';
 import { overlay } from '@renderer/overlay/control';
 import { EditBookmarkModal } from './EditBookmarkModal';
 import { Favicon } from '@renderer/components/ui/Favicon';
@@ -24,9 +25,8 @@ export function BookmarkItem({
   onClick,
   onCheckToggle,
 }: BookmarkItemProps) {
-  // Select only the needed actions to avoid re-renders on unrelated store changes
-  const openUrl = useBookmarkStore((s) => s.openUrl);
-  const deleteBookmark = useBookmarkStore((s) => s.removeBookmark);
+  const openUrlMutation = useOpenUrlMutation();
+  const deleteMutation = useDeleteBookmarkMutation();
 
   const [deleteConfirming, setDeleteConfirming] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -48,15 +48,15 @@ export function BookmarkItem({
   const extraTagCount = bookmark.tags.length - MAX_VISIBLE_TAGS;
 
   const handleDoubleClick = useCallback(() => {
-    openUrl(bookmark.url);
-  }, [openUrl, bookmark.url]);
+    openUrlMutation.mutate(bookmark.url);
+  }, [openUrlMutation, bookmark.url]);
 
   const handleOpenClick = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      openUrl(bookmark.url);
+      openUrlMutation.mutate(bookmark.url);
     },
-    [openUrl, bookmark.url],
+    [openUrlMutation, bookmark.url],
   );
 
   const handleEditClick = useCallback(
@@ -86,12 +86,12 @@ export function BookmarkItem({
     setDeleting(true);
     setDeleteError('');
     try {
-      await deleteBookmark(bookmark.id);
+      await deleteMutation.mutateAsync(bookmark.id);
     } catch {
       setDeleting(false);
       setDeleteError('Failed');
     }
-  }, [deleteBookmark, bookmark.id]);
+  }, [deleteMutation, bookmark.id]);
 
   const handleCheckToggle = useCallback(
     (e: React.MouseEvent) => {

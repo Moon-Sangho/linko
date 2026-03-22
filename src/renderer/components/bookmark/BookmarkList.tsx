@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Bookmark, SearchX } from 'lucide-react';
-import { useBookmarkStore } from '@renderer/store/useBookmarkStore';
+import { useBookmarksQuery } from '@renderer/hooks/queries/useBookmarksQuery';
+import { useDeleteBulkBookmarksMutation } from '@renderer/hooks/mutations/useDeleteBulkBookmarksMutation';
 import { useUIStore } from '@renderer/store/useUIStore';
 import { useSearch } from '@renderer/hooks/useSearch';
 import { overlay } from '@renderer/overlay/control';
@@ -12,7 +13,9 @@ import { Spinner } from '@renderer/components/ui/Spinner';
 import { EmptyState } from '@renderer/components/ui/EmptyState';
 
 export function BookmarkList() {
-  const { bookmarks, isLoading, fetchAll, removeBulk } = useBookmarkStore();
+  const { data: bookmarks = [], isLoading } = useBookmarksQuery();
+  const deleteBulkMutation = useDeleteBulkBookmarksMutation();
+
   const { selectedBookmarkId, setSelectedBookmark } = useUIStore();
   const selectedTagIds = useUIStore((s) => s.selectedTagIds);
   const selectedBookmarkIds = useUIStore((s) => s.selectedBookmarkIds);
@@ -64,17 +67,13 @@ export function BookmarkList() {
   const handleBulkDelete = async () => {
     setIsDeleting(true);
     try {
-      await removeBulk(selectedBookmarkIds);
+      await deleteBulkMutation.mutateAsync(selectedBookmarkIds);
       clearSelection();
       setShowDeleteModal(false);
     } finally {
       setIsDeleting(false);
     }
   };
-
-  useEffect(() => {
-    fetchAll();
-  }, [fetchAll]);
 
   useEffect(() => {
     const isMac = window.electron.platform === 'darwin';

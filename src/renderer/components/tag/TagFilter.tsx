@@ -1,17 +1,13 @@
-import { useEffect, useMemo } from 'react';
-import { useTagStore } from '@renderer/store/useTagStore';
+import { useMemo } from 'react';
+import { useBookmarksQuery } from '@renderer/hooks/queries/useBookmarksQuery';
+import { useTagsQuery } from '@renderer/hooks/queries/useTagsQuery';
 import { useUIStore } from '@renderer/store/useUIStore';
-import { useBookmarkStore } from '@renderer/store/useBookmarkStore';
 import { TagBadge } from './TagBadge';
 
 export function TagFilter() {
-  const { tags, fetchAll } = useTagStore();
+  const { data: tags = [] } = useTagsQuery();
   const { selectedTagIds, toggleTag, clearTags } = useUIStore();
-  const bookmarks = useBookmarkStore(s => s.bookmarks);
-
-  useEffect(() => {
-    fetchAll();
-  }, [fetchAll]);
+  const { data: bookmarks = [] } = useBookmarksQuery();
 
   const allActive = selectedTagIds.length === 0;
 
