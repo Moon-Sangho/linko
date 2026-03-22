@@ -32,15 +32,18 @@ That's Linko.
 
 ## Tech Stack
 
-| Layer            | Technology                       |
-| ---------------- | -------------------------------- |
-| Framework        | Electron                         |
-| Frontend         | React + TypeScript               |
-| State management | Zustand                          |
-| Styling          | Tailwind CSS                     |
-| UI primitives    | Radix UI                         |
-| Database         | SQLite (via better-sqlite3)      |
-| Build            | electron-vite + electron-builder |
+| Layer              | Technology                       |
+| ------------------ | -------------------------------- |
+| Framework          | Electron                         |
+| Frontend           | React + TypeScript               |
+| Server state       | TanStack Query                   |
+| UI state           | Zustand                          |
+| Form state         | react-hook-form + Zod            |
+| Styling            | Tailwind CSS                     |
+| UI primitives      | Radix UI                         |
+| Database           | SQLite (via better-sqlite3)      |
+| Testing            | Vitest + Testing Library         |
+| Build              | electron-vite + electron-builder |
 
 ---
 
@@ -54,7 +57,10 @@ Main Process (Node.js)
   └── URL metadata fetcher (src/main/services/)
 
 Renderer Process (React)
-  └── communicates via IPC only — no direct Node.js access
+  ├── communicates via IPC only — no direct Node.js access
+  ├── TanStack Query — server state (bookmarks, tags), caching, cache invalidation
+  ├── Zustand — transient UI state (selection, search input, active tag filters)
+  └── react-hook-form + Zod — form state and URL/input validation
 
 Shared
   ├── src/shared/types.ts         — shared TypeScript types
@@ -75,6 +81,15 @@ pnpm install   # or: npm install / yarn install
 
 # Run in development
 pnpm dev       # or: npm run dev / yarn dev
+
+# Run tests
+pnpm test      # or: npm test / yarn test
+
+# Run tests in watch mode
+pnpm test:watch
+
+# Run tests with coverage
+pnpm test:coverage
 ```
 
 ### Build & Install on macOS
@@ -118,8 +133,8 @@ linko/
 │   ├── renderer/      # React app
 │   │   ├── components/
 │   │   ├── pages/
-│   │   ├── hooks/
-│   │   └── store/     # Zustand stores
+│   │   ├── hooks/     # TanStack Query hooks (queries, mutations) + custom hooks
+│   │   └── store/     # Zustand store (UI state only)
 │   └── shared/        # Types and IPC channel names
 ├── .context/          # Agent collaboration files (see below)
 └── CLAUDE.md
@@ -138,7 +153,7 @@ Linko is being developed almost entirely through **agentic engineering** — mul
 | `/agent-pm`          | Requirements, user stories, work scope                |
 | `/agent-designer`    | Design system, screen layouts, component specs        |
 | `/agent-dev-core`    | Main process, SQLite, IPC handlers                    |
-| `/agent-dev-ui`      | React renderer, components, Zustand stores            |
+| `/agent-dev-ui`      | React renderer, components, TanStack Query hooks, Zustand store |
 | `/agent-dev-qa`      | Orchestrates 5 parallel QA sub-agents, aggregates results into a unified report |
 | `/agent-orchestrate` | Coordinates parallel agent work, resolves conflicts   |
 
