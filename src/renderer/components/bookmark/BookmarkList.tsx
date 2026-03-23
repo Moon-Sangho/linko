@@ -16,15 +16,32 @@ export function BookmarkList() {
   const { data: bookmarks = [], isLoading } = useBookmarksQuery();
   const deleteBulkMutation = useDeleteBulkBookmarksMutation();
 
-  const { selectedBookmarkId, setSelectedBookmark } = useUIStore();
   const selectedTagIds = useUIStore((s) => s.selectedTagIds);
-  const selectedBookmarkIds = useUIStore((s) => s.selectedBookmarkIds);
-  const toggleBookmarkSelection = useUIStore((s) => s.toggleBookmarkSelection);
-  const selectAllBookmarks = useUIStore((s) => s.selectAllBookmarks);
-  const selectRangeBookmarks = useUIStore((s) => s.selectRangeBookmarks);
-  const clearSelection = useUIStore((s) => s.clearSelection);
 
-  const isSelectionMode = selectedBookmarkIds.length > 0;
+  const [selectedBookmarkId, setSelectedBookmark] = useState<number | null>(null);
+  const [checkedBookmarkIds, setCheckedBookmarkIds] = useState<number[]>([]);
+
+  const toggleBookmarkCheck = useCallback((id: number) => {
+    setCheckedBookmarkIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+    );
+  }, []);
+
+  const checkAllBookmarks = useCallback((ids: number[]) => {
+    setCheckedBookmarkIds(ids);
+  }, []);
+
+  const checkRangeBookmarks = useCallback((ids: number[], checked: boolean) => {
+    setCheckedBookmarkIds((prev) =>
+      checked
+        ? [...new Set([...prev, ...ids])]
+        : prev.filter((x) => !ids.includes(x)),
+    );
+  }, []);
+
+  const clearChecked = useCallback(() => setCheckedBookmarkIds([]), []);
+
+  const isSelectionMode = checkedBookmarkIds.length > 0;
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const lastCheckedIndexRef = useRef<number | null>(null);
@@ -36,10 +53,10 @@ export function BookmarkList() {
   const showLoading = isSearchActive ? isSearching : isLoading;
 
   useEffect(() => {
-    if (selectedBookmarkIds.length === 0) {
+    if (checkedBookmarkIds.length === 0) {
       lastCheckedIndexRef.current = null;
     }
-  }, [selectedBookmarkIds.length]);
+  }, [checkedBookmarkIds.length]);
 
   const handleCheckToggle = useCallback(
     (id: number, e: React.MouseEvent) => {
@@ -48,14 +65,14 @@ export function BookmarkList() {
         const start = Math.min(lastCheckedIndexRef.current, currentIndex);
         const end = Math.max(lastCheckedIndexRef.current, currentIndex);
         const rangeIds = displayBookmarks.slice(start, end + 1).map((b) => b.id);
-        const willBeChecked = !selectedBookmarkIds.includes(id);
-        selectRangeBookmarks(rangeIds, willBeChecked);
+        const willBeChecked = !checkedBookmarkIds.includes(id);
+        checkRangeBookmarks(rangeIds, willBeChecked);
       } else {
-        toggleBookmarkSelection(id);
+        toggleBookmarkCheck(id);
       }
       lastCheckedIndexRef.current = currentIndex;
     },
-    [displayBookmarks, selectedBookmarkIds, selectRangeBookmarks, toggleBookmarkSelection],
+    [displayBookmarks, checkedBookmarkIds, checkRangeBookmarks, toggleBookmarkCheck],
   );
 
   const openAddModal = () => {
@@ -67,8 +84,8 @@ export function BookmarkList() {
   const handleBulkDelete = async () => {
     setIsDeleting(true);
     try {
-      await deleteBulkMutation.mutateAsync(selectedBookmarkIds);
-      clearSelection();
+      await deleteBulkMutation.mutateAsync(checkedBookmarkIds);
+      clearChecked();
       setShowDeleteModal(false);
     } finally {
       setIsDeleting(false);
@@ -81,12 +98,12 @@ export function BookmarkList() {
       const modifier = isMac ? e.metaKey : e.ctrlKey;
       if (modifier && e.key === 'a') {
         e.preventDefault();
-        selectAllBookmarks(displayBookmarks.map((b) => b.id));
+        checkAllBookmarks(displayBookmarks.map((b) => b.id));
         return;
       }
       if (e.key === 'Escape' && isSelectionMode) {
         e.preventDefault();
-        clearSelection();
+        clearChecked();
         return;
       }
       if (modifier && e.key === 'Backspace' && isSelectionMode) {
@@ -96,7 +113,7 @@ export function BookmarkList() {
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [isSelectionMode, displayBookmarks, selectAllBookmarks, clearSelection]);
+  }, [isSelectionMode, displayBookmarks, checkAllBookmarks, clearChecked]);
 
   if (showLoading) {
     return (
@@ -142,7 +159,7 @@ export function BookmarkList() {
             key={bookmark.id}
             bookmark={bookmark}
             isSelected={selectedBookmarkId === bookmark.id}
-            isChecked={selectedBookmarkIds.includes(bookmark.id)}
+            isChecked={checkedBookmarkIds.includes(bookmark.id)}
             isSelectionMode={isSelectionMode}
             onClick={() => setSelectedBookmark(bookmark.id)}
             onCheckToggle={handleCheckToggle}
@@ -151,18 +168,18 @@ export function BookmarkList() {
       </div>
       {isSelectionMode && (
         <BulkActionBar
-          selectedCount={selectedBookmarkIds.length}
+          selectedCount={checkedBookmarkIds.length}
           totalCount={displayBookmarks.length}
           isDeleting={isDeleting}
-          onSelectAll={() => selectAllBookmarks(displayBookmarks.map((b) => b.id))}
-          onDeselectAll={clearSelection}
+          onSelectAll={() => checkAllBookmarks(displayBookmarks.map((b) => b.id))}
+          onDeselectAll={clearChecked}
           onDeleteRequest={() => setShowDeleteModal(true)}
-          onClear={clearSelection}
+          onClear={clearChecked}
         />
       )}
       <BulkDeleteModal
         isOpen={showDeleteModal}
-        count={selectedBookmarkIds.length}
+        count={checkedBookmarkIds.length}
         isDeleting={isDeleting}
         onConfirm={handleBulkDelete}
         onCancel={() => setShowDeleteModal(false)}

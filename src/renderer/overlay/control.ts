@@ -3,7 +3,7 @@ import type { OverlayElement } from './overlayStore';
 
 /**
  * Imperative overlay API — open modals/dialogs from anywhere without
- * registering them in App.tsx or adding state to useUIStore.
+ * registering them in App.tsx or adding local state to components.
  *
  * Usage:
  *   const id = overlay.open(({ isOpen, close }) => (

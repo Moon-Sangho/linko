@@ -1,6 +1,7 @@
 import { forwardRef, useId, type InputHTMLAttributes, type ReactNode } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@renderer/lib/cn';
+import { Spinner } from './Spinner';
 
 const inputVariants = cva(
   'w-full rounded-md border bg-gray-900 font-sans text-white placeholder-gray-500 transition-colors duration-100 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1 focus:ring-offset-gray-950 disabled:opacity-50',
@@ -59,10 +60,16 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           aria-describedby={error ? errorId : undefined}
           className={cn(
             inputVariants({ size, hasError: !!error, hasLeftIcon: !!leftIcon }),
+            isLoading && 'pr-8',
             className,
           )}
           {...props}
         />
+        {isLoading && (
+          <span className="pointer-events-none absolute right-2.5 flex items-center text-gray-400">
+            <Spinner size="sm" />
+          </span>
+        )}
       </div>
       {error && (
         <p id={errorId} className="text-xs text-red-400">{error}</p>

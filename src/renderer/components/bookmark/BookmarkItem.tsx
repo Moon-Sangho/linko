@@ -26,8 +26,8 @@ export function BookmarkItem({
   onClick,
   onCheckToggle,
 }: BookmarkItemProps) {
-  const openUrlMutation = useOpenUrlMutation();
-  const deleteMutation = useDeleteBookmarkMutation();
+  const { mutate: openUrl } = useOpenUrlMutation();
+  const { mutateAsync: deleteBookmark } = useDeleteBookmarkMutation();
 
   const [deleteConfirming, setDeleteConfirming] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -49,15 +49,15 @@ export function BookmarkItem({
   const extraTagCount = bookmark.tags.length - MAX_VISIBLE_TAGS;
 
   const handleDoubleClick = useCallback(() => {
-    openUrlMutation.mutate(bookmark.url);
-  }, [openUrlMutation, bookmark.url]);
+    openUrl(bookmark.url);
+  }, [openUrl, bookmark.url]);
 
   const handleOpenClick = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      openUrlMutation.mutate(bookmark.url);
+      openUrl(bookmark.url);
     },
-    [openUrlMutation, bookmark.url],
+    [openUrl, bookmark.url],
   );
 
   const handleEditClick = useCallback(
@@ -87,12 +87,12 @@ export function BookmarkItem({
     setDeleting(true);
     setDeleteError('');
     try {
-      await deleteMutation.mutateAsync(bookmark.id);
+      await deleteBookmark(bookmark.id);
     } catch {
       setDeleting(false);
       setDeleteError('Failed');
     }
-  }, [deleteMutation, bookmark.id]);
+  }, [deleteBookmark, bookmark.id]);
 
   const handleCheckToggle = useCallback(
     (e: React.MouseEvent) => {
