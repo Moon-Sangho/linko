@@ -1,4 +1,4 @@
-import Database from 'better-sqlite3';
+import type Database from 'better-sqlite3';
 import type {
   Bookmark,
   Tag,
@@ -70,7 +70,14 @@ export class LocalBookmarkRepository implements BookmarkRepository {
         `INSERT INTO bookmarks (url, title, notes, favicon_url, created_at, updated_at)
          VALUES (?, ?, ?, ?, ?, ?)`,
       )
-      .run(input.url, input.title ?? null, input.notes ?? null, input.favicon_url ?? null, now, now);
+      .run(
+        input.url,
+        input.title ?? null,
+        input.notes ?? null,
+        input.favicon_url ?? null,
+        now,
+        now,
+      );
 
     const id = result.lastInsertRowid as number;
 
@@ -175,9 +182,7 @@ export class LocalBookmarkRepository implements BookmarkRepository {
 
   isDuplicate(url: string, excludeId?: number): boolean {
     const row = this.db
-      .prepare<[string], { id: number }>(
-        `SELECT id FROM bookmarks WHERE url = ? LIMIT 1`,
-      )
+      .prepare<[string], { id: number }>(`SELECT id FROM bookmarks WHERE url = ? LIMIT 1`)
       .get(url);
 
     if (!row) return false;

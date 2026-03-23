@@ -14,15 +14,15 @@ export function Sidebar() {
   const [importStatus, setImportStatus] = useState<string | null>(null);
 
   const openAddModal = () => {
-    overlay.open(({ isOpen, close }) => (
-      <AddBookmarkModal isOpen={isOpen} onClose={close} />
-    ));
+    overlay.open(({ isOpen, close }) => <AddBookmarkModal isOpen={isOpen} onClose={close} />);
   };
 
   const handleImport = useCallback(async () => {
     setImportStatus('Importing…');
     try {
-      const result = await window.electron.invoke(IpcChannels.FS_IMPORT_BOOKMARKS) as IpcResult<ImportSummary>;
+      const result = (await window.electron.invoke(
+        IpcChannels.FS_IMPORT_BOOKMARKS,
+      )) as IpcResult<ImportSummary>;
       if (result.success && result.data) {
         const { added, skipped } = result.data;
         setImportStatus(`Imported ${added} (${skipped} skipped)`);
@@ -52,9 +52,7 @@ export function Sidebar() {
 
       {/* Footer buttons */}
       <div className="px-3 py-3 border-t border-gray-800 flex flex-col gap-1.5">
-        {importStatus && (
-          <p className="text-xs text-gray-400 text-center">{importStatus}</p>
-        )}
+        {importStatus && <p className="text-xs text-gray-400 text-center">{importStatus}</p>}
         <button
           onClick={openAddModal}
           className="w-full flex items-center justify-center gap-2 h-8 text-sm font-medium bg-blue-600 hover:bg-blue-500 text-white rounded-md transition-colors duration-75"

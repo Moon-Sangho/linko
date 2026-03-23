@@ -36,9 +36,7 @@ export function BulkActionBar({
       </button>
 
       {/* Count */}
-      <span className="flex-1 text-sm text-gray-300">
-        {selectedCount} selected
-      </span>
+      <span className="flex-1 text-sm text-gray-300">{selectedCount} selected</span>
 
       {/* Actions */}
       <div className="flex items-center gap-2">

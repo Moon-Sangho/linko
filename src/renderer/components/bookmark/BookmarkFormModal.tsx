@@ -55,6 +55,8 @@ export function BookmarkFormModal({
       setIsCreatingTag(false);
       setNewTagName('');
     }
+    // form.toggleTag is a stable callback reference extracted from the form object
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newTagName, isCreatingTag, createTag, form.toggleTag]);
 
   const handleKeyDown = useCallback(

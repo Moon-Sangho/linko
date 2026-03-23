@@ -21,12 +21,7 @@ export function Favicon({ src, size = 16 }: FaviconProps) {
 
   if (!safeSrc || errored) {
     return (
-      <Globe
-        width={size}
-        height={size}
-        className="shrink-0 text-gray-500"
-        aria-hidden="true"
-      />
+      <Globe width={size} height={size} className="shrink-0 text-gray-500" aria-hidden="true" />
     );
   }
 

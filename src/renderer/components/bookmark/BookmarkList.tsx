@@ -33,9 +33,7 @@ export function BookmarkList() {
 
   const checkRangeBookmarks = useCallback((ids: number[], checked: boolean) => {
     setCheckedBookmarkIds((prev) =>
-      checked
-        ? [...new Set([...prev, ...ids])]
-        : prev.filter((x) => !ids.includes(x)),
+      checked ? [...new Set([...prev, ...ids])] : prev.filter((x) => !ids.includes(x)),
     );
   }, []);
 
@@ -76,9 +74,7 @@ export function BookmarkList() {
   );
 
   const openAddModal = () => {
-    overlay.open(({ isOpen, close }) => (
-      <AddBookmarkModal isOpen={isOpen} onClose={close} />
-    ));
+    overlay.open(({ isOpen, close }) => <AddBookmarkModal isOpen={isOpen} onClose={close} />);
   };
 
   const handleBulkDelete = async () => {

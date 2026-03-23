@@ -7,7 +7,7 @@ export function useDeleteBookmarkMutation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: number) => {
-      const result = await window.electron.invoke(IpcChannels.BOOKMARK_DELETE, id) as IpcResult;
+      const result = (await window.electron.invoke(IpcChannels.BOOKMARK_DELETE, id)) as IpcResult;
       if (!result.success) throw new Error(result.error ?? 'Failed to delete bookmark');
     },
     onSuccess: () => {

@@ -1,9 +1,9 @@
-import { useEffect, useRef } from "react";
-import { useCreateBookmarkMutation } from "@renderer/hooks/mutations/useCreateBookmarkMutation";
-import { useBookmarkForm } from "@renderer/hooks/useBookmarkForm";
-import { IpcChannels } from "@shared/ipc-channels";
-import type { IpcResult, UrlMetadata } from "@shared/types";
-import { BookmarkFormModal } from "./BookmarkFormModal";
+import { useEffect, useRef } from 'react';
+import { useCreateBookmarkMutation } from '@renderer/hooks/mutations/useCreateBookmarkMutation';
+import { useBookmarkForm } from '@renderer/hooks/useBookmarkForm';
+import { IpcChannels } from '@shared/ipc-channels';
+import type { IpcResult, UrlMetadata } from '@shared/types';
+import { BookmarkFormModal } from './BookmarkFormModal';
 
 interface AddBookmarkModalProps {
   isOpen: boolean;
@@ -20,6 +20,8 @@ export function AddBookmarkModal({ isOpen, onClose }: AddBookmarkModalProps) {
       form.reset();
       requestAnimationFrame(() => urlRef.current?.focus());
     }
+    // form is intentionally excluded: reset/focus should only run on open, not on every render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   const handleSave = form.handleSubmit(async (data) => {
@@ -53,8 +55,8 @@ export function AddBookmarkModal({ isOpen, onClose }: AddBookmarkModalProps) {
       });
       onClose();
     } catch {
-      form.setError("root", {
-        message: "Failed to save bookmark. Please try again.",
+      form.setError('root', {
+        message: 'Failed to save bookmark. Please try again.',
       });
     }
   });

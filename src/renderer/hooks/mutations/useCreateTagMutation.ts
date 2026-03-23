@@ -7,7 +7,10 @@ export function useCreateTagMutation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (input: CreateTagInput) => {
-      const result = await window.electron.invoke(IpcChannels.TAG_CREATE, input) as IpcResult<Tag>;
+      const result = (await window.electron.invoke(
+        IpcChannels.TAG_CREATE,
+        input,
+      )) as IpcResult<Tag>;
       if (!result.success || !result.data) throw new Error(result.error ?? 'Failed to create tag');
       return result.data;
     },

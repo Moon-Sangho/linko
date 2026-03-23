@@ -14,7 +14,12 @@ export function Modal({ isOpen, onClose, title, children, footer, width }: Modal
   const style: CSSProperties = width ? { maxWidth: width } : {};
 
   return (
-    <Dialog.Root open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+    <Dialog.Root
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+    >
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-gray-950/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
         <Dialog.Content
@@ -28,11 +33,7 @@ export function Modal({ isOpen, onClose, title, children, footer, width }: Modal
             </Dialog.Title>
             {children}
           </div>
-          {footer && (
-            <div className="px-6 py-4 border-t border-gray-800">
-              {footer}
-            </div>
-          )}
+          {footer && <div className="px-6 py-4 border-t border-gray-800">{footer}</div>}
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

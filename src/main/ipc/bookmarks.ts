@@ -12,16 +12,13 @@ import type { BookmarkRepository } from '../db/repositories/bookmark-repository'
 import { fetchUrlMetadata } from '../services/url-fetcher';
 
 export function registerBookmarkHandlers(repo: BookmarkRepository): void {
-  ipcMain.handle(
-    IpcChannels.BOOKMARKS_GET_ALL,
-    (): IpcResult<Bookmark[]> => {
-      try {
-        return { success: true, data: repo.getAll() };
-      } catch (error) {
-        return { success: false, error: (error as Error).message };
-      }
-    },
-  );
+  ipcMain.handle(IpcChannels.BOOKMARKS_GET_ALL, (): IpcResult<Bookmark[]> => {
+    try {
+      return { success: true, data: repo.getAll() };
+    } catch (error) {
+      return { success: false, error: (error as Error).message };
+    }
+  });
 
   ipcMain.handle(
     IpcChannels.BOOKMARKS_SEARCH,
@@ -34,17 +31,14 @@ export function registerBookmarkHandlers(repo: BookmarkRepository): void {
     },
   );
 
-  ipcMain.handle(
-    IpcChannels.BOOKMARK_GET_BY_ID,
-    (_, id: number): IpcResult<Bookmark | null> => {
-      try {
-        if (!isValidId(id)) return { success: false, error: 'Invalid id' };
-        return { success: true, data: repo.getById(id) };
-      } catch (error) {
-        return { success: false, error: (error as Error).message };
-      }
-    },
-  );
+  ipcMain.handle(IpcChannels.BOOKMARK_GET_BY_ID, (_, id: number): IpcResult<Bookmark | null> => {
+    try {
+      if (!isValidId(id)) return { success: false, error: 'Invalid id' };
+      return { success: true, data: repo.getById(id) };
+    } catch (error) {
+      return { success: false, error: (error as Error).message };
+    }
+  });
 
   ipcMain.handle(
     IpcChannels.BOOKMARK_CREATE,
@@ -75,31 +69,25 @@ export function registerBookmarkHandlers(repo: BookmarkRepository): void {
     },
   );
 
-  ipcMain.handle(
-    IpcChannels.BOOKMARK_DELETE,
-    (_, id: number): IpcResult => {
-      try {
-        if (!isValidId(id)) return { success: false, error: 'Invalid id' };
-        repo.delete(id);
-        return { success: true };
-      } catch (error) {
-        return { success: false, error: (error as Error).message };
-      }
-    },
-  );
+  ipcMain.handle(IpcChannels.BOOKMARK_DELETE, (_, id: number): IpcResult => {
+    try {
+      if (!isValidId(id)) return { success: false, error: 'Invalid id' };
+      repo.delete(id);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: (error as Error).message };
+    }
+  });
 
-  ipcMain.handle(
-    IpcChannels.BOOKMARK_OPEN,
-    async (_, url: string): Promise<IpcResult> => {
-      try {
-        if (!isValidUrl(url)) return { success: false, error: 'Invalid URL' };
-        await shell.openExternal(url);
-        return { success: true };
-      } catch (error) {
-        return { success: false, error: (error as Error).message };
-      }
-    },
-  );
+  ipcMain.handle(IpcChannels.BOOKMARK_OPEN, async (_, url: string): Promise<IpcResult> => {
+    try {
+      if (!isValidUrl(url)) return { success: false, error: 'Invalid URL' };
+      await shell.openExternal(url);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: (error as Error).message };
+    }
+  });
 
   ipcMain.handle(
     IpcChannels.BOOKMARK_FETCH_METADATA,

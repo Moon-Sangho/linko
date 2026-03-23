@@ -37,7 +37,9 @@ function extractTitle(html: string): string | null {
   const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
   if (titleMatch?.[1]) return decodeHtmlEntities(titleMatch[1].trim());
 
-  const ogTitleMatch = html.match(/<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']+)["']/i);
+  const ogTitleMatch = html.match(
+    /<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']+)["']/i,
+  );
   if (ogTitleMatch?.[1]) return decodeHtmlEntities(ogTitleMatch[1].trim());
 
   return null;

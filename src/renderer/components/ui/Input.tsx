@@ -33,7 +33,8 @@ const inputVariants = cva(
 );
 
 export interface InputProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'>,
+  extends
+    Omit<InputHTMLAttributes<HTMLInputElement>, 'size'>,
     Pick<VariantProps<typeof inputVariants>, 'size'> {
   leftIcon?: ReactNode;
   error?: string;
@@ -72,7 +73,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         )}
       </div>
       {error && (
-        <p id={errorId} className="text-xs text-red-400">{error}</p>
+        <p id={errorId} className="text-xs text-red-400">
+          {error}
+        </p>
       )}
     </div>
   );

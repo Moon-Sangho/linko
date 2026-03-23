@@ -36,6 +36,8 @@ export function EditBookmarkModal({ isOpen, onClose, bookmarkId }: EditBookmarkM
       setIsDeleting(false);
       setDeleteError('');
     }
+    // form.prefill is stable (useCallback in useBookmarkForm); form object excluded intentionally
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, bookmark, form.prefill]);
 
   const handleSave = form.handleSubmit(async (data) => {

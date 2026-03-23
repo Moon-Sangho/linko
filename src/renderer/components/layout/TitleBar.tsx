@@ -13,7 +13,8 @@ export function TitleBar({ title = 'Linko' }: TitleBarProps) {
   const [version, setVersion] = useState<string | null>(null);
 
   useEffect(() => {
-    window.electron.invoke(IpcChannels.APP_GET_VERSION)
+    window.electron
+      .invoke(IpcChannels.APP_GET_VERSION)
       .then((r) => {
         const result = r as IpcResult<string>;
         if (result.success && result.data) setVersion(result.data);
@@ -34,9 +35,7 @@ export function TitleBar({ title = 'Linko' }: TitleBarProps) {
       {/* App title — centered */}
       <div className="flex-1 text-center flex items-center justify-center gap-1.5">
         <span className="text-sm font-semibold text-gray-300">{title}</span>
-        {version && (
-          <span className="text-xs text-gray-600">v{version}</span>
-        )}
+        {version && <span className="text-xs text-gray-600">v{version}</span>}
       </div>
 
       {/* Windows controls */}
@@ -59,7 +58,14 @@ export function TitleBar({ title = 'Linko' }: TitleBarProps) {
             className="w-10 h-10 flex items-center justify-center text-gray-400 hover:bg-gray-800 hover:text-gray-200 transition-colors"
             aria-label="Maximize"
           >
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1">
+            <svg
+              width="10"
+              height="10"
+              viewBox="0 0 10 10"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1"
+            >
               <rect x="0.5" y="0.5" width="9" height="9" />
             </svg>
           </button>
@@ -68,7 +74,14 @@ export function TitleBar({ title = 'Linko' }: TitleBarProps) {
             className="w-10 h-10 flex items-center justify-center text-gray-400 hover:bg-red-600 hover:text-white transition-colors"
             aria-label="Close"
           >
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.2">
+            <svg
+              width="10"
+              height="10"
+              viewBox="0 0 10 10"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.2"
+            >
               <line x1="0" y1="0" x2="10" y2="10" />
               <line x1="10" y1="0" x2="0" y2="10" />
             </svg>

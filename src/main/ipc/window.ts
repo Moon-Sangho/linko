@@ -11,7 +11,11 @@ export function registerWindowHandlers(): void {
   ipcMain.handle(IpcChannels.WINDOW_MAXIMIZE, (): IpcResult => {
     const win = BrowserWindow.getFocusedWindow();
     if (win) {
-      win.isMaximized() ? win.restore() : win.maximize();
+      if (win.isMaximized()) {
+        win.restore();
+      } else {
+        win.maximize();
+      }
     }
     return { success: true };
   });

@@ -7,8 +7,12 @@ export function useCreateBookmarkMutation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (input: CreateBookmarkInput) => {
-      const result = await window.electron.invoke(IpcChannels.BOOKMARK_CREATE, input) as IpcResult<Bookmark>;
-      if (!result.success || !result.data) throw new Error(result.error ?? 'Failed to create bookmark');
+      const result = (await window.electron.invoke(
+        IpcChannels.BOOKMARK_CREATE,
+        input,
+      )) as IpcResult<Bookmark>;
+      if (!result.success || !result.data)
+        throw new Error(result.error ?? 'Failed to create bookmark');
       return result.data;
     },
     onSuccess: () => {
