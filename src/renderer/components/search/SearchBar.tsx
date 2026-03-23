@@ -25,13 +25,7 @@ export function SearchBar() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search bookmarks…"
-          className="
-            w-full h-8 pl-8 pr-8 text-sm
-            bg-gray-800 border border-gray-700 rounded-md
-            text-gray-200 placeholder-gray-500
-            focus:outline-none focus:border-gray-500 focus:ring-1 focus:ring-blue-500/30
-            transition-colors duration-75
-          "
+          className="w-full h-8 pl-8 pr-8 text-sm bg-gray-800 border border-gray-700 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:border-gray-500 focus:ring-1 focus:ring-blue-500/30 transition-colors duration-75"
         />
         {searchQuery ? (
           <button

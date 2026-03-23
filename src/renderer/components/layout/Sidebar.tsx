@@ -57,24 +57,14 @@ export function Sidebar() {
         )}
         <button
           onClick={openAddModal}
-          className="
-            w-full flex items-center justify-center gap-2
-            h-8 text-sm font-medium
-            bg-blue-600 hover:bg-blue-500 text-white
-            rounded-md transition-colors duration-75
-          "
+          className="w-full flex items-center justify-center gap-2 h-8 text-sm font-medium bg-blue-600 hover:bg-blue-500 text-white rounded-md transition-colors duration-75"
         >
           <Plus size={14} strokeWidth={1.5} />
           Add Bookmark
         </button>
         <button
           onClick={handleImport}
-          className="
-            w-full flex items-center justify-center gap-2
-            h-7 text-xs font-medium
-            text-gray-400 hover:text-gray-200 hover:bg-gray-800
-            rounded-md transition-colors duration-75
-          "
+          className="w-full flex items-center justify-center gap-2 h-7 text-xs font-medium text-gray-400 hover:text-gray-200 hover:bg-gray-800 rounded-md transition-colors duration-75"
         >
           <Upload size={12} strokeWidth={1.5} />
           Import from browser…

@@ -1,40 +1,39 @@
 import { type HTMLAttributes } from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '@renderer/lib/cn';
 
-const variantClasses = {
-  default: 'bg-gray-800 text-white',
-  blue: 'bg-blue-500/20 text-blue-400',
-  green: 'bg-green-500/20 text-green-400',
-  red: 'bg-red-500/20 text-red-400',
-  gray: 'bg-gray-700 text-gray-400',
-};
+const badgeVariants = cva(
+  'inline-flex items-center gap-1 rounded-full font-sans font-medium',
+  {
+    variants: {
+      variant: {
+        default: 'bg-gray-800 text-white',
+        blue: 'bg-blue-500/20 text-blue-400',
+        green: 'bg-green-500/20 text-green-400',
+        red: 'bg-red-500/20 text-red-400',
+        gray: 'bg-gray-700 text-gray-400',
+      },
+      size: {
+        sm: 'px-1.5 py-0.5 text-xs',
+        md: 'px-2.5 py-1 text-sm',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+      size: 'sm',
+    },
+  },
+);
 
-const sizeClasses = {
-  sm: 'px-1.5 py-0.5 text-xs',
-  md: 'px-2.5 py-1 text-sm',
-};
-
-export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
-  variant?: 'default' | 'blue' | 'green' | 'red' | 'gray';
-  size?: 'sm' | 'md';
+export interface BadgeProps
+  extends HTMLAttributes<HTMLSpanElement>,
+    VariantProps<typeof badgeVariants> {
   onRemove?: () => void;
 }
 
-export function Badge({
-  variant = 'default',
-  size = 'sm',
-  onRemove,
-  children,
-  className = '',
-  ...props
-}: BadgeProps) {
+export function Badge({ variant, size, onRemove, children, className, ...props }: BadgeProps) {
   return (
-    <span
-      className={`
-        inline-flex items-center gap-1 rounded-full font-sans font-medium
-        ${variantClasses[variant]} ${sizeClasses[size]} ${className}
-      `.trim()}
-      {...props}
-    >
+    <span className={cn(badgeVariants({ variant, size }), className)} {...props}>
       {children}
       {onRemove && (
         <button

@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useBookmarksQuery } from '@renderer/hooks/queries/useBookmarksQuery';
 import { useTagsQuery } from '@renderer/hooks/queries/useTagsQuery';
 import { useUIStore } from '@renderer/store/useUIStore';
+import { cn } from '@renderer/lib/cn';
 import { TagBadge } from './TagBadge';
 
 export function TagFilter() {
@@ -26,19 +27,18 @@ export function TagFilter() {
       {/* All bookmarks row */}
       <button
         onClick={clearTags}
-        className={`
-          w-full flex items-center gap-1.5
-          text-xs px-2 py-1.5 rounded-sm text-left
-          transition-colors duration-75 cursor-pointer
-          border-l-2
-          ${allActive
+        className={cn(
+          'w-full flex items-center gap-1.5',
+          'text-xs px-2 py-1.5 rounded-sm text-left',
+          'transition-colors duration-75 cursor-pointer',
+          'border-l-2',
+          allActive
             ? 'border-blue-500 bg-gray-800 text-white'
-            : 'border-transparent text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'
-          }
-        `}
+            : 'border-transparent text-gray-400 hover:bg-gray-800/50 hover:text-gray-200',
+        )}
       >
         <span className="flex-1">All bookmarks</span>
-        <span className={`text-[10px] tabular-nums ${allActive ? 'text-gray-400' : 'text-gray-600'}`}>
+        <span className={cn('text-[10px] tabular-nums', allActive ? 'text-gray-400' : 'text-gray-600')}>
           {bookmarks.length}
         </span>
       </button>
