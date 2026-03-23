@@ -150,12 +150,13 @@ Linko is being developed almost entirely through **agentic engineering** — mul
 
 | Agent                | Responsibility                                        |
 | -------------------- | ----------------------------------------------------- |
-| `/agent-pm`          | Requirements, user stories, work scope                |
-| `/agent-designer`    | Design system, screen layouts, component specs        |
-| `/agent-dev-core`    | Main process, SQLite, IPC handlers                    |
-| `/agent-dev-ui`      | React renderer, components, TanStack Query hooks, Zustand store |
-| `/agent-dev-qa`      | Orchestrates 5 parallel QA sub-agents, aggregates results into a unified report |
-| `/agent-orchestrate` | Coordinates parallel agent work, resolves conflicts   |
+| `/agent-pm`                | Requirements, user stories, work scope                |
+| `/agent-designer`          | Design system, screen layouts, component specs        |
+| `/agent-dev-core`          | Main process, SQLite, IPC handlers                    |
+| `/agent-dev-ui`            | React renderer, components, TanStack Query hooks, Zustand store |
+| `/agent-dev-qa`            | Orchestrates 5 parallel QA sub-agents, aggregates results into a unified report |
+| `/agent-orchestrate`       | Coordinates parallel agent work, resolves conflicts   |
+| `/agent-test-code-expert`  | Writes, reviews, and improves test code (unit, integration, component) |
 
 ### Parallel Work with Conductor
 

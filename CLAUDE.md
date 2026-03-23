@@ -86,6 +86,7 @@ Specialized sub-agents invoked via `/agent-*` commands.
 | `dev-ui.md` | React renderer, Zustand stores, IPC calls |
 | `dev-qa.md` | QA orchestration across all sub-agents |
 | `orchestrate.md` | Coordinate parallel agents, integrate output |
+| `test-code-expert.md` | Write, review, and improve test code |
 
 ### Commands (`.claude/commands/`)
 Slash commands available in any conversation.
@@ -98,6 +99,7 @@ Slash commands available in any conversation.
 | `/agent-dev-ui` | Run the UI Dev agent |
 | `/agent-dev-qa` | Run all QA agents in parallel |
 | `/agent-orchestrate` | Coordinate all agents |
+| `/agent-test-code-expert` | Write, review, or improve test code |
 | `/code-review` | Review changed code against project conventions |
 | `/git-commit` | Stage and commit following git conventions |
 | `/git-create-pr` | Create a GitHub PR |
