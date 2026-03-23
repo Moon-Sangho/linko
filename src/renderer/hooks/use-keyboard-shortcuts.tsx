@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { overlay } from '@renderer/overlay/control';
-import { AddBookmarkModal } from '@renderer/components/bookmark/AddBookmarkModal';
-import { CommandPalette } from '@renderer/components/search/CommandPalette';
+import { AddBookmarkModal } from '@renderer/components/bookmark/add-bookmark-modal';
+import { CommandPalette } from '@renderer/components/search/command-palette';
 
 const isMac = window.electron.platform === 'darwin';
 

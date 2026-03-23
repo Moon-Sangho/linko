@@ -1,12 +1,12 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Check, ExternalLink, Pencil, Trash2 } from 'lucide-react';
 import type { Bookmark } from '@shared/types';
-import { useDeleteBookmarkMutation } from '@renderer/hooks/mutations/useDeleteBookmarkMutation';
-import { useOpenUrlMutation } from '@renderer/hooks/mutations/useOpenUrlMutation';
+import { useDeleteBookmarkMutation } from '@renderer/hooks/mutations/use-delete-bookmark-mutation';
+import { useOpenUrlMutation } from '@renderer/hooks/mutations/use-open-url-mutation';
 import { overlay } from '@renderer/overlay/control';
-import { EditBookmarkModal } from './EditBookmarkModal';
-import { Favicon } from '@renderer/components/ui/Favicon';
-import { Badge } from '@renderer/components/ui/Badge';
+import { EditBookmarkModal } from './edit-bookmark-modal';
+import { Favicon } from '@renderer/components/ui/favicon';
+import { Badge } from '@renderer/components/ui/badge';
 import { cn } from '@renderer/lib/cn';
 
 interface BookmarkItemProps {

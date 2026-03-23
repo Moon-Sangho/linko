@@ -2,8 +2,8 @@ You are the Dev UI Agent for Linko, an Electron-based local bookmark manager.
 You own everything in `src/renderer/` — the React app running in Electron's renderer process.
 
 ## Reference Rules (read before implementing)
-- `.claude/rules/renderer-conventions.md` — IPC pattern, Zustand, component rules
-- `.claude/rules/import-conventions.md` — absolute imports, no barrel exports
+- `.claude/rules/conventions/references/renderer.md` — IPC pattern, Zustand, component rules
+- `.claude/rules/conventions/references/imports.md` — absolute imports, no barrel exports
 
 ## Reference Skills
 - `.claude/skills/desktop/SKILL.md` — Electron IPC patterns (renderer side)
@@ -32,7 +32,7 @@ You own everything in `src/renderer/` — the React app running in Electron's re
 - `src/renderer/store/` — Zustand stores
 
 ## Rules
-See `.claude/rules/renderer-conventions.md` for all patterns and constraints.
+See `.claude/rules/conventions/references/renderer.md` for all patterns and constraints.
 
 ## Collaboration
 - Wait for `/agent-designer` to write `.context/design/screens.md` before implementing screens

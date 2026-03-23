@@ -1,7 +1,7 @@
 import { forwardRef, useId, type InputHTMLAttributes, type ReactNode } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@renderer/lib/cn';
-import { Spinner } from './Spinner';
+import { Spinner } from './spinner';
 
 const inputVariants = cva(
   'w-full rounded-md border bg-gray-900 font-sans text-white placeholder-gray-500 transition-colors duration-100 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1 focus:ring-offset-gray-950 disabled:opacity-50',

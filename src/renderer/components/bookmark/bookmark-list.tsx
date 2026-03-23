@@ -1,16 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Bookmark, SearchX } from 'lucide-react';
-import { useBookmarksQuery } from '@renderer/hooks/queries/useBookmarksQuery';
-import { useDeleteBulkBookmarksMutation } from '@renderer/hooks/mutations/useDeleteBulkBookmarksMutation';
-import { useUIStore } from '@renderer/store/useUIStore';
-import { useSearch } from '@renderer/hooks/useSearch';
+import { useBookmarksQuery } from '@renderer/hooks/queries/use-bookmarks-query';
+import { useDeleteBulkBookmarksMutation } from '@renderer/hooks/mutations/use-delete-bulk-bookmarks-mutation';
+import { useUIStore } from '@renderer/store/use-ui-store';
+import { useSearch } from '@renderer/hooks/use-search';
 import { overlay } from '@renderer/overlay/control';
-import { AddBookmarkModal } from './AddBookmarkModal';
-import { BookmarkItem } from './BookmarkItem';
-import { BulkActionBar } from './BulkActionBar';
-import { BulkDeleteModal } from './BulkDeleteModal';
-import { Spinner } from '@renderer/components/ui/Spinner';
-import { EmptyState } from '@renderer/components/ui/EmptyState';
+import { AddBookmarkModal } from './add-bookmark-modal';
+import { BookmarkItem } from './bookmark-item';
+import { BulkActionBar } from './bulk-action-bar';
+import { BulkDeleteModal } from './bulk-delete-modal';
+import { Spinner } from '@renderer/components/ui/spinner';
+import { EmptyState } from '@renderer/components/ui/empty-state';
 
 export function BookmarkList() {
   const { data: bookmarks = [], isLoading } = useBookmarksQuery();

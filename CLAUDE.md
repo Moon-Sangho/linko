@@ -67,13 +67,16 @@ The `.claude/` directory contains all agent configuration for this project.
 ### Rules (`.claude/rules/`)
 Always-on constraints applied to every agent and conversation.
 
+See [`conventions/index.md`](.claude/rules/conventions/index.md) for a full overview.
+
 | File | Scope |
 |------|-------|
-| `renderer-conventions.md` | IPC pattern, Zustand, component rules |
-| `main-conventions.md` | Repository pattern, IPC handler structure |
-| `import-conventions.md` | Absolute imports, no barrel exports |
-| `electron-security.md` | BrowserWindow settings, contextBridge rules |
-| `git-conventions.md` | Branch naming, commit message format |
+| `conventions/references/file-naming.md` | kebab-case filenames, `git mv` for renames |
+| `conventions/references/renderer.md` | IPC pattern, Zustand, component rules |
+| `conventions/references/main.md` | Repository pattern, IPC handler structure |
+| `conventions/references/imports.md` | Absolute imports, no barrel exports |
+| `conventions/references/electron-security.md` | BrowserWindow settings, contextBridge rules |
+| `conventions/references/git.md` | Branch naming, commit message format |
 
 ### Agents (`.claude/agents/`)
 Specialized sub-agents invoked via `/agent-*` commands.

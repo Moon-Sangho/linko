@@ -59,7 +59,7 @@ export const useBookmarkStore = create<BookmarkStore>((set) => ({
 ```
 
 Rules:
-- One store file per domain (`bookmarkStore.ts`, `tagStore.ts`)
+- One store file per domain (`bookmark-store.ts`, `tag-store.ts`)
 - Store files live in `src/renderer/store/`
 - Store shape must match `contracts.md` during parallel implementation
 

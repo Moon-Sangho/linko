@@ -70,7 +70,7 @@ export function registerNotificationHandlers(): void {
 ### 4. Call from Renderer (Zustand Store)
 
 ```typescript
-// src/renderer/store/useAppStore.ts
+// src/renderer/store/use-app-store.ts
 showNotification: async (title: string, body: string) => {
   const result = await window.electron.invoke(
     IpcChannels.NOTIFICATION_SHOW,

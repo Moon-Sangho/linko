@@ -77,7 +77,7 @@ function parseBrowserBookmarks(html: string): Partial<Bookmark>[] {
 ## Call from Renderer
 
 ```typescript
-// src/renderer/hooks/useFileSystem.ts
+// src/renderer/hooks/use-file-system.ts
 import { IpcChannels } from '../../../shared/ipc-channels';
 
 export function useFileSystem() {

@@ -58,26 +58,26 @@ Write `file-ownership.md` to the same triggering context folder as `contracts.md
 ```markdown
 ## Agent A — components
 OWNS:
-- src/renderer/components/BookmarkCard.tsx
-- src/renderer/components/TagBadge.tsx
-- src/renderer/components/EmptyState.tsx
+- src/renderer/components/bookmark/bookmark-card.tsx
+- src/renderer/components/tag/tag-badge.tsx
+- src/renderer/components/ui/empty-state.tsx
 MUST NOT TOUCH:
 - src/renderer/store/
 - src/renderer/hooks/
-- src/renderer/App.tsx
+- src/renderer/app.tsx
 
 ## Agent B — store + hooks
 OWNS:
-- src/renderer/store/bookmarkStore.ts
-- src/renderer/hooks/useSearch.ts
-- src/renderer/hooks/useBookmarks.ts
+- src/renderer/store/bookmark-store.ts
+- src/renderer/hooks/use-search.ts
+- src/renderer/hooks/use-bookmarks.ts
 MUST NOT TOUCH:
 - src/renderer/components/
-- src/renderer/App.tsx
+- src/renderer/app.tsx
 
 ## Agent C (Integration, runs last)
 OWNS:
-- src/renderer/App.tsx
+- src/renderer/app.tsx
 ```
 
 ### 1c. Rules for shared files
@@ -86,11 +86,11 @@ OWNS:
 |-----------|------|
 | `src/shared/types.ts` | Orchestrator writes once before parallel phase. Sub-agents read only. |
 | `src/shared/ipc-channels.ts` | Same as types.ts — read only during parallel phase |
-| `App.tsx` / root component | Only the Integration Agent writes this |
+| `app.tsx` / root component | Only the Integration Agent writes this |
 
 > **No barrel exports** — do not create `index.ts` re-export aggregators.
 > Import directly from the file that owns the export.
-> See `.claude/rules/import-conventions.md`.
+> See `.claude/rules/conventions/references/imports.md`.
 
 ---
 
@@ -117,7 +117,7 @@ You are implementing [FEATURE] for the [AGENT NAME] partition.
 - src/shared/ipc-channels.ts
 
 ## DO NOT TOUCH
-- src/renderer/App.tsx
+- src/renderer/app.tsx
 - src/renderer/components/index.ts
 - src/renderer/store/index.ts
 - Any file not listed in "Your Files"
@@ -138,7 +138,7 @@ One agent (Integration Agent) runs after all parallel work is done:
 
 1. Read all files produced by parallel agents
 2. Write barrel exports (`index.ts` files)
-3. Wire components into `App.tsx`
+3. Wire components into `app.tsx`
 4. Resolve any type mismatches
 5. Run `pnpm build` and fix errors
 

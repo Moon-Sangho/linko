@@ -1,5 +1,5 @@
-import { Modal } from '@renderer/components/ui/Modal';
-import { Spinner } from '@renderer/components/ui/Spinner';
+import { Modal } from '@renderer/components/ui/modal';
+import { Spinner } from '@renderer/components/ui/spinner';
 
 interface BulkDeleteModalProps {
   isOpen: boolean;

@@ -96,7 +96,7 @@ Review all TypeScript/React files changed in this branch using the `typescript-r
 Report per file. Omit sections with no findings.
 
 ```
-### src/renderer/components/BookmarkCard.tsx
+### src/renderer/components/bookmark/bookmark-card.tsx
 
 🚫 Critical
 - Line 42: `useEffect` sets `displayTitle` derived from `bookmark.title` — compute during render instead.

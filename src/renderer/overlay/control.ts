@@ -1,5 +1,5 @@
-import { useOverlayStore } from './overlayStore';
-import type { OverlayElement } from './overlayStore';
+import { useOverlayStore } from './overlay-store';
+import type { OverlayElement } from './overlay-store';
 
 /**
  * Imperative overlay API — open modals/dialogs from anywhere without
