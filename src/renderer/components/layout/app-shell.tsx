@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import { TitleBar } from './TitleBar';
-import { Sidebar } from './Sidebar';
+import { TitleBar } from './title-bar';
+import { Sidebar } from './sidebar';
 
 interface AppShellProps {
   children: ReactNode;

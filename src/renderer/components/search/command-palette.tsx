@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { Command } from 'cmdk';
 import { Search, ExternalLink, X } from 'lucide-react';
-import { useBookmarksQuery } from '@renderer/hooks/queries/useBookmarksQuery';
-import { useOpenUrlMutation } from '@renderer/hooks/mutations/useOpenUrlMutation';
+import { useBookmarksQuery } from '@renderer/hooks/queries/use-bookmarks-query';
+import { useOpenUrlMutation } from '@renderer/hooks/mutations/use-open-url-mutation';
 import type { Bookmark } from '@shared/types';
 
 interface CommandPaletteProps {

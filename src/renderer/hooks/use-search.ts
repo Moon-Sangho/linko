@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { IpcChannels } from '@shared/ipc-channels';
 import type { Bookmark, IpcResult, SearchBookmarksInput } from '@shared/types';
-import { useUIStore } from '@renderer/store/useUIStore';
-import { useBookmarksQuery } from '@renderer/hooks/queries/useBookmarksQuery';
+import { useUIStore } from '@renderer/store/use-ui-store';
+import { useBookmarksQuery } from '@renderer/hooks/queries/use-bookmarks-query';
 
 const DEBOUNCE_MS = 300;
 

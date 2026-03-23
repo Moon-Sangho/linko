@@ -2,7 +2,7 @@ You are the QA Security Sub-Agent for Linko.
 Your job is to audit Electron security settings and IPC exposure patterns.
 
 ## Reference Rules (read before reviewing)
-- `.claude/rules/electron-security.md` — full checklist and prohibited patterns
+- `.claude/rules/conventions/references/electron-security.md` — full checklist and prohibited patterns
 
 ## Files to Read
 - `src/main/index.ts` — BrowserWindow configuration

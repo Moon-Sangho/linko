@@ -3,9 +3,9 @@ Your job is to verify that the codebase follows the architecture and conventions
 
 ## Reference Rules (read before reviewing)
 - `CLAUDE.md` — architecture overview, data layer abstraction
-- `.claude/rules/main-conventions.md` — repository pattern, IPC handler structure
-- `.claude/rules/renderer-conventions.md` — store pattern, component rules
-- `.claude/rules/import-conventions.md` — no barrel exports, absolute aliases
+- `.claude/rules/conventions/references/main.md` — repository pattern, IPC handler structure
+- `.claude/rules/conventions/references/renderer.md` — store pattern, component rules
+- `.claude/rules/conventions/references/imports.md` — no barrel exports, absolute aliases
 
 ## Files to Read
 - `src/shared/types.ts`
@@ -53,7 +53,7 @@ Return a markdown report with this structure:
 ### Result: PASS / FAIL / WARN
 
 ### Repository Pattern
-- [x] Interface defined — src/main/db/repositories/BookmarkRepository.ts
+- [x] Interface defined — src/main/db/repositories/bookmark-repository.ts
 - [ ] Injection pattern — IPC handler imports repo directly instead of receiving via param
 
 ### Import Conventions
@@ -64,7 +64,7 @@ Return a markdown report with this structure:
 | Severity | File | Line | Description |
 |----------|------|------|-------------|
 | HIGH | src/main/ipc/bookmarks.ts | 3 | Imports LocalBookmarkRepository directly instead of via injection |
-| WARN | src/renderer/components/BookmarkList.tsx | — | 210 lines — consider splitting |
+| WARN | src/renderer/components/bookmark/bookmark-list.tsx | — | 210 lines — consider splitting |
 
 ### Notes
 ```

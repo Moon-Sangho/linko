@@ -1,11 +1,11 @@
 import { useCallback, useState } from 'react';
 import { Plus, Upload } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
-import { SearchBar } from '@renderer/components/search/SearchBar';
-import { TagFilter } from '@renderer/components/tag/TagFilter';
+import { SearchBar } from '@renderer/components/search/search-bar';
+import { TagFilter } from '@renderer/components/tag/tag-filter';
 import { overlay } from '@renderer/overlay/control';
-import { AddBookmarkModal } from '@renderer/components/bookmark/AddBookmarkModal';
-import { queryKeys } from '@renderer/lib/queryKeys';
+import { AddBookmarkModal } from '@renderer/components/bookmark/add-bookmark-modal';
+import { queryKeys } from '@renderer/lib/query-keys';
 import { IpcChannels } from '@shared/ipc-channels';
 import type { ImportSummary, IpcResult } from '@shared/types';
 

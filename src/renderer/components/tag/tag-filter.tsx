@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
-import { useBookmarksQuery } from '@renderer/hooks/queries/useBookmarksQuery';
-import { useTagsQuery } from '@renderer/hooks/queries/useTagsQuery';
-import { useUIStore } from '@renderer/store/useUIStore';
+import { useBookmarksQuery } from '@renderer/hooks/queries/use-bookmarks-query';
+import { useTagsQuery } from '@renderer/hooks/queries/use-tags-query';
+import { useUIStore } from '@renderer/store/use-ui-store';
 import { cn } from '@renderer/lib/cn';
-import { TagBadge } from './TagBadge';
+import { TagBadge } from './tag-badge';
 
 export function TagFilter() {
   const { data: tags = [] } = useTagsQuery();

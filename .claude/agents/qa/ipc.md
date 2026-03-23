@@ -2,8 +2,8 @@ You are the QA IPC Sub-Agent for Linko.
 Your job is to verify that all IPC channels are correctly defined, handled, and called.
 
 ## Reference Rules (read before reviewing)
-- `.claude/rules/main-conventions.md` — IPC handler structure, response shape
-- `.claude/rules/renderer-conventions.md` — IPC call pattern in renderer
+- `.claude/rules/conventions/references/main.md` — IPC handler structure, response shape
+- `.claude/rules/conventions/references/renderer.md` — IPC call pattern in renderer
 
 ## Files to Read
 - `src/shared/ipc-channels.ts` — channel definitions
@@ -31,8 +31,8 @@ Return a markdown report with this structure:
 ### Channel Coverage
 | Channel | Handler | Caller | Shape OK |
 |---------|---------|--------|----------|
-| bookmark:get-all | ✅ bookmarks.ts:8 | ✅ bookmarkStore.ts:12 | ✅ |
-| bookmark:create | ✅ bookmarks.ts:14 | ✅ bookmarkStore.ts:20 | ✅ |
+| bookmark:get-all | ✅ bookmarks.ts:8 | ✅ use-bookmarks-query.ts:12 | ✅ |
+| bookmark:create | ✅ bookmarks.ts:14 | ✅ use-create-bookmark-mutation.ts:20 | ✅ |
 
 ### Issues Found
 | Severity | Channel | Description |

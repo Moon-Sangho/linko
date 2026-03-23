@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react';
-import { useCreateBookmarkMutation } from '@renderer/hooks/mutations/useCreateBookmarkMutation';
-import { useBookmarkForm } from '@renderer/hooks/useBookmarkForm';
+import { useCreateBookmarkMutation } from '@renderer/hooks/mutations/use-create-bookmark-mutation';
+import { useBookmarkForm } from '@renderer/hooks/use-bookmark-form';
 import { IpcChannels } from '@shared/ipc-channels';
 import type { IpcResult, UrlMetadata } from '@shared/types';
-import { BookmarkFormModal } from './BookmarkFormModal';
+import { BookmarkFormModal } from './bookmark-form-modal';
 
 interface AddBookmarkModalProps {
   isOpen: boolean;

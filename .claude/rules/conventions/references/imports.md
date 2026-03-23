@@ -7,13 +7,13 @@ Do **not** create `index.ts` barrel files (re-export aggregators).
 ```typescript
 // ❌ Bad — barrel export (blocks tree-shaking)
 // src/renderer/components/index.ts
-export { BookmarkCard } from './BookmarkCard'
-export { TagBadge } from './TagBadge'
-export { SearchBar } from './SearchBar'
+export { BookmarkCard } from './bookmark-card'
+export { TagBadge } from './tag-badge'
+export { SearchBar } from './search-bar'
 
 // ✅ Good — direct import with absolute alias
-import { BookmarkCard } from '@renderer/components/BookmarkCard'
-import { TagBadge } from '@renderer/components/TagBadge'
+import { BookmarkCard } from '@renderer/components/bookmark/bookmark-card'
+import { TagBadge } from '@renderer/components/tag/tag-badge'
 ```
 
 **Why**: Bundlers cannot tree-shake through barrel re-exports reliably.
@@ -39,17 +39,17 @@ Path aliases are configured in `tsconfig.json`:
 
 ```typescript
 // ❌ Bad — relative path crossing directory boundaries
-import { useBookmarkStore } from '../../store/bookmarkStore'
+import { useUIStore } from '../../store/use-ui-store'
 import type { Bookmark } from '../../../shared/types'
 
 // ✅ Good — absolute alias
-import { useBookmarkStore } from '@renderer/store/bookmarkStore'
+import { useUIStore } from '@renderer/store/use-ui-store'
 import type { Bookmark } from '@shared/types'
 import { IpcChannels } from '@shared/ipc-channels'
 ```
 
 **Rule of thumb**:
-- Same directory → relative (`./BookmarkCard`)
+- Same directory → relative (`./bookmark-card`)
 - Different directory → absolute alias (`@renderer/...`, `@shared/...`)
 
 ---
@@ -60,11 +60,11 @@ Always import from the exact file that owns the export.
 
 ```typescript
 // ❌ Bad — barrel or ambiguous path
-import { useBookmarkStore } from '@renderer/store'
+import { useUIStore } from '@renderer/store'
 import { Bookmark } from '@shared'
 
 // ✅ Good — exact file
-import { useBookmarkStore } from '@renderer/store/bookmarkStore'
+import { useUIStore } from '@renderer/store/use-ui-store'
 import type { Bookmark } from '@shared/types'
 ```
 
@@ -87,8 +87,8 @@ import { IpcChannels } from '@shared/ipc-channels'
 
 | Pattern | Allowed |
 |---------|---------|
-| `import X from './SiblingFile'` | ✅ same-dir relative |
-| `import X from '@renderer/components/BookmarkCard'` | ✅ absolute alias |
+| `import X from './sibling-file'` | ✅ same-dir relative |
+| `import X from '@renderer/components/bookmark/bookmark-card'` | ✅ absolute alias |
 | `import X from '@shared/types'` | ✅ absolute alias |
 | `import X from '../../shared/types'` | ❌ cross-dir relative |
 | `import X from '@renderer/components/index'` | ❌ barrel |

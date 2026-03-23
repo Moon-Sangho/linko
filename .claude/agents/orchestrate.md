@@ -8,10 +8,10 @@ then review and merge their results.
 - `.claude/skills/parallel-agents/SKILL.md` — contract-first parallel coordination
 
 ### Rules to Enforce During Review (Phase 3)
-- `.claude/rules/import-conventions.md` — absolute imports, no barrel exports
-- `.claude/rules/renderer-conventions.md` — no Node in renderer, IPC call pattern, Zustand pattern
-- `.claude/rules/main-conventions.md` — repository pattern, IPC handler structure, channel naming
-- `.claude/rules/electron-security.md` — BrowserWindow security settings, prohibited patterns
+- `.claude/rules/conventions/references/imports.md` — absolute imports, no barrel exports
+- `.claude/rules/conventions/references/renderer.md` — no Node in renderer, IPC call pattern, Zustand pattern
+- `.claude/rules/conventions/references/main.md` — repository pattern, IPC handler structure, channel naming
+- `.claude/rules/conventions/references/electron-security.md` — BrowserWindow security settings, prohibited patterns
 
 ## Input Files (read these first)
 - `CLAUDE.md` — architecture overview
@@ -32,7 +32,7 @@ then review and merge their results.
 Phase 1 (you, sequential) → Freeze contracts + write task cards
 Phase 2 (sub-agents, parallel) → Implement within file boundaries
 Phase 3 (you, sequential) → Review each agent's output
-Phase 4 (you, sequential) → Fix violations + integrate into App.tsx
+Phase 4 (you, sequential) → Fix violations + integrate into app.tsx
 ```
 
 ---
@@ -110,7 +110,7 @@ For each file, check:
 - [ ] No extra props or renamed fields introduced unilaterally
 - [ ] Store shape matches contract (no added/removed keys)
 
-### 3b. Import convention compliance (`.claude/rules/import-conventions.md`)
+### 3b. Import convention compliance (`.claude/rules/conventions/references/imports.md`)
 - [ ] No cross-directory relative imports (e.g. `../../store/bookmarkStore`)
   → must use `@renderer/store/bookmarkStore`
 - [ ] No barrel imports (e.g. `@renderer/components`)
@@ -129,8 +129,8 @@ After completing the review, produce a report:
 
 ### Agent A — components
 ✅ Contract: OK
-⚠️ Import: BookmarkCard.tsx line 3 uses relative cross-dir import
-   → fix: import from '@renderer/store/bookmarkStore'
+⚠️ Import: bookmark-card.tsx line 3 uses relative cross-dir import
+   → fix: import from '@renderer/store/use-ui-store'
 ✅ Boundary: OK
 
 ### Agent B — store/hooks
@@ -154,8 +154,8 @@ Priority order:
 2. Import violations (breaks build)
 3. Boundary violations (audit only — note but do not revert if output is correct)
 
-### Step 7 — Write App.tsx integration
-Wire all components into `src/renderer/App.tsx`:
+### Step 7 — Write app.tsx integration
+Wire all components into `src/renderer/app.tsx`:
 - Import directly from each source file (no barrel index.ts)
 - Use `@renderer/...` aliases for all imports
 - Follow the screen layout in `.context/design/screens.md`
@@ -182,7 +182,7 @@ Output completion summary:
 ## Integration Complete
 
 ### Files produced
-- [list all files created by sub-agents + App.tsx]
+- [list all files created by sub-agents + app.tsx]
 
 ### Violations fixed
 - [list each fix applied]
@@ -204,7 +204,7 @@ If **not** triggered by QA, skip the copy and output a standard completion summa
 ## Rules
 - You write contracts.md and file-ownership.md — no one else
 - You NEVER implement components yourself in Phase 1
-- You DO fix violations and write App.tsx in Phase 4
+- You DO fix violations and write app.tsx in Phase 4
 - If a partition boundary is unclear, make it explicit before proceeding
 - Shared files (types.ts, ipc-channels.ts) are frozen after Step 1
 

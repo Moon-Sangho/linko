@@ -1,13 +1,13 @@
 import { useCallback, useState } from 'react';
 import type { ReactNode, RefObject } from 'react';
 import { AlertTriangle } from 'lucide-react';
-import { useTagsQuery } from '@renderer/hooks/queries/useTagsQuery';
-import { useCreateTagMutation } from '@renderer/hooks/mutations/useCreateTagMutation';
-import type { BookmarkFormHandle } from '@renderer/hooks/useBookmarkForm';
-import { Modal } from '@renderer/components/ui/Modal';
-import { Input } from '@renderer/components/ui/Input';
-import { Spinner } from '@renderer/components/ui/Spinner';
-import { TagCheckboxList } from '@renderer/components/ui/TagCheckboxList';
+import { useTagsQuery } from '@renderer/hooks/queries/use-tags-query';
+import { useCreateTagMutation } from '@renderer/hooks/mutations/use-create-tag-mutation';
+import type { BookmarkFormHandle } from '@renderer/hooks/use-bookmark-form';
+import { Modal } from '@renderer/components/ui/modal';
+import { Input } from '@renderer/components/ui/input';
+import { Spinner } from '@renderer/components/ui/spinner';
+import { TagCheckboxList } from '@renderer/components/ui/tag-checkbox-list';
 
 interface BookmarkFormModalProps {
   isOpen: boolean;

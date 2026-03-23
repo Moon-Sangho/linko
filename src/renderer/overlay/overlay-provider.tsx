@@ -1,4 +1,4 @@
-import { useOverlayStore } from './overlayStore';
+import { useOverlayStore } from './overlay-store';
 
 /**
  * Mount once in App.tsx. Renders all active overlays from the overlay store.

@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useBookmarksQuery } from '@renderer/hooks/queries/useBookmarksQuery';
-import { useUpdateBookmarkMutation } from '@renderer/hooks/mutations/useUpdateBookmarkMutation';
-import { useDeleteBookmarkMutation } from '@renderer/hooks/mutations/useDeleteBookmarkMutation';
-import { useBookmarkForm } from '@renderer/hooks/useBookmarkForm';
-import { Spinner } from '@renderer/components/ui/Spinner';
-import { BookmarkFormModal } from './BookmarkFormModal';
+import { useBookmarksQuery } from '@renderer/hooks/queries/use-bookmarks-query';
+import { useUpdateBookmarkMutation } from '@renderer/hooks/mutations/use-update-bookmark-mutation';
+import { useDeleteBookmarkMutation } from '@renderer/hooks/mutations/use-delete-bookmark-mutation';
+import { useBookmarkForm } from '@renderer/hooks/use-bookmark-form';
+import { Spinner } from '@renderer/components/ui/spinner';
+import { BookmarkFormModal } from './bookmark-form-modal';
 
 interface EditBookmarkModalProps {
   isOpen: boolean;

@@ -9,7 +9,7 @@ Stages and commits changes following the project's git conventions.
 
 ## Reference
 
-Full conventions: `.claude/rules/git-conventions.md`
+Full conventions: `.claude/rules/conventions/references/git.md`
 
 ## Commit Message Format
 

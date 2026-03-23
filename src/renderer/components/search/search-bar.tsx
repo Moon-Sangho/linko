@@ -1,7 +1,7 @@
 import { Search, X } from 'lucide-react';
-import { useUIStore } from '@renderer/store/useUIStore';
+import { useUIStore } from '@renderer/store/use-ui-store';
 import { overlay } from '@renderer/overlay/control';
-import { CommandPalette } from '@renderer/components/search/CommandPalette';
+import { CommandPalette } from '@renderer/components/search/command-palette';
 
 export function SearchBar() {
   const { searchQuery, setSearchQuery } = useUIStore();

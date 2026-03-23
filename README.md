@@ -217,7 +217,7 @@ Calling `/git-create-pr` in any workspace triggers the following sequence automa
    │     ## Summary, ## Changes, ## Checklist
    ├── No unchecked items — body must not contain "- [ ]"
    ├── Security review — diff is scanned against all rules in .claude/rules/
-   │     (electron-security, renderer-conventions, main-conventions, etc.)
+   │     (electron-security, renderer, main, imports, etc.)
    └── Related issues — gh issue list is checked; Closes #<n> added if relevant
 
 4. Push branch
@@ -228,7 +228,7 @@ Calling `/git-create-pr` in any workspace triggers the following sequence automa
        and pre-checked checklist
 ```
 
-**PR title format** follows [git-conventions.md](.claude/rules/git-conventions.md):
+**PR title format** follows [git.md](.claude/rules/conventions/references/git.md):
 
 ```
 <type>(<scope>): <summary>

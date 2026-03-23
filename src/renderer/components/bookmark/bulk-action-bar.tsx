@@ -1,5 +1,5 @@
 import { Check, Minus } from 'lucide-react';
-import { Spinner } from '@renderer/components/ui/Spinner';
+import { Spinner } from '@renderer/components/ui/spinner';
 
 interface BulkActionBarProps {
   selectedCount: number;
