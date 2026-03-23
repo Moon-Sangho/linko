@@ -8,9 +8,11 @@ export function useDeleteBulkBookmarksMutation() {
   return useMutation({
     mutationFn: async (ids: number[]) => {
       const results = await Promise.all(
-        ids.map(id => window.electron.invoke(IpcChannels.BOOKMARK_DELETE, id) as Promise<IpcResult>),
+        ids.map(
+          (id) => window.electron.invoke(IpcChannels.BOOKMARK_DELETE, id) as Promise<IpcResult>,
+        ),
       );
-      const failed = results.filter(r => !r.success);
+      const failed = results.filter((r) => !r.success);
       if (failed.length > 0) throw new Error('Failed to delete some bookmarks');
     },
     onSettled: () => {

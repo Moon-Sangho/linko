@@ -6,27 +6,24 @@ import { importFromHtmlFile } from '../services/importer';
 import fs from 'fs/promises';
 
 export function registerFileSystemHandlers(bookmarkRepo: BookmarkRepository): void {
-  ipcMain.handle(
-    IpcChannels.FS_IMPORT_BOOKMARKS,
-    async (): Promise<IpcResult<ImportSummary>> => {
-      const { canceled, filePaths } = await dialog.showOpenDialog({
-        title: 'Import Bookmarks',
-        filters: [{ name: 'HTML Bookmark File', extensions: ['html', 'htm'] }],
-        properties: ['openFile'],
-      });
+  ipcMain.handle(IpcChannels.FS_IMPORT_BOOKMARKS, async (): Promise<IpcResult<ImportSummary>> => {
+    const { canceled, filePaths } = await dialog.showOpenDialog({
+      title: 'Import Bookmarks',
+      filters: [{ name: 'HTML Bookmark File', extensions: ['html', 'htm'] }],
+      properties: ['openFile'],
+    });
 
-      if (canceled || filePaths.length === 0) {
-        return { success: false, error: 'No file selected' };
-      }
+    if (canceled || filePaths.length === 0) {
+      return { success: false, error: 'No file selected' };
+    }
 
-      try {
-        const summary = await importFromHtmlFile(filePaths[0], bookmarkRepo);
-        return { success: true, data: summary };
-      } catch (error) {
-        return { success: false, error: (error as Error).message };
-      }
-    },
-  );
+    try {
+      const summary = await importFromHtmlFile(filePaths[0], bookmarkRepo);
+      return { success: true, data: summary };
+    } catch (error) {
+      return { success: false, error: (error as Error).message };
+    }
+  });
 
   ipcMain.handle(
     IpcChannels.FS_EXPORT_BOOKMARKS,

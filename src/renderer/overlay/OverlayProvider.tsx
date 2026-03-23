@@ -11,9 +11,7 @@ export function OverlayProvider() {
   return (
     <>
       {overlays.map(({ id, element, isOpen }) => (
-        <div key={id}>
-          {element({ isOpen, close: () => close(id) })}
-        </div>
+        <div key={id}>{element({ isOpen, close: () => close(id) })}</div>
       ))}
     </>
   );

@@ -32,9 +32,7 @@ export function useKeyboardShortcuts() {
 
       if (modifier && e.key === 'n') {
         e.preventDefault();
-        overlay.open(({ isOpen, close }) => (
-          <AddBookmarkModal isOpen={isOpen} onClose={close} />
-        ));
+        overlay.open(({ isOpen, close }) => <AddBookmarkModal isOpen={isOpen} onClose={close} />);
       }
     };
 

@@ -33,9 +33,7 @@ export const useOverlayStore = create<OverlayStore>((set) => ({
   close: (id) => {
     // Mark closed first so Radix Dialog can play the exit animation
     set((state) => ({
-      overlays: state.overlays.map((o) =>
-        o.id === id ? { ...o, isOpen: false } : o,
-      ),
+      overlays: state.overlays.map((o) => (o.id === id ? { ...o, isOpen: false } : o)),
     }));
     setTimeout(() => {
       set((state) => ({

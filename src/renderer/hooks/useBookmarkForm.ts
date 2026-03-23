@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -165,15 +165,20 @@ export function useBookmarkForm() {
   }
 
   /** Pre-fills form for edit mode and cancels in-flight async calls. */
-  function prefill(data: { url: string; title: string; notes: string; tagIds: number[] }) {
-    sessionRef.current += 1;
-    titleAutoFilledRef.current = false;
-    rhf.reset({ url: data.url, title: data.title, notes: data.notes });
-    setSelectedTagIds(data.tagIds);
-    setIsFetchingMeta(false);
-    setIsDuplicate(false);
-    setSuggestedUrl('');
-  }
+  const prefill = useCallback(
+    (data: { url: string; title: string; notes: string; tagIds: number[] }) => {
+      sessionRef.current += 1;
+      titleAutoFilledRef.current = false;
+      rhf.reset({ url: data.url, title: data.title, notes: data.notes });
+      setSelectedTagIds(data.tagIds);
+      setIsFetchingMeta(false);
+      setIsDuplicate(false);
+      setSuggestedUrl('');
+    },
+    // rhf.reset is stable (react-hook-form guarantee); setters are stable
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
 
   /** Cancels any in-flight async operations (blur-triggered fetch). */
   function cancel() {
@@ -214,3 +219,5 @@ export function useBookmarkForm() {
     cancel,
   };
 }
+
+export type BookmarkFormHandle = ReturnType<typeof useBookmarkForm>;

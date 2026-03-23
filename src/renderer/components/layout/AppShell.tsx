@@ -12,9 +12,7 @@ export function AppShell({ children }: AppShellProps) {
       <TitleBar />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
-        <main className="flex-1 flex flex-col overflow-hidden">
-          {children}
-        </main>
+        <main className="flex-1 flex flex-col overflow-hidden">{children}</main>
       </div>
     </div>
   );

@@ -26,8 +26,8 @@ export function BookmarkItem({
   onClick,
   onCheckToggle,
 }: BookmarkItemProps) {
-  const openUrlMutation = useOpenUrlMutation();
-  const deleteMutation = useDeleteBookmarkMutation();
+  const { mutate: openUrl } = useOpenUrlMutation();
+  const { mutateAsync: deleteBookmark } = useDeleteBookmarkMutation();
 
   const [deleteConfirming, setDeleteConfirming] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -49,15 +49,15 @@ export function BookmarkItem({
   const extraTagCount = bookmark.tags.length - MAX_VISIBLE_TAGS;
 
   const handleDoubleClick = useCallback(() => {
-    openUrlMutation.mutate(bookmark.url);
-  }, [openUrlMutation, bookmark.url]);
+    openUrl(bookmark.url);
+  }, [openUrl, bookmark.url]);
 
   const handleOpenClick = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      openUrlMutation.mutate(bookmark.url);
+      openUrl(bookmark.url);
     },
-    [openUrlMutation, bookmark.url],
+    [openUrl, bookmark.url],
   );
 
   const handleEditClick = useCallback(
@@ -82,17 +82,20 @@ export function BookmarkItem({
     setDeleteError('');
   }, []);
 
-  const handleDeleteConfirm = useCallback(async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setDeleting(true);
-    setDeleteError('');
-    try {
-      await deleteMutation.mutateAsync(bookmark.id);
-    } catch {
-      setDeleting(false);
-      setDeleteError('Failed');
-    }
-  }, [deleteMutation, bookmark.id]);
+  const handleDeleteConfirm = useCallback(
+    async (e: React.MouseEvent) => {
+      e.stopPropagation();
+      setDeleting(true);
+      setDeleteError('');
+      try {
+        await deleteBookmark(bookmark.id);
+      } catch {
+        setDeleting(false);
+        setDeleteError('Failed');
+      }
+    },
+    [deleteBookmark, bookmark.id],
+  );
 
   const handleCheckToggle = useCallback(
     (e: React.MouseEvent) => {
@@ -113,8 +116,8 @@ export function BookmarkItem({
         isChecked
           ? 'bg-[var(--color-accent-subtle)]'
           : isSelected
-          ? 'bg-[var(--color-bg-elevated)]'
-          : 'hover:bg-[var(--color-bg-elevated)]',
+            ? 'bg-[var(--color-bg-elevated)]'
+            : 'hover:bg-[var(--color-bg-elevated)]',
       )}
       onClick={onClick}
       onDoubleClick={handleDoubleClick}
@@ -173,50 +176,54 @@ export function BookmarkItem({
       )}
 
       {/* Actions — hidden in selection mode */}
-      {!isSelectionMode && (deleteConfirming ? (
-        <div className="flex-shrink-0 flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-          {deleteError && <span className="text-xs text-red-400">{deleteError}</span>}
-          <span className="text-xs text-gray-400">Delete?</span>
-          <button
-            onClick={handleDeleteCancel}
-            disabled={deleting}
-            className="px-2 py-1 text-xs text-gray-400 hover:text-white transition-colors disabled:opacity-50"
+      {!isSelectionMode &&
+        (deleteConfirming ? (
+          <div
+            className="flex-shrink-0 flex items-center gap-2"
+            onClick={(e) => e.stopPropagation()}
           >
-            Cancel
-          </button>
-          <button
-            onClick={handleDeleteConfirm}
-            disabled={deleting}
-            className="px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-500 transition-colors disabled:opacity-50"
-          >
-            {deleting ? '…' : 'Delete'}
-          </button>
-        </div>
-      ) : (
-        <div className="flex-shrink-0 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-[80ms]">
-          <button
-            onClick={handleOpenClick}
-            className="p-1.5 rounded text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-overlay)] transition-colors"
-            title="Open in browser"
-          >
-            <ExternalLink size={14} strokeWidth={1.5} />
-          </button>
-          <button
-            onClick={handleEditClick}
-            className="p-1.5 rounded text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-overlay)] transition-colors"
-            title="Edit"
-          >
-            <Pencil size={14} strokeWidth={1.5} />
-          </button>
-          <button
-            onClick={handleDeleteClick}
-            className="p-1.5 rounded text-[var(--color-text-secondary)] hover:text-red-400 hover:bg-[var(--color-bg-overlay)] transition-colors"
-            title="Delete"
-          >
-            <Trash2 size={14} strokeWidth={1.5} />
-          </button>
-        </div>
-      ))}
+            {deleteError && <span className="text-xs text-red-400">{deleteError}</span>}
+            <span className="text-xs text-gray-400">Delete?</span>
+            <button
+              onClick={handleDeleteCancel}
+              disabled={deleting}
+              className="px-2 py-1 text-xs text-gray-400 hover:text-white transition-colors disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDeleteConfirm}
+              disabled={deleting}
+              className="px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-500 transition-colors disabled:opacity-50"
+            >
+              {deleting ? '…' : 'Delete'}
+            </button>
+          </div>
+        ) : (
+          <div className="flex-shrink-0 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-[80ms]">
+            <button
+              onClick={handleOpenClick}
+              className="p-1.5 rounded text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-overlay)] transition-colors"
+              title="Open in browser"
+            >
+              <ExternalLink size={14} strokeWidth={1.5} />
+            </button>
+            <button
+              onClick={handleEditClick}
+              className="p-1.5 rounded text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-overlay)] transition-colors"
+              title="Edit"
+            >
+              <Pencil size={14} strokeWidth={1.5} />
+            </button>
+            <button
+              onClick={handleDeleteClick}
+              className="p-1.5 rounded text-[var(--color-text-secondary)] hover:text-red-400 hover:bg-[var(--color-bg-overlay)] transition-colors"
+              title="Delete"
+            >
+              <Trash2 size={14} strokeWidth={1.5} />
+            </button>
+          </div>
+        ))}
     </div>
   );
 }

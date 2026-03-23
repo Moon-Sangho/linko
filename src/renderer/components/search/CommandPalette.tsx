@@ -32,10 +32,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-start justify-center pt-[20vh]"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-[20vh]" onClick={onClose}>
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
 
@@ -96,7 +93,11 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                     <p className="truncate text-xs text-gray-500">{bookmark.url}</p>
                   </div>
 
-                  <ExternalLink size={12} className="text-gray-600 flex-shrink-0" strokeWidth={1.5} />
+                  <ExternalLink
+                    size={12}
+                    className="text-gray-600 flex-shrink-0"
+                    strokeWidth={1.5}
+                  />
                 </Command.Item>
               ))}
             </Command.Group>

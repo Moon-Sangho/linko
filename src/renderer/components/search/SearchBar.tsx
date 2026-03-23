@@ -7,9 +7,7 @@ export function SearchBar() {
   const { searchQuery, setSearchQuery } = useUIStore();
 
   const openCommandPalette = () => {
-    overlay.open(({ isOpen, close }) => (
-      <CommandPalette isOpen={isOpen} onClose={close} />
-    ));
+    overlay.open(({ isOpen, close }) => <CommandPalette isOpen={isOpen} onClose={close} />);
   };
 
   return (

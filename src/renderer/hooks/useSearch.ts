@@ -31,7 +31,10 @@ export function useSearch() {
         query: query.trim() || undefined,
         tagIds: tagIds.length > 0 ? tagIds : undefined,
       };
-      const result = await window.electron.invoke(IpcChannels.BOOKMARKS_SEARCH, input) as IpcResult<Bookmark[]>;
+      const result = (await window.electron.invoke(
+        IpcChannels.BOOKMARKS_SEARCH,
+        input,
+      )) as IpcResult<Bookmark[]>;
       // Discard if a newer request has already been dispatched
       if (requestId !== requestIdRef.current) return;
       if (result.success && result.data) {

@@ -25,7 +25,9 @@ export function TagBadge({ tag, isActive, onClick, count }: TagBadgeProps) {
       <span className={cn('select-none', isActive ? 'text-blue-400' : 'text-gray-600')}>#</span>
       <span className="flex-1 truncate">{tag.name}</span>
       {count !== undefined && (
-        <span className={cn('text-[10px] tabular-nums', isActive ? 'text-gray-400' : 'text-gray-600')}>
+        <span
+          className={cn('text-[10px] tabular-nums', isActive ? 'text-gray-400' : 'text-gray-600')}
+        >
           {count}
         </span>
       )}

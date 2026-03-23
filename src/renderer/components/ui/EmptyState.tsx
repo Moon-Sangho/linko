@@ -23,9 +23,7 @@ export function EmptyState({ icon, title, description, action }: EmptyStateProps
       )}
       <div className="flex flex-col gap-1">
         <p className="font-sans text-sm font-medium text-white">{title}</p>
-        {description && (
-          <p className="font-sans text-sm text-gray-400">{description}</p>
-        )}
+        {description && <p className="font-sans text-sm text-gray-400">{description}</p>}
       </div>
       {action && (
         <div className="mt-1">
@@ -35,7 +33,9 @@ export function EmptyState({ icon, title, description, action }: EmptyStateProps
           >
             {action.label}
             {action.shortcut && (
-              <kbd className="rounded bg-gray-700 px-1 py-0.5 text-xs text-gray-400">{action.shortcut}</kbd>
+              <kbd className="rounded bg-gray-700 px-1 py-0.5 text-xs text-gray-400">
+                {action.shortcut}
+              </kbd>
             )}
           </button>
         </div>

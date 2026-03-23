@@ -38,7 +38,9 @@ export function TagFilter() {
         )}
       >
         <span className="flex-1">All bookmarks</span>
-        <span className={cn('text-[10px] tabular-nums', allActive ? 'text-gray-400' : 'text-gray-600')}>
+        <span
+          className={cn('text-[10px] tabular-nums', allActive ? 'text-gray-400' : 'text-gray-600')}
+        >
           {bookmarks.length}
         </span>
       </button>
