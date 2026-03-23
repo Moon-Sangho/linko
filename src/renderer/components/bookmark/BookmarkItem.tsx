@@ -7,6 +7,7 @@ import { overlay } from '@renderer/overlay/control';
 import { EditBookmarkModal } from './EditBookmarkModal';
 import { Favicon } from '@renderer/components/ui/Favicon';
 import { Badge } from '@renderer/components/ui/Badge';
+import { cn } from '@renderer/lib/cn';
 
 interface BookmarkItemProps {
   bookmark: Bookmark;
@@ -103,14 +104,18 @@ export function BookmarkItem({
 
   return (
     <div
-      className={`
-        group relative flex items-center gap-3 py-3 px-4 cursor-pointer
-        border-b border-[var(--color-border)] last:border-b-0
-        transition-colors duration-[80ms] ease-out
-        border-l-2
-        ${isChecked ? 'border-l-[var(--color-accent)]' : 'border-l-transparent'}
-        ${isChecked ? 'bg-[var(--color-accent-subtle)]' : isSelected ? 'bg-[var(--color-bg-elevated)]' : 'hover:bg-[var(--color-bg-elevated)]'}
-      `}
+      className={cn(
+        'group relative flex items-center gap-3 py-3 px-4 cursor-pointer',
+        'border-b border-[var(--color-border)] last:border-b-0',
+        'transition-colors duration-[80ms] ease-out',
+        'border-l-2',
+        isChecked ? 'border-l-[var(--color-accent)]' : 'border-l-transparent',
+        isChecked
+          ? 'bg-[var(--color-accent-subtle)]'
+          : isSelected
+          ? 'bg-[var(--color-bg-elevated)]'
+          : 'hover:bg-[var(--color-bg-elevated)]',
+      )}
       onClick={onClick}
       onDoubleClick={handleDoubleClick}
     >
@@ -118,15 +123,14 @@ export function BookmarkItem({
       <button
         onClick={handleCheckToggle}
         onDoubleClick={(e) => e.stopPropagation()}
-        className={`
-          flex-shrink-0 w-4 h-4 rounded-sm border flex items-center justify-center
-          transition-opacity duration-[80ms]
-          ${isSelectionMode ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}
-          ${isChecked
+        className={cn(
+          'flex-shrink-0 w-4 h-4 rounded-sm border flex items-center justify-center',
+          'transition-opacity duration-[80ms]',
+          isSelectionMode ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
+          isChecked
             ? 'bg-[var(--color-accent)] border-[var(--color-accent)]'
-            : 'border-gray-600 bg-transparent hover:border-gray-400'
-          }
-        `}
+            : 'border-gray-600 bg-transparent hover:border-gray-400',
+        )}
       >
         {isChecked && <Check size={10} strokeWidth={2.5} className="text-white" />}
       </button>

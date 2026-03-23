@@ -50,10 +50,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
             <Search size={16} className="text-gray-400 flex-shrink-0" strokeWidth={1.5} />
             <Command.Input
               placeholder="Search bookmarks…"
-              className="
-                flex-1 bg-transparent text-sm text-gray-200 placeholder-gray-500
-                focus:outline-none
-              "
+              className="flex-1 bg-transparent text-sm text-gray-200 placeholder-gray-500 focus:outline-none"
               autoFocus
             />
             <button
@@ -77,13 +74,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                   key={bookmark.id}
                   value={`${bookmark.title ?? ''} ${bookmark.url}`}
                   onSelect={() => handleSelect(bookmark)}
-                  className="
-                    flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer
-                    text-sm text-gray-300
-                    aria-selected:bg-gray-800 aria-selected:text-gray-100
-                    data-[selected=true]:bg-gray-800
-                    hover:bg-gray-800
-                  "
+                  className="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer text-sm text-gray-300 aria-selected:bg-gray-800 aria-selected:text-gray-100 data-[selected=true]:bg-gray-800 hover:bg-gray-800"
                 >
                   {bookmark.favicon_url ? (
                     <img

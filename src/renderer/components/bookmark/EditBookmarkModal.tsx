@@ -10,7 +10,6 @@ import { Modal } from '@renderer/components/ui/Modal';
 import { Input } from '@renderer/components/ui/Input';
 import { Spinner } from '@renderer/components/ui/Spinner';
 import { TagCheckboxList } from '@renderer/components/ui/TagCheckboxList';
-
 interface EditBookmarkModalProps {
   isOpen: boolean;
   onClose: () => void;
