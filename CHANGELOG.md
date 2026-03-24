@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.10](https://github.com/Moon-Sangho/linko/compare/v0.1.9...v0.1.10) (2026-03-24)
+
+
+### Bug Fixes
+
+* **ui:** Prevent global keyboard shortcuts from intercepting input events ([#66](https://github.com/Moon-Sangho/linko/issues/66)) ([257ccde](https://github.com/Moon-Sangho/linko/commit/257ccdead55eac8abd3ce96ab63a917756181905))
+
 ## [0.1.9](https://github.com/Moon-Sangho/linko/compare/v0.1.8...v0.1.9) (2026-03-20)
 
 
