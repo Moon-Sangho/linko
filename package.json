@@ -17,7 +17,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
     "format": "prettier --write src",
-    "postinstall": "electron-rebuild -f -w better-sqlite3"
+    "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
     "@electron-toolkit/utils": "^4.0.0",
@@ -36,7 +36,6 @@
     "zustand": "^5.0.12"
   },
   "devDependencies": {
-    "@electron/rebuild": "^4.0.3",
     "@eslint/js": "^10.0.1",
     "@resvg/resvg-js": "^2.6.2",
     "@tanstack/eslint-plugin-query": "^5.94.5",
@@ -72,7 +71,6 @@
     "onlyBuiltDependencies": [
       "electron",
       "better-sqlite3",
-      "@electron/rebuild",
       "esbuild"
     ],
     "peerDependencyRules": {
