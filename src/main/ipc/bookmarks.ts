@@ -12,32 +12,20 @@ import type { BookmarkRepository } from '../db/repositories/bookmark-repository'
 import { fetchUrlMetadata } from '../services/url-fetcher';
 
 export function registerBookmarkHandlers(repo: BookmarkRepository): void {
-  ipcMain.handle(IpcChannels.BOOKMARKS_GET_ALL, (): IpcResult<Bookmark[]> => {
-    try {
-      return { success: true, data: repo.getAll() };
-    } catch (error) {
-      return { success: false, error: (error as Error).message };
-    }
+  ipcMain.handle(IpcChannels.BOOKMARKS_GET_ALL, (): Bookmark[] => {
+    return repo.getAll();
   });
 
   ipcMain.handle(
     IpcChannels.BOOKMARKS_SEARCH,
-    (_, input: SearchBookmarksInput): IpcResult<Bookmark[]> => {
-      try {
-        return { success: true, data: repo.search(input) };
-      } catch (error) {
-        return { success: false, error: (error as Error).message };
-      }
+    (_, input: SearchBookmarksInput): Bookmark[] => {
+      return repo.search(input);
     },
   );
 
-  ipcMain.handle(IpcChannels.BOOKMARK_GET_BY_ID, (_, id: number): IpcResult<Bookmark | null> => {
-    try {
-      if (!isValidId(id)) return { success: false, error: 'Invalid id' };
-      return { success: true, data: repo.getById(id) };
-    } catch (error) {
-      return { success: false, error: (error as Error).message };
-    }
+  ipcMain.handle(IpcChannels.BOOKMARK_GET_BY_ID, (_, id: number): Bookmark | null => {
+    if (!isValidId(id)) throw new Error('Invalid id');
+    return repo.getById(id);
   });
 
   ipcMain.handle(

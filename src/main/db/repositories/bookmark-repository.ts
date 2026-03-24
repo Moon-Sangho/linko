@@ -142,7 +142,7 @@ export class LocalBookmarkRepository implements BookmarkRepository {
       const ftsQuery = query!
         .trim()
         .split(/\s+/)
-        .map((term) => `"${term.replace(/"/g, '""')}"`)
+        .map((term) => `"${term.replace(/"/g, '""')}"*`)
         .join(' OR ');
 
       rows = this.db

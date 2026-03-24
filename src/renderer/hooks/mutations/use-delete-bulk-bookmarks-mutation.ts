@@ -18,6 +18,7 @@ export function useDeleteBulkBookmarksMutation() {
     onSettled: () => {
       // Refetch regardless — partial failure leaves the DB in an unknown state
       queryClient.invalidateQueries({ queryKey: queryKeys.bookmark.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.bookmark.searches });
       queryClient.invalidateQueries({ queryKey: queryKeys.tag.all });
     },
   });

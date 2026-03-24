@@ -18,6 +18,7 @@ export function useUpdateBookmarkMutation() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.bookmark.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.bookmark.searches });
       queryClient.invalidateQueries({ queryKey: queryKeys.tag.all });
     },
   });

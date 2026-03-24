@@ -8,8 +8,9 @@ Your job is to verify that all IPC channels are correctly defined, handled, and 
 ## Files to Read
 - `src/shared/ipc-channels.ts` — channel definitions
 - `src/main/ipc/` — all handler files
-- `src/renderer/store/` — where IPC calls originate
-- `src/renderer/hooks/` — hooks that call IPC (if any)
+- `src/renderer/store/` — where most IPC calls originate (mutations, reads)
+- `src/renderer/hooks/queries/` — TanStack Query hooks that call IPC directly (e.g. search)
+- `src/renderer/hooks/mutations/` — TanStack Query mutation hooks
 
 ## What to Verify
 

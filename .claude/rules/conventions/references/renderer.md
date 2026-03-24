@@ -68,7 +68,6 @@ Rules:
 ## Component Rules
 
 - One component per file
-- Keep components small and focused — if it needs more than ~150 lines, split it
 - Props interface defined in the same file as the component (not in `types.ts`)
 - Use `@radix-ui/react-*` for accessible primitives (dialog, dropdown, etc.)
 - Use `cmdk` for command palette / search UI
