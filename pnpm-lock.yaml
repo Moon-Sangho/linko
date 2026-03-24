@@ -51,9 +51,6 @@ importers:
         specifier: ^5.0.12
         version: 5.0.12(@types/react@19.2.14)(react@19.2.4)
     devDependencies:
-      '@electron/rebuild':
-        specifier: ^4.0.3
-        version: 4.0.3
       '@eslint/js':
         specifier: ^10.0.1
         version: 10.0.1(eslint@10.1.0(jiti@1.21.7))
