@@ -19,7 +19,7 @@ For each flow, trace from UI → store → IPC call → handler → repository a
 1. **Add bookmark** — user submits form → store.add() → `bookmark:create` → handler → repo.create()
 2. **Edit bookmark** — user edits → store.update() → `bookmark:update` → handler → repo.update()
 3. **Delete bookmark** — user clicks delete → store.delete() → `bookmark:delete` → handler → repo.delete()
-4. **Search** — user types query → store.search() → `bookmark:search` → handler → repo.search()
+4. **Search** — user types query → `useSearchBookmark` (debounced) → `useSearchBookmarkQuery` → `bookmark:search` → handler → repo.search()
 5. **Tag filter** — user selects tag → filtered view renders correctly
 6. **Import from browser HTML** — file selected → `bookmark:import` → handler → repo.create() batch
 7. **App quit** — DB connection closed cleanly

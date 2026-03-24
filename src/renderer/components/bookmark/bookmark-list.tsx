@@ -3,7 +3,7 @@ import { Bookmark, SearchX } from 'lucide-react';
 import { useBookmarksQuery } from '@renderer/hooks/queries/use-bookmarks-query';
 import { useDeleteBulkBookmarksMutation } from '@renderer/hooks/mutations/use-delete-bulk-bookmarks-mutation';
 import { useUIStore } from '@renderer/store/use-ui-store';
-import { useSearch } from '@renderer/hooks/use-search';
+import { useSearchBookmark } from '@renderer/hooks/use-search-bookmark';
 import { overlay } from '@renderer/overlay/control';
 import { AddBookmarkModal } from './add-bookmark-modal';
 import { BookmarkItem } from './bookmark-item';
@@ -44,7 +44,7 @@ export function BookmarkList() {
   const [isDeleting, setIsDeleting] = useState(false);
   const lastCheckedIndexRef = useRef<number | null>(null);
 
-  const { searchResults, isSearching, searchQuery } = useSearch();
+  const { searchResults, isSearching, searchQuery } = useSearchBookmark();
 
   const isSearchActive = searchQuery !== '' || selectedTagIds.length > 0;
   const displayBookmarks = isSearchActive ? searchResults : bookmarks;

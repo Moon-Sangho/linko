@@ -34,6 +34,12 @@ Your job is to verify that the codebase follows the architecture and conventions
 - [ ] Stores in `src/renderer/store/`
 - [ ] Stores use `window.electron.invoke()` only (no direct Node access)
 
+### TanStack Query Hooks
+- [ ] Query hooks in `src/renderer/hooks/queries/` — read-only IPC calls, no store involvement
+- [ ] Mutation hooks in `src/renderer/hooks/mutations/` — wrap mutations and invalidate related queries
+- [ ] Query keys defined centrally in `src/renderer/lib/query-keys.ts`
+- [ ] Search hook (`use-search-bookmark.ts`) uses debounced input before passing to query hook
+
 ### Import Conventions
 - [ ] No barrel `index.ts` files in `src/renderer/components/` or `src/renderer/store/`
 - [ ] Cross-directory imports use path aliases (`@renderer/`, `@shared/`, `@main/`)
@@ -41,7 +47,6 @@ Your job is to verify that the codebase follows the architecture and conventions
 
 ### Component Rules
 - [ ] Props interfaces co-located with components (not in `types.ts`)
-- [ ] No component file over ~150 lines
 
 ## Output Format
 

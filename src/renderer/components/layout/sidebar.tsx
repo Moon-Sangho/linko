@@ -27,6 +27,7 @@ export function Sidebar() {
         const { added, skipped } = result.data;
         setImportStatus(`Imported ${added} (${skipped} skipped)`);
         queryClient.invalidateQueries({ queryKey: queryKeys.bookmark.all });
+        queryClient.invalidateQueries({ queryKey: queryKeys.bookmark.searches });
         setTimeout(() => setImportStatus(null), 4000);
       } else if (result.error && result.error !== 'No file selected') {
         setImportStatus('Import failed');
