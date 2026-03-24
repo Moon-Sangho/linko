@@ -1,5 +1,7 @@
 import { ipcMain, shell } from 'electron';
 import { IpcChannels } from '@shared/ipc-channels';
+import { isValidUrl } from '@shared/utils/is-valid-url';
+import { isValidId } from '@shared/utils/is-valid-id';
 import type {
   CreateBookmarkInput,
   UpdateBookmarkInput,
@@ -102,15 +104,3 @@ export function registerBookmarkHandlers(repo: BookmarkRepository): void {
   );
 }
 
-function isValidId(id: unknown): id is number {
-  return typeof id === 'number' && Number.isInteger(id) && id > 0;
-}
-
-function isValidUrl(url: string): boolean {
-  try {
-    const parsed = new URL(url);
-    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
-  } catch {
-    return false;
-  }
-}

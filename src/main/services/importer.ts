@@ -1,6 +1,7 @@
 import fs from 'fs/promises';
-import type { ImportSummary } from '../../shared/types';
-import type { BookmarkRepository } from '../db/repositories/bookmark-repository';
+import type { ImportSummary } from '@shared/types';
+import { isValidUrl } from '@shared/utils/is-valid-url';
+import type { BookmarkRepository } from '@main/db/repositories/bookmark-repository';
 
 interface ParsedBookmark {
   url: string;
@@ -56,13 +57,4 @@ function parseBrowserBookmarks(html: string): ParsedBookmark[] {
   }
 
   return bookmarks;
-}
-
-function isValidUrl(url: string): boolean {
-  try {
-    const parsed = new URL(url);
-    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
-  } catch {
-    return false;
-  }
 }

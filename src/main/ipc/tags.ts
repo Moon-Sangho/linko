@@ -1,5 +1,6 @@
 import { ipcMain } from 'electron';
 import { IpcChannels } from '@shared/ipc-channels';
+import { isValidId } from '@shared/utils/is-valid-id';
 import type { Tag, CreateTagInput, IpcResult } from '@shared/types';
 import type { TagRepository } from '../db/repositories/tag-repository';
 
@@ -30,6 +31,3 @@ export function registerTagHandlers(repo: TagRepository): void {
   });
 }
 
-function isValidId(id: unknown): id is number {
-  return typeof id === 'number' && Number.isInteger(id) && id > 0;
-}

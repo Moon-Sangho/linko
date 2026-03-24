@@ -154,9 +154,10 @@ Linko is being developed almost entirely through **agentic engineering** — mul
 | `/agent-designer`          | Design system, screen layouts, component specs        |
 | `/agent-dev-core`          | Main process, SQLite, IPC handlers                    |
 | `/agent-dev-ui`            | React renderer, components, TanStack Query hooks, Zustand store |
-| `/agent-dev-qa`            | Orchestrates 5 parallel QA sub-agents, aggregates results into a unified report |
-| `/agent-orchestrate`       | Coordinates parallel agent work, resolves conflicts   |
-| `/agent-test-code-expert`  | Writes, reviews, and improves test code (unit, integration, component) |
+| `/agent-dev-qa`            | Run 5 QA sub-agents in parallel, produce unified report |
+| `/agent-orchestrator`      | Universal entry point — run any playbook by task description or path |
+| `/agent-test-code-expert`  | Write, review, or improve test code (unit, integration, component) |
+| `/agent-test-code-review`  | Run 3 specialist test reviewers in parallel, get unified report |
 
 ### Parallel Work with Conductor
 
@@ -174,7 +175,8 @@ The `.context/` directory is a local-only scratch space for agents within a sing
 ├── design/             ← written by /agent-designer, read by dev-ui
 ├── implementation/     ← ipc-api.md written by /agent-dev-core, read by dev-ui
 ├── patches/            ← contracts + file-ownership for parallel patch work
-└── qa/                 ← QA run reports and verification artifacts
+├── qa/                 ← QA run reports and verification artifacts
+└── test-code-review/   ← test review run reports
 ```
 
 Because `.context/` is gitignored, its contents do not persist across workspaces or team members — each workspace starts fresh. Agents generate context on demand at the start of each session.
@@ -186,7 +188,7 @@ Because `.context/` is gitignored, its contents do not persist across workspaces
 2. /agent-designer    → design/
 3. /agent-dev-core    → src/main/  +  implementation/ipc-api.md
    /agent-dev-ui      → src/renderer/  (runs in parallel with dev-core)
-4. /agent-dev-qa      → spawns 5 sub-agents in parallel → qa/qa-checklist.md
+4. /agent-dev-qa      → spawns 5 sub-agents in parallel → .context/qa/<run>/1-qa-report.md
                          ├── security    (Electron security settings)
                          ├── ipc         (channel coverage, response shapes)
                          ├── functional  (CRUD flow traces)
@@ -196,7 +198,7 @@ Because `.context/` is gitignored, its contents do not persist across workspaces
 
 Steps 3a and 3b can run in parallel because the IPC contract is frozen before both start — each agent knows exactly what interface it is building to or consuming.
 
-Step 4 runs each QA category as a separate sub-agent in parallel (defined in `.claude/agents/qa/`), then the orchestrator aggregates all results into a single report. This reduces QA time from ~4 minutes to roughly the duration of the slowest sub-agent.
+Step 4 runs each QA category as a separate sub-agent in parallel (defined in `.claude/agents/playbooks/qa/`), then the orchestrator aggregates all results into a single report. This reduces QA time from ~4 minutes to roughly the duration of the slowest sub-agent.
 
 ### `/git-create-pr` — How PR Creation Works
 

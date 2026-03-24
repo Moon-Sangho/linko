@@ -1,20 +1,23 @@
-You are the QA Orchestrator Agent for Linko.
-Your job is to run all QA sub-agents in parallel and produce a unified report.
+# Playbook: QA
+
+Run all QA sub-agents in parallel and produce a unified report.
 
 Do NOT do any QA work yourself — delegate everything to sub-agents.
 
 ---
 
-## Step 1 — Determine the run folder
+## Pre-work
 
-Check existing runs to determine where to write the report:
+### Step 1 — Determine the run folder
+
+Check existing runs:
 
 ```bash
 ls .context/qa/ 2>/dev/null | sort | tail -1
 ```
 
-**New cycle** (no folders exist, or latest folder already has `3-verification.md`):
-- Create a new folder: `NNN-YYYY-MM-DD-<tag>/`
+**New cycle** (no folders exist, or the latest folder already has `3-verification.md`):
+- Create a new folder: `.context/qa/NNN-YYYY-MM-DD-<tag>/`
 - Report will be written as `1-qa-report.md`
 
 **Verification** (latest folder has `1-qa-report.md` but no `3-verification.md`):
@@ -36,36 +39,52 @@ mkdir -p .context/qa/NNN-YYYY-MM-DD-<tag>
 
 ---
 
-## Step 2 — Launch All Sub-Agents in Parallel
+## Agents
 
-Send a single message with 5 Agent tool calls at the same time (do NOT call them sequentially).
+Launch all 5 sub-agents simultaneously in a single message.
 
-Use `subagent_type: "general-purpose"` for each.
+**Security Agent**
+```
+Read `.claude/agents/playbooks/qa/security.md` and follow its instructions exactly.
+Working directory: <workspace-path>
+```
 
-### Sub-Agent Prompts
+**IPC Agent**
+```
+Read `.claude/agents/playbooks/qa/ipc.md` and follow its instructions exactly.
+Working directory: <workspace-path>
+```
 
-**Security Agent** — read `.claude/agents/qa/security.md` and follow its instructions exactly. Work in: <workspace-path>
+**Functional Agent**
+```
+Read `.claude/agents/playbooks/qa/functional.md` and follow its instructions exactly.
+Working directory: <workspace-path>
+```
 
-**IPC Agent** — read `.claude/agents/qa/ipc.md` and follow its instructions exactly. Work in: <workspace-path>
+**Build Agent**
+```
+Read `.claude/agents/playbooks/qa/build.md` and follow its instructions exactly.
+Working directory: <workspace-path>
+```
 
-**Functional Agent** — read `.claude/agents/qa/functional.md` and follow its instructions exactly. Work in: <workspace-path>
-
-**Build Agent** — read `.claude/agents/qa/build.md` and follow its instructions exactly. Work in: <workspace-path>
-
-**Architecture Agent** — read `.claude/agents/qa/architecture.md` and follow its instructions exactly. Work in: <workspace-path>
+**Architecture Agent**
+```
+Read `.claude/agents/playbooks/qa/architecture.md` and follow its instructions exactly.
+Working directory: <workspace-path>
+```
 
 ---
 
-## Step 3 — Aggregate and Write Report
+## Output
 
-Once all 5 sub-agents return, write the unified report directly to the run folder:
+Write the unified report to the run folder determined in Pre-work:
 
 ```
-.context/qa/NNN-YYYY-MM-DD-<tag>/1-qa-report.md   ← new run
-.context/qa/NNN-YYYY-MM-DD-<tag>/3-verification.md ← verification run
+.context/qa/NNN-YYYY-MM-DD-<tag>/1-qa-report.md    ← new run
+.context/qa/NNN-YYYY-MM-DD-<tag>/3-verification.md  ← verification run
 ```
 
-### Report Format
+### Report format
 
 ```markdown
 # QA Report
@@ -116,14 +135,14 @@ Overall: PASS / FAIL / WARN
 <paste Architecture Agent report here>
 ```
 
-### Overall Result Rule
+### Overall result rule
 - `FAIL` if any sub-agent returned FAIL
 - `WARN` if no FAIL but any sub-agent returned WARN
 - `PASS` only if all sub-agents returned PASS
 
 ---
 
-## Step 4 — Report to User
+## User Report
 
 ```
 QA complete. Overall: FAIL
@@ -132,16 +151,17 @@ QA complete. Overall: FAIL
 |----------|--------|--------|
 | Security | PASS | 0 |
 | IPC | FAIL | 2 |
-...
+| Functional | WARN | 1 |
+| Build | PASS | 0 |
+| Architecture | WARN | 3 |
 
 Report: .context/qa/NNN-YYYY-MM-DD-<tag>/1-qa-report.md
 
-Next step: run /agent-orchestrate to distribute fix tasks.
+Next step: run /agent-orchestrator playbooks/feature-build.md to distribute fix tasks.
 ```
 
 For a verification run, replace the next-step line with:
+
 ```
 Verification complete. Run cycle closed: .context/qa/NNN-YYYY-MM-DD-<tag>/
 ```
-
-$ARGUMENTS

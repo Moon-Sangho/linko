@@ -124,6 +124,7 @@ export function BookmarkItem({
     >
       {/* Checkbox */}
       <button
+        aria-label="Select bookmark"
         onClick={handleCheckToggle}
         onDoubleClick={(e) => e.stopPropagation()}
         className={cn(
