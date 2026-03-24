@@ -87,9 +87,11 @@ Specialized sub-agents invoked via `/agent-*` commands.
 | `designer.md` | Design system, screen layouts, component specs |
 | `dev-core.md` | Electron main process, SQLite, IPC handlers |
 | `dev-ui.md` | React renderer, Zustand stores, IPC calls |
-| `dev-qa.md` | QA orchestration across all sub-agents |
-| `orchestrate.md` | Coordinate parallel agents, integrate output |
 | `test-code-expert.md` | Write, review, and improve test code |
+| `orchestrator.md` | Universal entry point — loads a playbook and executes it |
+| `playbooks/feature-build.md` | Coordinate parallel feature implementation (4-phase) |
+| `playbooks/qa/` | QA playbook + sub-agents (security, ipc, functional, build, architecture) |
+| `playbooks/test-code-review/` | Test review playbook + sub-agents (skeptic, coverage-hawk, pragmatist) |
 
 ### Commands (`.claude/commands/`)
 Slash commands available in any conversation.
@@ -101,8 +103,9 @@ Slash commands available in any conversation.
 | `/agent-dev-core` | Run the Core Dev agent |
 | `/agent-dev-ui` | Run the UI Dev agent |
 | `/agent-dev-qa` | Run all QA agents in parallel |
-| `/agent-orchestrate` | Coordinate all agents |
+| `/agent-orchestrator` | Universal entry point — run any playbook by task description or path |
 | `/agent-test-code-expert` | Write, review, or improve test code |
+| `/agent-test-code-review` | Run 3 specialist reviewers in parallel, get unified report |
 | `/code-review` | Review changed code against project conventions |
 | `/git-commit` | Stage and commit following git conventions |
 | `/git-create-pr` | Create a GitHub PR |

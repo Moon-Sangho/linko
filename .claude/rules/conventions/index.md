@@ -11,3 +11,4 @@ Each reference below covers a specific area — read the relevant file before wo
 | **Main Process** | Repository pattern, IPC handler structure, response shape | [main.md](./references/main.md) |
 | **Electron Security** | BrowserWindow settings, contextBridge rules, prohibited patterns | [electron-security.md](./references/electron-security.md) |
 | **Git** | Branch naming (`type/description`), conventional commit format | [git.md](./references/git.md) |
+| **Testing** | Test file location (`tests/` subdirectory), mocking patterns, layer strategy | [testing.md](./references/testing.md) |

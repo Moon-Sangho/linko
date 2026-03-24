@@ -15,7 +15,7 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     passWithNoTests: true,
-    include: ['src/renderer/**/*.{test,spec}.{ts,tsx}'],
+    include: ['src/renderer/**/*.{test,spec}.{ts,tsx}', 'src/shared/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['node_modules', 'out', 'dist'],
     coverage: {
       provider: 'v8',

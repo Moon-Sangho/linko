@@ -4,19 +4,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { IpcChannels } from '@shared/ipc-channels';
 import type { IpcResult, UrlMetadata } from '@shared/types';
+import { isValidUrl } from '@shared/utils/is-valid-url';
 
 const bookmarkSchema = z.object({
   url: z
     .string()
     .min(1, 'URL is required')
-    .refine((val) => {
-      try {
-        const u = new URL(val);
-        return u.protocol === 'http:' || u.protocol === 'https:';
-      } catch {
-        return false;
-      }
-    }, 'Please enter a valid URL (https:// or http://)'),
+    .refine(isValidUrl, 'Please enter a valid URL (https:// or http://)'),
   title: z.string(),
   notes: z.string(),
 });
@@ -44,16 +38,6 @@ export function useBookmarkForm() {
   const [isFetchingMeta, setIsFetchingMeta] = useState(false);
   const [isDuplicate, setIsDuplicate] = useState(false);
   const [suggestedUrl, setSuggestedUrl] = useState('');
-
-  /** Only accepts http: and https: to prevent javascript:, file:, etc. */
-  function isValidUrl(value: string): boolean {
-    try {
-      const u = new URL(value);
-      return u.protocol === 'http:' || u.protocol === 'https:';
-    } catch {
-      return false;
-    }
-  }
 
   /**
    * Runs duplicate check and metadata fetch for a fully-qualified URL.
