@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Command } from 'cmdk';
 import { Search, ExternalLink, X } from 'lucide-react';
 import { useBookmarksQuery } from '@renderer/hooks/queries/use-bookmarks-query';
@@ -13,16 +12,6 @@ interface CommandPaletteProps {
 export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   const { data: bookmarks = [] } = useBookmarksQuery();
   const openUrlMutation = useOpenUrlMutation();
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -40,6 +29,10 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       <div
         className="relative w-full max-w-2xl mx-4 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') onClose();
+          e.stopPropagation();
+        }}
       >
         <Command className="flex flex-col" shouldFilter>
           {/* Input */}
