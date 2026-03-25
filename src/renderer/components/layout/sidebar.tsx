@@ -1,45 +1,35 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { Plus, Upload } from 'lucide-react';
-import { useQueryClient } from '@tanstack/react-query';
 import { SearchBar } from '@renderer/components/search/search-bar';
 import { TagFilter } from '@renderer/components/tag/tag-filter';
 import { overlay } from '@renderer/overlay/control';
 import { AddBookmarkModal } from '@renderer/components/bookmark/add-bookmark-modal';
-import { queryKeys } from '@renderer/lib/query-keys';
-import { IpcChannels } from '@shared/ipc-channels';
-import type { ImportSummary, IpcResult } from '@shared/types';
+import { useImportBookmarksMutation } from '@renderer/hooks/mutations/use-import-bookmarks-mutation';
 
 export function Sidebar() {
-  const queryClient = useQueryClient();
   const [importStatus, setImportStatus] = useState<string | null>(null);
+  const { mutateAsync: importBookmarks } = useImportBookmarksMutation();
 
   const openAddModal = () => {
     overlay.open(({ isOpen, close }) => <AddBookmarkModal isOpen={isOpen} onClose={close} />);
   };
 
-  const handleImport = useCallback(async () => {
+  const handleImport = async () => {
     setImportStatus('Importing…');
     try {
-      const result = (await window.electron.invoke(
-        IpcChannels.FS_IMPORT_BOOKMARKS,
-      )) as IpcResult<ImportSummary>;
-      if (result.success && result.data) {
-        const { added, skipped } = result.data;
+      const data = await importBookmarks();
+      if (data) {
+        const { added, skipped } = data;
         setImportStatus(`Imported ${added} (${skipped} skipped)`);
-        queryClient.invalidateQueries({ queryKey: queryKeys.bookmark.all });
-        queryClient.invalidateQueries({ queryKey: queryKeys.bookmark.searches });
         setTimeout(() => setImportStatus(null), 4000);
-      } else if (result.error && result.error !== 'No file selected') {
-        setImportStatus('Import failed');
-        setTimeout(() => setImportStatus(null), 3000);
       } else {
-        setImportStatus(null);
+        setImportStatus(null); // cancelled
       }
     } catch {
       setImportStatus('Import failed');
       setTimeout(() => setImportStatus(null), 3000);
     }
-  }, [queryClient]);
+  };
 
   return (
     <div className="w-56 flex-shrink-0 flex flex-col bg-gray-900 border-r border-gray-800 h-full">

@@ -1,8 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useCreateBookmarkMutation } from '@renderer/hooks/mutations/use-create-bookmark-mutation';
+import { useFetchUrlMetadataMutation } from '@renderer/hooks/mutations/use-fetch-url-metadata-mutation';
 import { useBookmarkForm } from '@renderer/hooks/use-bookmark-form';
-import { IpcChannels } from '@shared/ipc-channels';
-import type { IpcResult, UrlMetadata } from '@shared/types';
 import { BookmarkFormModal } from './bookmark-form-modal';
 
 interface AddBookmarkModalProps {
@@ -12,6 +11,7 @@ interface AddBookmarkModalProps {
 
 export function AddBookmarkModal({ isOpen, onClose }: AddBookmarkModalProps) {
   const { mutateAsync: createBookmark } = useCreateBookmarkMutation();
+  const { mutateAsync: fetchMetadata } = useFetchUrlMetadataMutation();
   const form = useBookmarkForm();
   const urlRef = useRef<HTMLInputElement>(null);
 
@@ -32,17 +32,10 @@ export function AddBookmarkModal({ isOpen, onClose }: AddBookmarkModalProps) {
     let title = data.title || null;
     let faviconUrl: string | null = null;
 
-    try {
-      const meta = (await window.electron.invoke(
-        IpcChannels.BOOKMARK_FETCH_METADATA,
-        data.url,
-      )) as IpcResult<UrlMetadata>;
-      if (meta.success && meta.data) {
-        if (!title) title = meta.data.title;
-        faviconUrl = meta.data.favicon_url ?? null;
-      }
-    } catch {
-      // Ignore — save without favicon
+    const meta = await fetchMetadata(data.url).catch(() => null);
+    if (meta) {
+      if (!title) title = meta.title;
+      faviconUrl = meta.favicon_url ?? null;
     }
 
     try {

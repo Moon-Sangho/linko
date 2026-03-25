@@ -9,4 +9,8 @@ export const queryKeys = {
   tag: {
     all: ['tags'] as const,
   },
+  app: {
+    all: ['app'] as const,
+    version: () => [...queryKeys.app.all, 'version'] as const,
+  },
 } as const;
