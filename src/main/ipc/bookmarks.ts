@@ -6,10 +6,12 @@ import type {
   CreateBookmarkInput,
   UpdateBookmarkInput,
   SearchBookmarksInput,
+  GetBookmarksPageInput,
+  BookmarkPage,
   IpcResult,
   Bookmark,
   UrlMetadata,
-} from '@shared/types';
+} from '@shared/types/domains';
 import type { BookmarkRepository } from '../db/repositories/bookmark-repository';
 import { fetchUrlMetadata } from '../services/url-fetcher';
 
@@ -17,6 +19,13 @@ export function registerBookmarkHandlers(repo: BookmarkRepository): void {
   ipcMain.handle(IpcChannels.BOOKMARKS_GET_ALL, (): Bookmark[] => {
     return repo.getAll();
   });
+
+  ipcMain.handle(
+    IpcChannels.BOOKMARKS_GET_PAGE,
+    (_, input: GetBookmarksPageInput): BookmarkPage => {
+      return repo.getPage(input);
+    },
+  );
 
   ipcMain.handle(
     IpcChannels.BOOKMARKS_SEARCH,

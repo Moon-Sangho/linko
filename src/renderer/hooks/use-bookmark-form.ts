@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { IpcChannels } from '@shared/ipc-channels';
-import type { IpcResult, UrlMetadata } from '@shared/types';
+import type { IpcResult, UrlMetadata } from '@shared/types/domains';
 import { isValidUrl } from '@shared/utils/is-valid-url';
 
 const bookmarkSchema = z.object({

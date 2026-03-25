@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useBookmarksQuery } from '@renderer/hooks/queries/use-bookmarks-query';
+import { useBookmarkQuery } from '@renderer/hooks/queries/use-bookmark-query';
 import { useUpdateBookmarkMutation } from '@renderer/hooks/mutations/use-update-bookmark-mutation';
 import { useDeleteBookmarkMutation } from '@renderer/hooks/mutations/use-delete-bookmark-mutation';
 import { useBookmarkForm } from '@renderer/hooks/use-bookmark-form';
@@ -13,9 +13,7 @@ interface EditBookmarkModalProps {
 }
 
 export function EditBookmarkModal({ isOpen, onClose, bookmarkId }: EditBookmarkModalProps) {
-  const { data: bookmark = null } = useBookmarksQuery(
-    (bookmarks) => bookmarks.find((b) => b.id === bookmarkId) ?? null,
-  );
+  const { data: bookmark = null } = useBookmarkQuery(bookmarkId);
   const { mutateAsync: updateBookmark } = useUpdateBookmarkMutation();
   const { mutateAsync: deleteBookmark } = useDeleteBookmarkMutation();
 

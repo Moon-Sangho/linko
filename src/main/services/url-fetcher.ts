@@ -1,4 +1,4 @@
-import type { UrlMetadata } from '../../shared/types';
+import type { UrlMetadata } from '../../shared/types/domains';
 
 const FETCH_TIMEOUT_MS = 5000;
 

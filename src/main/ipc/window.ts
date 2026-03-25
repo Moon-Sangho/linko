@@ -1,6 +1,6 @@
 import { ipcMain, BrowserWindow } from 'electron';
 import { IpcChannels } from '@shared/ipc-channels';
-import type { IpcResult } from '@shared/types';
+import type { IpcResult } from '@shared/types/domains';
 
 export function registerWindowHandlers(): void {
   ipcMain.handle(IpcChannels.WINDOW_MINIMIZE, (): IpcResult => {

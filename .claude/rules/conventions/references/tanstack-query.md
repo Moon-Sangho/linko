@@ -48,20 +48,49 @@ Use a hierarchical structure with an `all` base key per domain:
 ```typescript
 export const queryKeys = {
   bookmark: {
-    all: ['bookmarks'] as const,
-    search: (input: SearchBookmarksInput) => ['bookmarks', 'search', input] as const,
+    all: ['bookmarks'] as const,                                           // internal prefix only
+    lists: () => [...queryKeys.bookmark.all, 'list'] as const,            // broad list invalidation
+    list: (input: BookmarkListInput) => [...queryKeys.bookmark.lists(), input] as const,
+    byIds: () => [...queryKeys.bookmark.all, 'by-id'] as const,           // broad byId invalidation
+    byId: (id: number) => [...queryKeys.bookmark.byIds(), id] as const,
   },
   app: {
-    all: ['app'] as const,
+    all: ['app'] as const,                                                 // internal prefix only
     version: () => [...queryKeys.app.all, 'version'] as const,
   },
 } as const
 ```
 
 Rules:
-- Every domain has an `all` base key for broad invalidation
-- Derived keys spread the parent (`[...queryKeys.app.all, 'version']`)
+- Every domain has an `all` base key — **internal use only** (see rule below)
+- Derived keys always spread the parent key (`[...queryKeys.app.all, 'version']`)
 - Parameterized keys are functions; parameter-free derived keys are also functions for consistency
+- Add an intermediate prefix key (e.g. `lists`, `byIds`) when a group of parameterized keys needs broad invalidation
+
+---
+
+## `all` Key Usage Rule
+
+**`queryKeys.*.all` must never be used as a `queryKey` in `useQuery` or `useInfiniteQuery`.**
+
+`all` is a domain namespace prefix — its primary purpose is to be spread into derived keys.
+It is also allowed in `invalidateQueries` and `removeQueries` for broad domain-level cache operations,
+because `invalidateQueries` uses prefix matching (`exact: false`) by default.
+
+```typescript
+// ❌ Bad — all is not a fetchable queryKey
+useQuery({ queryKey: queryKeys.bookmark.all, queryFn: ... });
+
+// ✅ Good — use a specific derived key for fetching
+useQuery({ queryKey: queryKeys.bookmark.byId(id), queryFn: ... });
+
+// ✅ Good — broad domain invalidation after a mutation
+queryClient.invalidateQueries({ queryKey: queryKeys.bookmark.all });
+// This invalidates all ['bookmarks', ...] queries: list(), byId(), etc.
+
+// ✅ Good — full domain cache eviction (e.g. logout)
+queryClient.removeQueries({ queryKey: queryKeys.bookmark.all });
+```
 
 ---
 
@@ -70,16 +99,16 @@ Rules:
 One hook file per query, placed in `src/renderer/hooks/queries/`.
 
 ```typescript
-// ✅ src/renderer/hooks/queries/use-bookmarks-query.ts
+// ✅ src/renderer/hooks/queries/use-bookmark-query.ts
 import { useQuery } from '@tanstack/react-query'
 import { IpcChannels } from '@shared/ipc-channels'
 import type { Bookmark } from '@shared/types'
 import { queryKeys } from '@renderer/lib/query-keys'
 
-export function useBookmarksQuery() {
+export function useBookmarkQuery(id: number) {
   return useQuery({
-    queryKey: queryKeys.bookmark.all,
-    queryFn: () => window.electron.invoke(IpcChannels.BOOKMARKS_GET_ALL) as Promise<Bookmark[]>,
+    queryKey: queryKeys.bookmark.byId(id),
+    queryFn: () => window.electron.invoke(IpcChannels.BOOKMARK_GET_BY_ID, id) as Promise<Bookmark | null>,
   })
 }
 ```

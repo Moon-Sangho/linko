@@ -1,43 +1,20 @@
-import { useEffect, useMemo, useState } from 'react';
-import type { SearchBookmarksInput } from '@shared/types';
 import { useUIStore } from '@renderer/store/use-ui-store';
-import { useSearchQuery } from '@renderer/hooks/queries/use-search-bookmark-query';
-import { debounce } from '@renderer/utils/debounce';
+import { useDebouncedValue } from '@renderer/hooks/use-debounced-value';
 
-const QUERY_DEBOUNCE_MS = 1000;
+const DEBOUNCE_MS = 500;
 
 /**
- * Server-side FTS search via BOOKMARKS_SEARCH IPC.
- * Debounces the text query. Tag selection is always instant.
+ * Reads search state from UIStore and debounces the text query.
+ * tagIds are returned as-is (no delay — tag selection should be immediate).
  */
 export function useSearchBookmark() {
   const { searchQuery, setSearchQuery, selectedTagIds } = useUIStore();
-
-  const [debouncedQuery, setDebouncedQuery] = useState(searchQuery);
-
-  const updateDebouncedQuery = useMemo(
-    () => debounce(setDebouncedQuery, { delay: QUERY_DEBOUNCE_MS }),
-    [],
-  );
-
-  useEffect(() => {
-    updateDebouncedQuery(searchQuery);
-  }, [searchQuery, updateDebouncedQuery]);
-
-  // tagIds are always live — not debounced
-  const debouncedInput: SearchBookmarksInput = { query: debouncedQuery, tagIds: selectedTagIds };
-
-  const {
-    data: searchResults = [],
-    isFetching: isSearching,
-    error,
-  } = useSearchQuery(debouncedInput);
+  const debouncedQuery = useDebouncedValue(searchQuery, DEBOUNCE_MS);
 
   return {
     searchQuery,
     setSearchQuery,
-    searchResults,
-    isSearching,
-    error: error?.message ?? null,
+    debouncedQuery,
+    selectedTagIds,
   };
 }

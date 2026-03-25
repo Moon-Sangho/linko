@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Bookmark, SearchX } from 'lucide-react';
-import { useBookmarksQuery } from '@renderer/hooks/queries/use-bookmarks-query';
+import { useBookmarkListQuery } from '@renderer/hooks/queries/use-bookmark-list-query';
+import { useIntersectionObserver } from '@renderer/hooks/use-intersection-observer';
 import { useDeleteBulkBookmarksMutation } from '@renderer/hooks/mutations/use-delete-bulk-bookmarks-mutation';
-import { useUIStore } from '@renderer/store/use-ui-store';
 import { useSearchBookmark } from '@renderer/hooks/use-search-bookmark';
 import { overlay } from '@renderer/overlay/control';
 import { AddBookmarkModal } from './add-bookmark-modal';
@@ -13,10 +13,22 @@ import { Spinner } from '@renderer/components/ui/spinner';
 import { EmptyState } from '@renderer/components/ui/empty-state';
 
 export function BookmarkList() {
-  const { data: bookmarks = [], isLoading } = useBookmarksQuery();
+  const { searchQuery, selectedTagIds, debouncedQuery } = useSearchBookmark();
+
+  const {
+    data,
+    isLoading,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useBookmarkListQuery({ query: debouncedQuery, tagIds: selectedTagIds });
+
   const deleteBulkMutation = useDeleteBulkBookmarksMutation();
 
-  const selectedTagIds = useUIStore((s) => s.selectedTagIds);
+  const displayBookmarks = useMemo(
+    () => data?.pages.flatMap((page) => page.results) ?? [],
+    [data],
+  );
 
   const [selectedBookmarkId, setSelectedBookmark] = useState<number | null>(null);
   const [checkedBookmarkIds, setCheckedBookmarkIds] = useState<number[]>([]);
@@ -44,11 +56,9 @@ export function BookmarkList() {
   const [isDeleting, setIsDeleting] = useState(false);
   const lastCheckedIndexRef = useRef<number | null>(null);
 
-  const { searchResults, isSearching, searchQuery } = useSearchBookmark();
-
-  const isSearchActive = searchQuery !== '' || selectedTagIds.length > 0;
-  const displayBookmarks = isSearchActive ? searchResults : bookmarks;
-  const showLoading = isSearchActive ? isSearching : isLoading;
+  const sentinelRef = useIntersectionObserver<HTMLDivElement>(fetchNextPage, {
+    enabled: hasNextPage && !isFetchingNextPage,
+  });
 
   useEffect(() => {
     if (checkedBookmarkIds.length === 0) {
@@ -111,7 +121,9 @@ export function BookmarkList() {
     return () => window.removeEventListener('keydown', handler);
   }, [isSelectionMode, displayBookmarks, checkAllBookmarks, clearChecked]);
 
-  if (showLoading) {
+  const isSearchActive = searchQuery !== '' || selectedTagIds.length > 0;
+
+  if (isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center">
         <Spinner size="md" />
@@ -161,6 +173,12 @@ export function BookmarkList() {
             onCheckToggle={handleCheckToggle}
           />
         ))}
+        <div ref={sentinelRef} className="h-1" />
+        {isFetchingNextPage && (
+          <div className="flex justify-center py-4">
+            <Spinner size="sm" />
+          </div>
+        )}
       </div>
       {isSelectionMode && (
         <BulkActionBar
