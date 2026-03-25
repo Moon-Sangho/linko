@@ -39,7 +39,8 @@ export function BookmarkFormModal({
   deleteError,
   saveDisabled,
 }: BookmarkFormModalProps) {
-  const { data: tags = [] } = useTagsQuery();
+  const { data: tagsData } = useTagsQuery();
+  const tags = tagsData?.tags ?? [];
   const { mutateAsync: createTag } = useCreateTagMutation();
   const [newTagName, setNewTagName] = useState('');
   const [isCreatingTag, setIsCreatingTag] = useState(false);

@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { IpcChannels } from '@shared/ipc-channels';
-import type { IpcResult, UrlMetadata } from '@shared/types';
+import type { IpcResult, UrlMetadata } from '@shared/types/domains';
 
 export function useFetchUrlMetadataMutation() {
   return useMutation({

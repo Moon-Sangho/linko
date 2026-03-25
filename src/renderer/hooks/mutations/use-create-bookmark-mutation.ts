@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { IpcChannels } from '@shared/ipc-channels';
-import type { Bookmark, CreateBookmarkInput, IpcResult } from '@shared/types';
+import type { Bookmark, CreateBookmarkInput, IpcResult } from '@shared/types/domains';
 import { queryKeys } from '@renderer/lib/query-keys';
 
 export function useCreateBookmarkMutation() {
@@ -17,7 +17,7 @@ export function useCreateBookmarkMutation() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.bookmark.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.bookmark.searches });
+      queryClient.invalidateQueries({ queryKey: queryKeys.tag.all });
     },
   });
 }

@@ -1,6 +1,6 @@
 import { ipcMain, dialog } from 'electron';
 import { IpcChannels } from '@shared/ipc-channels';
-import type { ImportSummary, IpcResult } from '@shared/types';
+import type { ImportSummary, IpcResult } from '@shared/types/domains';
 import type { BookmarkRepository } from '../db/repositories/bookmark-repository';
 import { importFromHtmlFile } from '../services/importer';
 import fs from 'fs/promises';

@@ -10,7 +10,7 @@ import { registerTagHandlers } from './ipc/tags';
 import { registerWindowHandlers } from './ipc/window';
 import { registerFileSystemHandlers } from './ipc/file-system';
 import { registerAppHandlers } from './ipc/app';
-import type { WindowState } from '@shared/types';
+import type { WindowState } from '@shared/types/domains';
 
 const isDev = is.dev;
 

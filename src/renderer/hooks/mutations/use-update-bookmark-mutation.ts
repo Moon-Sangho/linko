@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { IpcChannels } from '@shared/ipc-channels';
-import type { Bookmark, IpcResult, UpdateBookmarkInput } from '@shared/types';
+import type { Bookmark, IpcResult, UpdateBookmarkInput } from '@shared/types/domains';
 import { queryKeys } from '@renderer/lib/query-keys';
 
 export function useUpdateBookmarkMutation() {
@@ -16,10 +16,10 @@ export function useUpdateBookmarkMutation() {
         throw new Error(result.error ?? 'Failed to update bookmark');
       return result.data;
     },
-    onSuccess: () => {
+    onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.bookmark.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.bookmark.searches });
       queryClient.invalidateQueries({ queryKey: queryKeys.tag.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.bookmark.byId(id) });
     },
   });
 }

@@ -1,4 +1,4 @@
-import type { Tag } from '@shared/types';
+import type { Tag } from '@shared/types/domains';
 import { cn } from '@renderer/lib/cn';
 
 interface TagCheckboxListProps {

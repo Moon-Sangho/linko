@@ -1,10 +1,10 @@
 import type Database from 'better-sqlite3';
-import type { Tag, CreateTagInput } from '@shared/types';
+import type { Tag, TagsResult, CreateTagInput } from '@shared/types/domains';
 
 // ─── Repository Interface ─────────────────────────────────────────────────────
 
 export interface TagRepository {
-  getAll(): Tag[];
+  getAll(): TagsResult;
   getById(id: number): Tag | null;
   create(input: CreateTagInput): Tag;
   delete(id: number): void;
@@ -15,8 +15,22 @@ export interface TagRepository {
 export class LocalTagRepository implements TagRepository {
   constructor(private readonly db: Database.Database) {}
 
-  getAll(): Tag[] {
-    return this.db.prepare<[], Tag>(`SELECT id, name FROM tags ORDER BY name COLLATE NOCASE`).all();
+  getAll(): TagsResult {
+    const tags = this.db
+      .prepare<[], Tag>(
+        `SELECT t.id, t.name, COUNT(bt.bookmark_id) AS count
+         FROM tags t
+         LEFT JOIN bookmark_tags bt ON bt.tag_id = t.id
+         GROUP BY t.id
+         ORDER BY t.name COLLATE NOCASE`,
+      )
+      .all();
+
+    const { total } = this.db
+      .prepare<[], { total: number }>(`SELECT COUNT(*) AS total FROM bookmarks`)
+      .get()!;
+
+    return { tags, total };
   }
 
   getById(id: number): Tag | null {

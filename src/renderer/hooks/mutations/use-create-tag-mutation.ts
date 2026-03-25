@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { IpcChannels } from '@shared/ipc-channels';
-import type { CreateTagInput, IpcResult, Tag } from '@shared/types';
+import type { CreateTagInput, IpcResult, Tag } from '@shared/types/domains';
 import { queryKeys } from '@renderer/lib/query-keys';
 
 export function useCreateTagMutation() {

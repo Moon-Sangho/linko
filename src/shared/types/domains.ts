@@ -1,8 +1,11 @@
+import type { PageParams, Paged } from './paging';
+
 // ─── Core Domain Types ────────────────────────────────────────────────────────
 
 export interface Tag {
   id: number;
   name: string;
+  count?: number;
 }
 
 export interface Bookmark {
@@ -38,10 +41,19 @@ export interface CreateTagInput {
   name: string;
 }
 
+export interface TagsResult {
+  tags: Tag[];
+  total: number;
+}
+
 export interface SearchBookmarksInput {
   query?: string;
   tagIds?: number[];
 }
+
+export type GetBookmarksPageInput = PageParams<SearchBookmarksInput>;
+
+export type BookmarkPage = Paged<Bookmark>;
 
 // ─── URL Metadata ─────────────────────────────────────────────────────────────
 

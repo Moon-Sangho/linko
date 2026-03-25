@@ -1,16 +1,19 @@
 import type Database from 'better-sqlite3';
 import type {
   Bookmark,
+  BookmarkPage,
   Tag,
   CreateBookmarkInput,
   UpdateBookmarkInput,
   SearchBookmarksInput,
-} from '@shared/types';
+  GetBookmarksPageInput,
+} from '@shared/types/domains';
 
 // ─── Repository Interface ─────────────────────────────────────────────────────
 
 export interface BookmarkRepository {
   getAll(): Bookmark[];
+  getPage(input: GetBookmarksPageInput): BookmarkPage;
   getById(id: number): Bookmark | null;
   create(input: CreateBookmarkInput): Bookmark;
   update(id: number, input: UpdateBookmarkInput): Bookmark;
@@ -48,6 +51,58 @@ export class LocalBookmarkRepository implements BookmarkRepository {
       .all();
 
     return this.bulkAttachTags(rows);
+  }
+
+  getPage(input: GetBookmarksPageInput): BookmarkPage {
+    const { query, tagIds, limit, offset } = input;
+    const hasQuery = query && query.trim().length > 0;
+    const hasTags = tagIds && tagIds.length > 0;
+
+    let rows: BookmarkRow[];
+
+    if (hasQuery) {
+      const ftsQuery = query!
+        .trim()
+        .split(/\s+/)
+        .map((term) => `"${term.replace(/"/g, '""')}"*`)
+        .join(' OR ');
+
+      rows = this.db
+        .prepare<[string], BookmarkRow>(
+          `SELECT b.id, b.url, b.title, b.notes, b.favicon_url, b.created_at, b.updated_at
+           FROM bookmarks b
+           JOIN bookmarks_fts fts ON fts.rowid = b.id
+           WHERE bookmarks_fts MATCH ?
+           ORDER BY rank`,
+        )
+        .all(ftsQuery);
+    } else {
+      rows = this.db
+        .prepare<[], BookmarkRow>(
+          `SELECT id, url, title, notes, favicon_url, created_at, updated_at
+           FROM bookmarks ORDER BY created_at DESC`,
+        )
+        .all();
+    }
+
+    if (hasTags) {
+      const placeholders = tagIds!.map(() => '?').join(', ');
+      const taggedIds = new Set(
+        this.db
+          .prepare<number[], { bookmark_id: number }>(
+            `SELECT DISTINCT bookmark_id FROM bookmark_tags WHERE tag_id IN (${placeholders})`,
+          )
+          .all(...tagIds!)
+          .map((r: { bookmark_id: number }) => r.bookmark_id),
+      );
+      rows = rows.filter((r) => taggedIds.has(r.id));
+    }
+
+    const page = rows.slice(offset, offset + limit);
+    return {
+      results: this.bulkAttachTags(page),
+      hasMore: offset + limit < rows.length,
+    };
   }
 
   getById(id: number): Bookmark | null {
@@ -172,7 +227,7 @@ export class LocalBookmarkRepository implements BookmarkRepository {
             `SELECT DISTINCT bookmark_id FROM bookmark_tags WHERE tag_id IN (${placeholders})`,
           )
           .all(...tagIds!)
-          .map((r) => r.bookmark_id),
+          .map((r: { bookmark_id: number }) => r.bookmark_id),
       );
       rows = rows.filter((r) => taggedIds.has(r.id));
     }

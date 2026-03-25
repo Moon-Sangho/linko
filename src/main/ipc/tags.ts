@@ -1,11 +1,11 @@
 import { ipcMain } from 'electron';
 import { IpcChannels } from '@shared/ipc-channels';
 import { isValidId } from '@shared/utils/is-valid-id';
-import type { Tag, CreateTagInput, IpcResult } from '@shared/types';
+import type { Tag, TagsResult, CreateTagInput, IpcResult } from '@shared/types/domains';
 import type { TagRepository } from '../db/repositories/tag-repository';
 
 export function registerTagHandlers(repo: TagRepository): void {
-  ipcMain.handle(IpcChannels.TAGS_GET_ALL, (): Tag[] => {
+  ipcMain.handle(IpcChannels.TAGS_GET_ALL, (): TagsResult => {
     return repo.getAll();
   });
 
@@ -30,4 +30,3 @@ export function registerTagHandlers(repo: TagRepository): void {
     }
   });
 }
-
