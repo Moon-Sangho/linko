@@ -21,16 +21,20 @@ Main Process                      Renderer Process
 │ src/main/ipc/       │          │   .invoke()          │
 └─────────────────────┘          └─────────────────────┘
          │                                │
-         ▼                                ▼
-┌─────────────────────┐          ┌─────────────────────┐
-│ SQLite / fs / fetch │          │ Zustand Store        │
-└─────────────────────┘          └─────────────────────┘
-         ▲
+         ▼                          ┌─────┴──────────────┐
+┌─────────────────────┐          ┌──▼──────────────┐  ┌─▼──────────────┐
+│ SQLite / fs / fetch │          │ TanStack Query  │  │ Zustand Store  │
+└─────────────────────┘          │ (server state)  │  │ (UI state)     │
+         ▲                       └─────────────────┘  └────────────────┘
 ┌─────────────────────┐
 │ preload.ts          │
 │ contextBridge       │
 └─────────────────────┘
 ```
+
+**State management split:**
+- **TanStack Query** — server state: data fetched from SQLite via IPC (bookmarks, tags, etc.)
+- **Zustand** — UI state only: search query, selected tag filters, modal open/close, etc.
 
 ## Adding a New Feature
 
@@ -88,8 +92,58 @@ registerNewFeatureHandlers();
 
 ### 4. Call from Renderer
 
+**Reads** — use `useQuery` via a hook in `src/renderer/hooks/queries/`:
+
 ```typescript
-const result = await window.electron.invoke(IpcChannels.NEW_FEATURE_ACTION, input);
+// src/renderer/hooks/queries/use-new-feature-query.ts
+import { useQuery } from '@tanstack/react-query'
+import { IpcChannels } from '@shared/ipc-channels'
+import type { NewFeatureResult } from '@shared/types'
+import { queryKeys } from '@renderer/lib/query-keys'
+
+export function useNewFeatureQuery() {
+  return useQuery({
+    queryKey: queryKeys.newFeature.all,
+    queryFn: () =>
+      window.electron.invoke(IpcChannels.NEW_FEATURE_GET) as Promise<NewFeatureResult[]>,
+  })
+}
+```
+
+**Mutations** — use `useMutation` via a hook in `src/renderer/hooks/mutations/`:
+
+```typescript
+// src/renderer/hooks/mutations/use-new-feature-action-mutation.ts
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { IpcChannels } from '@shared/ipc-channels'
+import type { NewFeatureInput, NewFeatureResult, IpcResult } from '@shared/types'
+import { queryKeys } from '@renderer/lib/query-keys'
+
+export function useNewFeatureActionMutation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (input: NewFeatureInput) => {
+      const result = (await window.electron.invoke(
+        IpcChannels.NEW_FEATURE_ACTION,
+        input,
+      )) as IpcResult<NewFeatureResult>
+      if (!result.success || !result.data)
+        throw new Error(result.error ?? 'Action failed')
+      return result.data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.newFeature.all })
+    },
+  })
+}
+```
+
+Add query keys in `src/renderer/lib/query-keys.ts`:
+
+```typescript
+newFeature: {
+  all: ['new-feature'] as const,
+}
 ```
 
 ## Detailed Guides

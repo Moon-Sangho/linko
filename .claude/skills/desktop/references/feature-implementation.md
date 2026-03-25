@@ -8,13 +8,17 @@ Main Process                    Renderer Process
 │ ipcMain.handle() │◄──IPC───►│ window.electron  │
 │ src/main/ipc/    │           │   .invoke()      │
 └──────────────────┘           └──────────────────┘
-        │                              │
-        ▼                              ▼
-┌──────────────────┐           ┌──────────────────┐
-│ SQLite / fs /    │           │ Zustand Store    │
-│ network          │           │ (UI State)       │
-└──────────────────┘           └──────────────────┘
+        │                        ┌───────┴──────────────┐
+        ▼                   ┌────▼────────────┐  ┌──────▼──────────┐
+┌──────────────────┐        │ TanStack Query  │  │ Zustand Store   │
+│ SQLite / fs /    │        │ (server state)  │  │ (UI state only) │
+│ network          │        └─────────────────┘  └─────────────────┘
+└──────────────────┘
 ```
+
+**State split:**
+- **TanStack Query** — server state fetched from SQLite via IPC (hooks in `src/renderer/hooks/queries/` and `src/renderer/hooks/mutations/`)
+- **Zustand** — UI-only state: filters, search input, modal visibility, etc.
 
 ## Step-by-Step: Example (System Notification)
 
@@ -67,24 +71,44 @@ export function registerNotificationHandlers(): void {
 }
 ```
 
-### 4. Call from Renderer (Zustand Store)
+### 4. Call from Renderer
+
+**Mutations** (actions that change data) — use `useMutation` in `src/renderer/hooks/mutations/`:
 
 ```typescript
-// src/renderer/store/use-app-store.ts
-showNotification: async (title: string, body: string) => {
-  const result = await window.electron.invoke(
-    IpcChannels.NOTIFICATION_SHOW,
-    { title, body },
-  );
-  if (!result.success) {
-    console.error('Notification failed:', result.error);
-  }
-},
+// src/renderer/hooks/mutations/use-show-notification-mutation.ts
+import { useMutation } from '@tanstack/react-query'
+import { IpcChannels } from '@shared/ipc-channels'
+import type { ShowNotificationInput, NotificationResult, IpcResult } from '@shared/types'
+
+export function useShowNotificationMutation() {
+  return useMutation({
+    mutationFn: async (input: ShowNotificationInput) => {
+      const result = (await window.electron.invoke(
+        IpcChannels.NOTIFICATION_SHOW,
+        input,
+      )) as IpcResult<NotificationResult>
+      if (!result.success) throw new Error(result.error ?? 'Notification failed')
+      return result.data
+    },
+  })
+}
 ```
+
+Use in a component:
+
+```typescript
+const { mutate: showNotification, isPending } = useShowNotificationMutation()
+showNotification({ title: 'Hello', body: 'World' })
+```
+
+**Reads** (queries that fetch data) — use `useQuery` in `src/renderer/hooks/queries/`.
+See `SKILL.md` for the query hook pattern.
 
 ## Best Practices
 
 1. **Security**: Validate inputs in main process, never trust renderer data blindly
 2. **Performance**: Use async handlers for all heavy operations (DB, fs, network)
-3. **Error handling**: Always return `{ success, error }` — never throw across IPC
-4. **UX**: Update Zustand state to reflect loading/error states in UI
+3. **Error handling**: Throw in `mutationFn` on failure — TanStack Query surfaces it via `error` and `isError`
+4. **Cache invalidation**: Call `queryClient.invalidateQueries` in `onSuccess` when a mutation affects cached query data
+5. **UI state**: Loading/error states come from TanStack Query (`isPending`, `isError`) — no need to mirror them in Zustand
