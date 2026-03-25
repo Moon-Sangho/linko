@@ -20,6 +20,9 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.94.5
         version: 5.94.5(react@19.2.4)
+      '@testing-library/dom':
+        specifier: ^10.4.1
+        version: 10.4.1
       better-sqlite3:
         specifier: ^12.8.0
         version: 12.8.0
