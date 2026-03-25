@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import type { CSSProperties } from 'react';
 import { IpcChannels } from '@shared/ipc-channels';
-import type { IpcResult } from '@shared/types';
+import { useAppVersionQuery } from '@renderer/hooks/queries/use-app-version-query';
 
 interface TitleBarProps {
   title?: string;
@@ -10,24 +10,14 @@ export function TitleBar({ title = 'Linko' }: TitleBarProps) {
   const handleMinimize = () => window.electron.invoke(IpcChannels.WINDOW_MINIMIZE);
   const handleMaximize = () => window.electron.invoke(IpcChannels.WINDOW_MAXIMIZE);
   const handleClose = () => window.electron.invoke(IpcChannels.WINDOW_CLOSE);
-  const [version, setVersion] = useState<string | null>(null);
-
-  useEffect(() => {
-    window.electron
-      .invoke(IpcChannels.APP_GET_VERSION)
-      .then((r) => {
-        const result = r as IpcResult<string>;
-        if (result.success && result.data) setVersion(result.data);
-      })
-      .catch(() => {});
-  }, []);
+  const { data: version } = useAppVersionQuery();
 
   const isMac = navigator.platform.toLowerCase().includes('mac');
 
   return (
     <div
       className="flex items-center h-10 bg-gray-950 border-b border-gray-800 select-none flex-shrink-0"
-      style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
+      style={{ WebkitAppRegion: 'drag' } as CSSProperties}
     >
       {/* macOS traffic lights — system handles these with hiddenInset */}
       {isMac && <div className="w-20 flex-shrink-0" />}
@@ -42,7 +32,7 @@ export function TitleBar({ title = 'Linko' }: TitleBarProps) {
       {!isMac && (
         <div
           className="flex items-center flex-shrink-0"
-          style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
+          style={{ WebkitAppRegion: 'no-drag' } as CSSProperties}
         >
           <button
             onClick={handleMinimize}
