@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.11](https://github.com/Moon-Sangho/linko/compare/v0.1.10...v0.1.11) (2026-03-25)
+
+
+### Bug Fixes
+
+* **renderer:** Make tag filter update search results instantly ([#73](https://github.com/Moon-Sangho/linko/issues/73)) ([189429f](https://github.com/Moon-Sangho/linko/commit/189429f0038c492867f498c78c213a9920a3047c))
+
 ## [0.1.10](https://github.com/Moon-Sangho/linko/compare/v0.1.9...v0.1.10) (2026-03-24)
 
 
