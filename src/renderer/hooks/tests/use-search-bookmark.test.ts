@@ -192,50 +192,29 @@ describe('useSearchBookmark', () => {
       expect(lastQueryInput()).toMatchObject({ query: 'notes', tagIds: [5] })
     })
 
-    it('fires the debounce when only selectedTagIds changes with an empty searchQuery', () => {
-      // Start with empty query and no tags
+    it('updates tagIds immediately when selectedTagIds changes', () => {
       useUIStore.setState({ searchQuery: '', selectedTagIds: [] })
       renderHook(() => useSearchBookmark())
 
-      // Toggle a tag without changing the search text
       act(() => {
         useUIStore.getState().toggleTag(3)
       })
 
-      // Before delay — still the initial state (empty tagIds)
-      act(() => {
-        vi.advanceTimersByTime(500)
-      })
-      expect(lastQueryInput()).toMatchObject({ query: '', tagIds: [] })
-
-      // After full debounce delay — updated tagIds should propagate
-      act(() => {
-        vi.advanceTimersByTime(500)
-      })
+      // Tags bypass the debounce — no timer advance needed
       expect(lastQueryInput()).toMatchObject({ query: '', tagIds: [3] })
     })
 
-    it('fires debounce with tagIds: [] after clearTags is called', () => {
-      // Start with a tag selected
+    it('updates tagIds immediately when clearTags is called', () => {
       useUIStore.setState({ searchQuery: '', selectedTagIds: [7] })
       renderHook(() => useSearchBookmark())
 
-      // Clear the tag
       act(() => {
         useUIStore.getState().clearTags()
       })
 
-      // Before delay — still the previous state
-      act(() => {
-        vi.advanceTimersByTime(500)
-      })
-      expect(lastQueryInput()).toMatchObject({ query: '', tagIds: [7] })
-
-      // After full debounce delay — empty tagIds should propagate
-      act(() => {
-        vi.advanceTimersByTime(500)
-      })
+      // Tags bypass the debounce — clears immediately
       expect(lastQueryInput()).toMatchObject({ query: '', tagIds: [] })
     })
+
   })
 })

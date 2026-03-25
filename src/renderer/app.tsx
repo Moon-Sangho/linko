@@ -11,7 +11,6 @@ export default function App() {
       <AppShell>
         <BookmarkList />
       </AppShell>
-
       <OverlayProvider />
     </>
   );
