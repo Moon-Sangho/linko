@@ -197,3 +197,28 @@ If a body is truly needed, append it as additional `-m` flags:
 ```bash
 git commit -m "fix(db): Resolve connection leak on app quit" -m "The connection was not closed on before-quit, causing corruption."
 ```
+
+---
+
+## PR Description Accuracy
+
+**Only describe changes that exist in the final merged code.**
+
+Do NOT include:
+- Approaches that were explored during the conversation but ultimately not used
+- Changes that were made and then reverted
+- Architectural alternatives that were discussed but rejected
+
+```
+# ❌ Bad — "lists()" intermediate keys were discussed but never added
+## Changes
+- Removed intermediate pagination keys (lists(), byIds())
+
+# ✅ Good — only what actually landed
+## Changes
+- Simplified mutation invalidations to use broad domain-level keys
+```
+
+**Why**: Including explored-but-rejected paths in a PR description is misleading.
+Reviewers rely on the description to understand what the code actually does —
+not the journey that got there.

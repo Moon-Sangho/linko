@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { BookmarkItem } from '@renderer/components/bookmark/bookmark-item'
-import type { Bookmark } from '@shared/types'
+import type { Bookmark } from '@shared/types/domains'
 
 // ─── Mocks ───────────────────────────────────────────────────────────────────
 // vi.mock is hoisted to the top of the file, so variables used inside factories

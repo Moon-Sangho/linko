@@ -1,26 +1,15 @@
-import { useMemo } from 'react';
-import { useBookmarksQuery } from '@renderer/hooks/queries/use-bookmarks-query';
 import { useTagsQuery } from '@renderer/hooks/queries/use-tags-query';
 import { useUIStore } from '@renderer/store/use-ui-store';
 import { cn } from '@renderer/lib/cn';
 import { TagBadge } from './tag-badge';
 
 export function TagFilter() {
-  const { data: tags = [] } = useTagsQuery();
+  const { data } = useTagsQuery();
+  const tags = data?.tags ?? [];
+  const total = data?.total ?? 0;
   const { selectedTagIds, toggleTag, clearTags } = useUIStore();
-  const { data: bookmarks = [] } = useBookmarksQuery();
 
   const allActive = selectedTagIds.length === 0;
-
-  const tagCounts = useMemo(() => {
-    const counts: Record<number, number> = {};
-    for (const bookmark of bookmarks) {
-      for (const tag of bookmark.tags) {
-        counts[tag.id] = (counts[tag.id] ?? 0) + 1;
-      }
-    }
-    return counts;
-  }, [bookmarks]);
 
   return (
     <div className="flex flex-col px-3 py-2">
@@ -41,7 +30,7 @@ export function TagFilter() {
         <span
           className={cn('text-[10px] tabular-nums', allActive ? 'text-gray-400' : 'text-gray-600')}
         >
-          {bookmarks.length}
+          {total}
         </span>
       </button>
 
@@ -56,7 +45,7 @@ export function TagFilter() {
                 tag={tag}
                 isActive={selectedTagIds.includes(tag.id)}
                 onClick={() => toggleTag(tag.id)}
-                count={tagCounts[tag.id] ?? 0}
+                count={tag.count}
               />
             ))}
           </div>

@@ -1,5 +1,5 @@
 import fs from 'fs/promises';
-import type { ImportSummary } from '@shared/types';
+import type { ImportSummary } from '@shared/types/domains';
 import { isValidUrl } from '@shared/utils/is-valid-url';
 import type { BookmarkRepository } from '@main/db/repositories/bookmark-repository';
 

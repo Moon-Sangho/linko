@@ -1,6 +1,7 @@
 export const IpcChannels = {
   // ─── Bookmarks ──────────────────────────────────────────────────────────────
   BOOKMARKS_GET_ALL: 'bookmarks:get-all',
+  BOOKMARKS_GET_PAGE: 'bookmarks:get-page',
   BOOKMARKS_SEARCH: 'bookmarks:search',
   BOOKMARK_GET_BY_ID: 'bookmark:get-by-id',
   BOOKMARK_CREATE: 'bookmark:create',

@@ -1,13 +1,14 @@
-import type { SearchBookmarksInput } from '@shared/types';
+import type { SearchBookmarksInput } from '@shared/types/domains';
 
 export const queryKeys = {
   bookmark: {
     all: ['bookmarks'] as const,
-    searches: ['bookmarks', 'search'] as const,
-    search: (input: SearchBookmarksInput) => ['bookmarks', 'search', input] as const,
+    list: (input: SearchBookmarksInput) => [...queryKeys.bookmark.all, 'list', input] as const,
+    byId: (id: number) => [...queryKeys.bookmark.all, 'by-id', id] as const,
   },
   tag: {
     all: ['tags'] as const,
+    list: () => [...queryKeys.tag.all, 'list'] as const,
   },
   app: {
     all: ['app'] as const,

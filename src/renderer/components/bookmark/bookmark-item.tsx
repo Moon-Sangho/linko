@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Check, ExternalLink, Pencil, Trash2 } from 'lucide-react';
-import type { Bookmark } from '@shared/types';
+import type { Bookmark } from '@shared/types/domains';
 import { useDeleteBookmarkMutation } from '@renderer/hooks/mutations/use-delete-bookmark-mutation';
 import { useOpenUrlMutation } from '@renderer/hooks/mutations/use-open-url-mutation';
 import { overlay } from '@renderer/overlay/control';

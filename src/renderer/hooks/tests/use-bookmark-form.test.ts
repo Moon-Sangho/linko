@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { useBookmarkForm } from '@renderer/hooks/use-bookmark-form'
 import { IpcChannels } from '@shared/ipc-channels'
-import type { IpcResult, UrlMetadata } from '@shared/types'
+import type { IpcResult, UrlMetadata } from '@shared/types/domains'
 
 // ─── Mocks ───────────────────────────────────────────────────────────────────
 // vi.hoisted() ensures mockInvoke is initialized before vi.mock factories run.
