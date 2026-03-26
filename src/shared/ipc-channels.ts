@@ -30,3 +30,18 @@ export const IpcChannels = {
 } as const;
 
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels];
+
+/**
+ * One-way push channels: main → renderer via webContents.send / ipcRenderer.on.
+ * These are NOT request-response — do not use with ipcMain.handle / invoke.
+ */
+export const IpcEventChannels = {
+  // ─── Bookmarks ──────────────────────────────────────────────────────────────
+  BOOKMARK_FAVICON_UPDATED: 'bookmark:favicon-updated',
+} as const;
+
+export type IpcEventChannel = (typeof IpcEventChannels)[keyof typeof IpcEventChannels];
+
+export interface IpcEventPayloadMap {
+  [IpcEventChannels.BOOKMARK_FAVICON_UPDATED]: { id: number; favicon_url: string };
+}
