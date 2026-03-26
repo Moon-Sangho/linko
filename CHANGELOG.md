@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.14](https://github.com/Moon-Sangho/linko/compare/v0.1.13...v0.1.14) (2026-03-26)
+
+
+### Features
+
+* **main:** Implement lazy favicon enrichment with real-time UI updates ([#83](https://github.com/Moon-Sangho/linko/issues/83)) ([dc2bdce](https://github.com/Moon-Sangho/linko/commit/dc2bdcec8e0ad236ced384893a0d76d835bdff38))
+
 ## [0.1.13](https://github.com/Moon-Sangho/linko/compare/v0.1.12...v0.1.13) (2026-03-26)
 
 
