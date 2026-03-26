@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.13](https://github.com/Moon-Sangho/linko/compare/v0.1.12...v0.1.13) (2026-03-26)
+
+
+### Documentation
+
+* Embed test review perspectives into test-code-expert agent ([#81](https://github.com/Moon-Sangho/linko/issues/81)) ([a72f8d1](https://github.com/Moon-Sangho/linko/commit/a72f8d1761e5833f1735a52ba2900130377a0743))
+
 ## [0.1.12](https://github.com/Moon-Sangho/linko/compare/v0.1.11...v0.1.12) (2026-03-26)
 
 
