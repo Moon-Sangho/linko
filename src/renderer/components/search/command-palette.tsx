@@ -37,7 +37,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   if (!isOpen) return null;
 
   const handleSelect = (bookmark: Bookmark) => {
-    openUrlMutation(bookmark.url);
+    openUrlMutation({ id: bookmark.id, url: bookmark.url });
     onClose();
   };
 

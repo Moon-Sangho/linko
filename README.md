@@ -124,19 +124,32 @@ This produces a `.dmg` file under `dist/`. To install:
 ```
 linko/
 ├── src/
-│   ├── main/          # Electron main process
+│   ├── main/                # Electron main process
 │   │   ├── index.ts
 │   │   ├── preload.ts
-│   │   ├── ipc/       # IPC handlers (one file per domain)
-│   │   ├── db/        # SQLite schema + repositories
-│   │   └── services/  # URL fetcher, importer
-│   ├── renderer/      # React app
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── hooks/     # TanStack Query hooks (queries, mutations) + custom hooks
-│   │   └── store/     # Zustand store (UI state only)
-│   └── shared/        # Types and IPC channel names
-├── .context/          # Agent collaboration files (see below)
+│   │   ├── ipc/             # IPC handlers (one file per domain)
+│   │   ├── db/              # SQLite schema + repositories
+│   │   ├── services/        # URL fetcher, importer
+│   │   └── windows/         # BrowserWindow factories
+│   ├── renderer/            # React app
+│   │   ├── components/      # UI components grouped by domain
+│   │   │   ├── bookmark/
+│   │   │   ├── layout/
+│   │   │   ├── search/
+│   │   │   ├── tag/
+│   │   │   └── ui/          # Shared primitives (Favicon, Spinner, etc.)
+│   │   ├── hooks/           # Custom hooks
+│   │   │   ├── mutations/   # TanStack Query mutation hooks
+│   │   │   └── queries/     # TanStack Query query hooks
+│   │   ├── lib/             # Library integrations (QueryClient, query keys, etc.)
+│   │   ├── overlay/         # Overlay / modal portal system
+│   │   ├── store/           # Zustand store (UI state only)
+│   │   └── utils/           # Pure renderer utilities
+│   ├── shared/              # Shared between main and renderer
+│   │   ├── types/           # TypeScript domain types
+│   │   └── utils/           # Pure utility functions (isValidUrl, etc.)
+│   └── test/                # Global test setup
+├── .context/                # Agent collaboration files (see below)
 └── CLAUDE.md
 ```
 

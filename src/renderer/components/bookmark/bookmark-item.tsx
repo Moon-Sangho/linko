@@ -49,15 +49,15 @@ export function BookmarkItem({
   const extraTagCount = bookmark.tags.length - MAX_VISIBLE_TAGS;
 
   const handleDoubleClick = useCallback(() => {
-    openUrl(bookmark.url);
-  }, [openUrl, bookmark.url]);
+    openUrl({ id: bookmark.id, url: bookmark.url });
+  }, [openUrl, bookmark.id, bookmark.url]);
 
   const handleOpenClick = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      openUrl(bookmark.url);
+      openUrl({ id: bookmark.id, url: bookmark.url });
     },
-    [openUrl, bookmark.url],
+    [openUrl, bookmark.id, bookmark.url],
   );
 
   const handleEditClick = useCallback(

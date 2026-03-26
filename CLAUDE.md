@@ -42,7 +42,8 @@ linko/
 │   │   ├── index.ts
 │   │   ├── ipc/       # IPC handlers
 │   │   ├── db/        # SQLite + repositories
-│   │   └── services/  # URL fetcher, etc.
+│   │   ├── services/  # URL fetcher, etc.
+│   │   └── windows/   # BrowserWindow factories
 │   ├── renderer/      # React app
 │   │   ├── components/
 │   │   ├── pages/
