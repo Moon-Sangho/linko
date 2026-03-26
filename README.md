@@ -156,8 +156,8 @@ Linko is being developed almost entirely through **agentic engineering** — mul
 | `/agent-dev-ui`            | React renderer, components, TanStack Query hooks, Zustand store |
 | `/agent-dev-qa`            | Run 5 QA sub-agents in parallel, produce unified report |
 | `/agent-orchestrator`      | Universal entry point — run any playbook by task description or path |
-| `/agent-test-code-expert`  | Write, review, or improve test code (unit, integration, component) |
-| `/agent-test-code-review`  | Run 3 specialist test reviewers in parallel, get unified report |
+| `/agent-test-code-expert`  | Write, review, or improve test code (unit, integration, component). Runs Skeptic / Coverage Hawk / Pragmatist checks internally before output. |
+| `/agent-test-code-review`  | Run 3 specialist test reviewers in parallel, get unified report. **Token-intensive** — use selectively (see note below). |
 
 ### Parallel Work with Conductor
 

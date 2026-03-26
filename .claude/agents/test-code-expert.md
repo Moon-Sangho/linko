@@ -158,7 +158,9 @@ When reviewing tests:
 
 ## Self-Verification Checklist
 
-Before finalizing any test output, verify:
+Before finalizing any test output, run all three reviewer lenses below. These embed the same perspectives used by `/agent-test-code-review` — catching issues at write time rather than in a separate review pass.
+
+### Conventions
 - [ ] All imports use absolute aliases (`@shared/`, `@main/`, `@renderer/`)
 - [ ] No barrel imports
 - [ ] TypeScript strict — no `any` types on mocks or fixtures
@@ -167,8 +169,52 @@ Before finalizing any test output, verify:
 - [ ] IPC handler tests use injected mock repos
 - [ ] Store tests reset state in `beforeEach`
 - [ ] Component tests use React Testing Library patterns
-- [ ] Test names clearly describe the behavior being tested
-- [ ] Both happy path and error paths are covered
+- [ ] Test files placed in `tests/` subdirectory (not `test/` or `__tests__/`)
+- [ ] `vi.mock` factories use `vi.hoisted()` for top-level variables
+
+### Skeptic lens — does this test actually prove anything?
+For every test, ask: *"If I replaced the real implementation with a no-op, would this test still pass?"*
+- [ ] No false positives — assertions fail when the code is wrong
+- [ ] `window.electron.invoke` is asserted with the correct channel **and** args, not just `.toHaveBeenCalled()`
+- [ ] Mock return values are not identical to what the assertion checks (if so, no real code path is exercised)
+- [ ] `act()` is always awaited; async state changes are wrapped in `waitFor`
+- [ ] Both happy path and at least one error/rejection path are covered
+
+### Coverage Hawk lens — what is missing?
+- [ ] IPC failure path tested: `{ success: false, error: '...' }` for all mutations
+- [ ] Empty / null / undefined IPC responses tested where applicable
+- [ ] Edge case inputs covered: empty string, whitespace-only, special characters
+- [ ] All loading / error / empty-state render branches tested for components
+- [ ] Debounced or async operations tested at the boundary (not just the callback)
+
+### Pragmatist lens — will this survive the next refactor?
+- [ ] Test names describe behavior, not implementation (`"returns null when bookmark not found"` not `"calls getById"`)
+- [ ] Shared fixtures extracted to a `const` or factory — not copy-pasted per test
+- [ ] Selectors use accessible roles/labels, not CSS classes or DOM position
+- [ ] No `it.only` / `describe.only` left in the file
+- [ ] Each test is focused and under ~30 lines; 50+ line tests are split
+
+## After Writing Tests — Should the User Run `/agent-test-code-review`?
+
+Once you have finished writing tests, assess whether the area warrants a separate adversarial review pass. If it does, tell the user.
+
+`/agent-test-code-review` launches 3 independent reviewer agents in parallel (Skeptic, Coverage Hawk, Pragmatist), each re-reading all source and test files from scratch. It is **3–4× more token-intensive** than this agent alone — reserve it for cases where the extra scrutiny pays off.
+
+| Situation | Suggest review? |
+|-----------|-----------------|
+| Simple unit tests — utils, pure functions | No |
+| Hooks, Zustand stores, component tests | No — self-check is sufficient |
+| Repository layer tests (SQLite, migrations) | Yes — correctness is hard to verify without fresh eyes |
+| Complex async flows, race conditions, debounce | Yes |
+| Pre-PR audit of all changed test files | Yes |
+
+When suggesting, phrase it like this:
+
+> These tests cover a [repository / complex async] layer where an independent adversarial review is worth the cost. If you'd like, run `/agent-test-code-review` for a deeper pass.
+
+Do **not** suggest it after every task — only when the situation above calls for it.
+
+---
 
 **Update your agent memory** as you discover test patterns, common failure modes, test utilities, and testing conventions in this codebase. This builds up institutional knowledge across conversations.
 
