@@ -12,10 +12,14 @@ import type {
   Bookmark,
   UrlMetadata,
 } from '@shared/types/domains';
-import type { BookmarkRepository } from '../db/repositories/bookmark-repository';
-import { fetchUrlMetadata } from '../services/url-fetcher';
+import type { BookmarkRepository } from '@main/db/repositories/bookmark-repository';
+import { fetchUrlMetadata } from '@main/services/url-fetcher';
+import type { FaviconEnrichmentService } from '@main/services/favicon-enrichment-service';
 
-export function registerBookmarkHandlers(repo: BookmarkRepository): void {
+export function registerBookmarkHandlers(
+  repo: BookmarkRepository,
+  enrichmentService: FaviconEnrichmentService,
+): void {
   ipcMain.handle(IpcChannels.BOOKMARKS_GET_ALL, (): Bookmark[] => {
     return repo.getAll();
   });
@@ -78,15 +82,24 @@ export function registerBookmarkHandlers(repo: BookmarkRepository): void {
     }
   });
 
-  ipcMain.handle(IpcChannels.BOOKMARK_OPEN, async (_, url: string): Promise<IpcResult> => {
-    try {
-      if (!isValidUrl(url)) return { success: false, error: 'Invalid URL' };
-      await shell.openExternal(url);
-      return { success: true };
-    } catch (error) {
-      return { success: false, error: (error as Error).message };
-    }
-  });
+  ipcMain.handle(
+    IpcChannels.BOOKMARK_OPEN,
+    async (_, id: number, url: string): Promise<IpcResult> => {
+      try {
+        if (!isValidId(id)) return { success: false, error: 'Invalid id' };
+        if (!isValidUrl(url)) return { success: false, error: 'Invalid URL' };
+        await shell.openExternal(url);
+        // Lazy favicon fetch: only fetch if not yet stored (e.g. bulk-imported bookmarks)
+        const bookmark = repo.getById(id);
+        if (bookmark && !bookmark.favicon_url) {
+          enrichmentService.updateFaviconInBackground(id, url);
+        }
+        return { success: true };
+      } catch (error) {
+        return { success: false, error: (error as Error).message };
+      }
+    },
+  );
 
   ipcMain.handle(
     IpcChannels.BOOKMARK_FETCH_METADATA,
