@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.12](https://github.com/Moon-Sangho/linko/compare/v0.1.11...v0.1.12) (2026-03-26)
+
+
+### Build System
+
+* Include all commit types in CHANGELOG sections ([#78](https://github.com/Moon-Sangho/linko/issues/78)) ([5bd18e5](https://github.com/Moon-Sangho/linko/commit/5bd18e5815e559e9a87c8d6cc3ba1de089f63a60))
+
+
+### Tests
+
+* **renderer:** Add comprehensive TanStack Query hook tests ([#79](https://github.com/Moon-Sangho/linko/issues/79)) ([a9da103](https://github.com/Moon-Sangho/linko/commit/a9da103019874ddd8fd5f98a2f88ec5625095ddc))
+
 ## [0.1.11](https://github.com/Moon-Sangho/linko/compare/v0.1.10...v0.1.11) (2026-03-25)
 
 
