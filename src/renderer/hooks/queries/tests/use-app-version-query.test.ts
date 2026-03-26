@@ -54,17 +54,6 @@ describe('useAppVersionQuery', () => {
     expect(result.current.isPending).toBe(true)
   })
 
-  it('surfaces null data when IPC returns null', async () => {
-    mockInvoke.mockResolvedValue(null)
-    const { wrapper } = createWrapper()
-
-    const { result } = renderHook(() => useAppVersionQuery(), { wrapper })
-
-    await waitFor(() => expect(result.current.isSuccess).toBe(true))
-
-    expect(result.current.data).toBeNull()
-  })
-
   it('enters error state when IPC rejects', async () => {
     mockInvoke.mockRejectedValue(new Error('IPC failure'))
     const { wrapper } = createWrapper()

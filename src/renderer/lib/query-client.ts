@@ -1,7 +1,7 @@
 import { QueryClient } from '@tanstack/react-query';
 import type { DefaultOptions } from '@tanstack/react-query';
 
-export const queryClientDefaultOptions: DefaultOptions = {
+export const queryClientDefaultOptions = {
   queries: {
     // Local SQLite — data only changes through our own mutations.
     // gcTime: Infinity keeps the cache alive as long as the app is open,
@@ -12,13 +12,13 @@ export const queryClientDefaultOptions: DefaultOptions = {
     refetchOnWindowFocus: false,
     // Queries run over IPC, not HTTP — online/offline status is irrelevant.
     // Without this, TanStack Query pauses all queries when the system goes offline.
-    networkMode: 'always',
+    networkMode: 'always' as const,
     retry: 1,
   },
   mutations: {
-    networkMode: 'always',
+    networkMode: 'always' as const,
   },
-};
+} satisfies DefaultOptions;
 
 export const queryClient = new QueryClient({
   defaultOptions: queryClientDefaultOptions,

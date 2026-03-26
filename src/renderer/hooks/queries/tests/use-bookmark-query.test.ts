@@ -68,15 +68,15 @@ describe('useBookmarkQuery', () => {
     expect(mockInvoke).toHaveBeenCalledWith(IpcChannels.BOOKMARK_GET_BY_ID, 999)
   })
 
-  it('calls IPC with id = 0 (falsy but valid)', async () => {
-    mockInvoke.mockResolvedValue(null)
+  it('does not call IPC when id is 0 (disabled by enabled: id > 0)', () => {
     const { wrapper } = createWrapper()
 
     const { result } = renderHook(() => useBookmarkQuery(0), { wrapper })
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true))
-
-    expect(mockInvoke).toHaveBeenCalledWith(IpcChannels.BOOKMARK_GET_BY_ID, 0)
+    // enabled: id > 0 prevents the query from firing for invalid ids
+    expect(result.current.isPending).toBe(true)
+    expect(result.current.fetchStatus).toBe('idle')
+    expect(mockInvoke).not.toHaveBeenCalled()
   })
 
   it('refetches with the new id when id changes', async () => {

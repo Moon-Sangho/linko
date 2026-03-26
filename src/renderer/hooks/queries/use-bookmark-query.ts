@@ -8,5 +8,6 @@ export function useBookmarkQuery(id: number) {
     queryKey: queryKeys.bookmark.byId(id),
     queryFn: () =>
       window.electron.invoke(IpcChannels.BOOKMARK_GET_BY_ID, id) as Promise<Bookmark | null>,
+    enabled: id > 0,
   });
 }
