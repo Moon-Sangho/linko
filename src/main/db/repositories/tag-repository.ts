@@ -1,5 +1,5 @@
 import type Database from 'better-sqlite3';
-import type { Tag, TagsResult, CreateTagInput } from '@shared/types/domains';
+import type { Tag, TagsResult, CreateTagInput, UpdateTagInput } from '@shared/types/domains';
 
 // ─── Repository Interface ─────────────────────────────────────────────────────
 
@@ -7,6 +7,7 @@ export interface TagRepository {
   getAll(): TagsResult;
   getById(id: number): Tag | null;
   create(input: CreateTagInput): Tag;
+  update(id: number, input: UpdateTagInput): Tag;
   delete(id: number): void;
 }
 
@@ -44,6 +45,26 @@ export class LocalTagRepository implements TagRepository {
     const result = this.db.prepare(`INSERT INTO tags (name) VALUES (?)`).run(trimmed);
 
     return this.getById(result.lastInsertRowid as number)!;
+  }
+
+  update(id: number, input: UpdateTagInput): Tag {
+    const trimmed = input.name.trim();
+    if (!trimmed) throw new Error('Tag name cannot be empty');
+
+    this.db.prepare(`UPDATE tags SET name = ? WHERE id = ?`).run(trimmed, id);
+
+    const updated = this.db
+      .prepare<[number], Tag>(
+        `SELECT t.id, t.name, COUNT(bt.bookmark_id) AS count
+         FROM tags t
+         LEFT JOIN bookmark_tags bt ON bt.tag_id = t.id
+         WHERE t.id = ?
+         GROUP BY t.id`,
+      )
+      .get(id);
+
+    if (!updated) throw new Error(`Tag with id ${id} not found`);
+    return updated;
   }
 
   delete(id: number): void {
