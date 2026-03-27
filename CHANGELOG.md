@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.15](https://github.com/Moon-Sangho/linko/compare/v0.1.14...v0.1.15) (2026-03-27)
+
+
+### Documentation
+
+* Update REAMDE.md ([2a2523c](https://github.com/Moon-Sangho/linko/commit/2a2523c8c55daa59f5c89d088020894658878e08))
+
+
+### Tests
+
+* **renderer:** Write comprehensive TanStack Query mutation hook tests with IPC rejection coverage ([#86](https://github.com/Moon-Sangho/linko/issues/86)) ([0e5cc72](https://github.com/Moon-Sangho/linko/commit/0e5cc724251e2ee4fbd246d3d42e659f88b7b022))
+
 ## [0.1.14](https://github.com/Moon-Sangho/linko/compare/v0.1.13...v0.1.14) (2026-03-26)
 
 
