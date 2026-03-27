@@ -41,6 +41,10 @@ export interface CreateTagInput {
   name: string;
 }
 
+export interface UpdateTagInput {
+  name: string;
+}
+
 export interface TagsResult {
   tags: Tag[];
   total: number;
