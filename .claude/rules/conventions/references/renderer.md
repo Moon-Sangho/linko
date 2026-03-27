@@ -86,6 +86,54 @@ export function BookmarkCard({ bookmark, onDelete }: BookmarkCardProps) {
 
 ---
 
+## Keyboard Event Containment
+
+When a component owns a focused input (e.g. an inline rename field), it must call `e.stopPropagation()` in its `onKeyDown` handler to prevent keydown events from leaking to global `window` listeners.
+
+```typescript
+// ✅ Correct — stop at the boundary
+function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+  e.stopPropagation();
+  if (e.key === 'Enter') { ... }
+  if (e.key === 'Escape') { ... }
+}
+
+// ❌ Wrong — guard in the global listener
+window.addEventListener('keydown', (e) => {
+  if (e.target instanceof HTMLInputElement) return; // symptomatic workaround
+  ...
+});
+```
+
+**Why**: The leak is the problem, not the listener. Fix at the source (the input boundary) so global shortcuts remain simple and components are self-contained.
+
+---
+
+## Modal / Overlay Pattern
+
+All modals must be opened via the imperative `overlay.open()` API — never by managing a local `isOpen` state in the parent component.
+
+```typescript
+// ✅ Correct — imperative overlay
+import { overlay } from '@renderer/overlay/control'
+
+overlay.open(({ isOpen, close }) => (
+  <MyModal isOpen={isOpen} onClose={close} />
+))
+
+// ❌ Wrong — local isOpen state
+const [isOpen, setIsOpen] = useState(false)
+<MyModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
+```
+
+Rules:
+- `overlay.open()` returns an `id` — use `overlay.close(id)` if you need to close it programmatically from outside
+- Modal components must accept `isOpen: boolean` and `onClose: () => void` props (consumed by `OverlayProvider`)
+- `OverlayProvider` is mounted once in `App.tsx` — do not mount it elsewhere
+- Modal component files live in the same domain folder as their trigger (e.g. `src/renderer/components/tag/tag-delete-modal.tsx`)
+
+---
+
 ## Packages
 
 | Package | Purpose |
