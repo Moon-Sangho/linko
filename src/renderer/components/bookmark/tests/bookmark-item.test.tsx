@@ -151,14 +151,14 @@ describe('BookmarkItem', () => {
       const user = userEvent.setup()
       renderItem()
       await user.dblClick(screen.getByText('Example Site'))
-      expect(mockOpenUrl).toHaveBeenCalledWith('https://example.com')
+      expect(mockOpenUrl).toHaveBeenCalledWith({ id: 1, url: 'https://example.com' })
     })
 
     it('calls openUrl when the open button is clicked', async () => {
       const user = userEvent.setup()
       renderItem()
       await user.click(screen.getByTitle('Open in browser'))
-      expect(mockOpenUrl).toHaveBeenCalledWith('https://example.com')
+      expect(mockOpenUrl).toHaveBeenCalledWith({ id: 1, url: 'https://example.com' })
     })
 
     it('opens the edit modal when the edit button is clicked', async () => {
