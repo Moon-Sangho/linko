@@ -3,6 +3,8 @@ import { IpcChannels } from '@shared/ipc-channels';
 import type { ImportSummary, IpcResult } from '@shared/types/domains';
 import { queryKeys } from '@renderer/lib/query-keys';
 
+export const IMPORT_CANCELLED_SENTINEL = 'No file selected';
+
 export function useImportBookmarksMutation() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -11,7 +13,7 @@ export function useImportBookmarksMutation() {
         IpcChannels.FS_IMPORT_BOOKMARKS,
       )) as IpcResult<ImportSummary>;
       if (!result.success) {
-        if (result.error === 'No file selected') return null; // user cancelled
+        if (result.error === IMPORT_CANCELLED_SENTINEL) return null; // user cancelled
         throw new Error(result.error ?? 'Import failed');
       }
       return result.data ?? null;
