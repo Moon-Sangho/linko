@@ -14,6 +14,7 @@ export const IpcChannels = {
   // ─── Tags ────────────────────────────────────────────────────────────────────
   TAGS_GET_ALL: 'tags:get-all',
   TAG_CREATE: 'tag:create',
+  TAG_UPDATE: 'tag:update',
   TAG_DELETE: 'tag:delete',
 
   // ─── File System ─────────────────────────────────────────────────────────────

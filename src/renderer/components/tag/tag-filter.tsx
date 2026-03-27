@@ -1,7 +1,7 @@
 import { useTagsQuery } from '@renderer/hooks/queries/use-tags-query';
 import { useUIStore } from '@renderer/store/use-ui-store';
 import { cn } from '@renderer/lib/cn';
-import { TagBadge } from './tag-badge';
+import { TagFilterItem } from './tag-filter-item';
 
 export function TagFilter() {
   const { data } = useTagsQuery();
@@ -40,12 +40,11 @@ export function TagFilter() {
           <p className="text-[11px] text-gray-500 px-2 mb-1">Tags</p>
           <div className="flex flex-col">
             {tags.map((tag) => (
-              <TagBadge
+              <TagFilterItem
                 key={tag.id}
                 tag={tag}
                 isActive={selectedTagIds.includes(tag.id)}
                 onClick={() => toggleTag(tag.id)}
-                count={tag.count}
               />
             ))}
           </div>

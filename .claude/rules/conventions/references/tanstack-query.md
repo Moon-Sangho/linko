@@ -132,3 +132,20 @@ queryFn: async () => {
   return null
 }
 ```
+
+---
+
+## Mutation Usage in Components
+
+Always destructure mutation hooks at the call site — never use the mutation object directly.
+
+```typescript
+// ✅ Destructure
+const { mutate: deleteTag, isPending: isDeleting } = useDeleteTagMutation()
+const { mutateAsync: createBookmark } = useCreateBookmarkMutation()
+
+// ❌ Use object directly
+const deleteMutation = useDeleteTagMutation()
+deleteMutation.mutate(id)
+deleteMutation.isPending
+```

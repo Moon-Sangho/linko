@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron';
 import { IpcChannels } from '@shared/ipc-channels';
 import { isValidId } from '@shared/utils/is-valid-id';
-import type { Tag, TagsResult, CreateTagInput, IpcResult } from '@shared/types/domains';
+import type { Tag, TagsResult, CreateTagInput, UpdateTagInput, IpcResult } from '@shared/types/domains';
 import type { TagRepository } from '../db/repositories/tag-repository';
 
 export function registerTagHandlers(repo: TagRepository): void {
@@ -15,6 +15,14 @@ export function registerTagHandlers(repo: TagRepository): void {
         return { success: false, error: 'Tag name cannot be empty' };
       }
       return { success: true, data: repo.create(input) };
+    } catch (error) {
+      return { success: false, error: (error as Error).message };
+    }
+  });
+
+  ipcMain.handle(IpcChannels.TAG_UPDATE, async (_, id: number, input: UpdateTagInput): Promise<IpcResult<Tag>> => {
+    try {
+      return { success: true, data: repo.update(id, input) };
     } catch (error) {
       return { success: false, error: (error as Error).message };
     }
