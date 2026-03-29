@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.16](https://github.com/Moon-Sangho/linko/compare/v0.1.15...v0.1.16) (2026-03-29)
+
+
+### Features
+
+* **ui:** Implement resizable sidebar with drag handle ([#90](https://github.com/Moon-Sangho/linko/issues/90)) ([1c50975](https://github.com/Moon-Sangho/linko/commit/1c50975e886e6d3c4daa7923f65f777f2672927d))
+
 ## [0.1.15](https://github.com/Moon-Sangho/linko/compare/v0.1.14...v0.1.15) (2026-03-27)
 
 
