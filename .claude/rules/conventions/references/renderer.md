@@ -134,6 +134,39 @@ Rules:
 
 ---
 
+## Tailwind Class Merging
+
+Use `cn` from `@renderer/lib/cn` when a className has conditional logic or needs merge conflict resolution.
+For static classNames with no branching, a plain string is preferred.
+
+```typescript
+import { cn } from '@renderer/lib/cn'
+
+// ✅ Use cn — conditional logic
+<div className={cn('base-class', isActive && 'bg-blue-500', variant === 'ghost' && 'bg-transparent')} />
+
+// ✅ Use cn — merging classes that may conflict
+<div className={cn('bg-gray-800', className)} />
+
+// ✅ Plain string — no conditionals, no merging needed
+<div className="flex items-center gap-2 text-sm" />
+
+// ❌ Wrong — array join instead of cn
+<div className={['base-class', isActive ? 'bg-blue-500' : ''].join(' ')} />
+
+// ❌ Wrong — template literal instead of cn
+<div className={`base-class ${isActive ? 'bg-blue-500' : ''}`} />
+
+// ❌ Wrong — cn wrapping a static string (unnecessary)
+<div className={cn('flex items-center gap-2')} />
+```
+
+**Why**: `cn` uses `clsx` for conditional logic and `tailwind-merge` to resolve conflicting
+Tailwind classes (e.g. `bg-gray-800 bg-blue-500` → last one wins correctly).
+Don't wrap static strings in `cn` — it adds noise with no benefit.
+
+---
+
 ## Packages
 
 | Package | Purpose |
