@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { useState } from 'react';
 import { Plus, Upload } from 'lucide-react';
 import { SearchBar } from '@renderer/components/search/search-bar';
@@ -6,7 +7,11 @@ import { overlay } from '@renderer/overlay/control';
 import { AddBookmarkModal } from '@renderer/components/bookmark/add-bookmark-modal';
 import { useImportBookmarksMutation } from '@renderer/hooks/mutations/use-import-bookmarks-mutation';
 
-export function Sidebar() {
+interface SidebarProps {
+  style?: CSSProperties;
+}
+
+export function Sidebar({ style }: SidebarProps) {
   const [importStatus, setImportStatus] = useState<string | null>(null);
   const { mutateAsync: importBookmarks } = useImportBookmarksMutation();
 
@@ -32,7 +37,7 @@ export function Sidebar() {
   };
 
   return (
-    <div className="w-56 flex-shrink-0 flex flex-col bg-gray-900 border-r border-gray-800 h-full">
+    <div className="flex-shrink-0 flex flex-col bg-gray-900 h-full" style={style}>
       {/* Search */}
       <SearchBar />
 
