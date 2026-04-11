@@ -17,7 +17,7 @@ Object.defineProperty(window, 'electron', {
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
 
 const bookmarkFixture: Bookmark = {
-  id: 42,
+  id: 'uuid-42',
   url: 'https://updated.example.com',
   title: 'Updated Title',
   notes: 'Some notes',
@@ -48,10 +48,10 @@ describe('useUpdateBookmarkMutation', () => {
     const { result } = renderHook(() => useUpdateBookmarkMutation(), { wrapper })
 
     await act(async () => {
-      await result.current.mutateAsync({ id: 42, input: updateInput })
+      await result.current.mutateAsync({ id: 'uuid-42', input: updateInput })
     })
 
-    expect(mockInvoke).toHaveBeenCalledWith(IpcChannels.BOOKMARK_UPDATE, 42, updateInput)
+    expect(mockInvoke).toHaveBeenCalledWith(IpcChannels.BOOKMARK_UPDATE, 'uuid-42', updateInput)
     expect(mockInvoke).toHaveBeenCalledTimes(1)
   })
 
@@ -64,7 +64,7 @@ describe('useUpdateBookmarkMutation', () => {
 
     let data: Bookmark | undefined
     await act(async () => {
-      data = await result.current.mutateAsync({ id: 42, input: updateInput })
+      data = await result.current.mutateAsync({ id: 'uuid-42', input: updateInput })
     })
 
     expect(data).toEqual(bookmarkFixture)
@@ -80,7 +80,7 @@ describe('useUpdateBookmarkMutation', () => {
 
     await act(async () => {
       await expect(
-        result.current.mutateAsync({ id: 99, input: updateInput }),
+        result.current.mutateAsync({ id: 'uuid-99', input: updateInput }),
       ).rejects.toThrow('Bookmark not found')
     })
 
@@ -96,7 +96,7 @@ describe('useUpdateBookmarkMutation', () => {
 
     await act(async () => {
       await expect(
-        result.current.mutateAsync({ id: 1, input: updateInput }),
+        result.current.mutateAsync({ id: 'uuid-1', input: updateInput }),
       ).rejects.toThrow('Failed to update bookmark')
     })
   })
@@ -110,7 +110,7 @@ describe('useUpdateBookmarkMutation', () => {
 
     await act(async () => {
       await expect(
-        result.current.mutateAsync({ id: 1, input: updateInput }),
+        result.current.mutateAsync({ id: 'uuid-1', input: updateInput }),
       ).rejects.toThrow('Failed to update bookmark')
     })
   })
@@ -124,7 +124,7 @@ describe('useUpdateBookmarkMutation', () => {
     const { result } = renderHook(() => useUpdateBookmarkMutation(), { wrapper })
 
     await act(async () => {
-      await result.current.mutateAsync({ id: 42, input: updateInput })
+      await result.current.mutateAsync({ id: 'uuid-42', input: updateInput })
     })
 
     await waitFor(() =>
@@ -143,12 +143,12 @@ describe('useUpdateBookmarkMutation', () => {
     const { result } = renderHook(() => useUpdateBookmarkMutation(), { wrapper })
 
     await act(async () => {
-      await result.current.mutateAsync({ id: 42, input: updateInput })
+      await result.current.mutateAsync({ id: 'uuid-42', input: updateInput })
     })
 
     await waitFor(() =>
       expect(invalidateSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ queryKey: ['bookmarks', 'by-id', 42] }),
+        expect.objectContaining({ queryKey: ['bookmarks', 'by-id', 'uuid-42'] }),
       ),
     )
   })
@@ -162,7 +162,7 @@ describe('useUpdateBookmarkMutation', () => {
     const { result } = renderHook(() => useUpdateBookmarkMutation(), { wrapper })
 
     await act(async () => {
-      await result.current.mutateAsync({ id: 42, input: updateInput })
+      await result.current.mutateAsync({ id: 'uuid-42', input: updateInput })
     })
 
     await waitFor(() =>
@@ -180,7 +180,7 @@ describe('useUpdateBookmarkMutation', () => {
 
     await act(async () => {
       await expect(
-        result.current.mutateAsync({ id: 42, input: updateInput }),
+        result.current.mutateAsync({ id: 'uuid-42', input: updateInput }),
       ).rejects.toThrow('IPC channel unavailable')
     })
 
@@ -197,7 +197,7 @@ describe('useUpdateBookmarkMutation', () => {
 
     await act(async () => {
       await expect(
-        result.current.mutateAsync({ id: 1, input: updateInput }),
+        result.current.mutateAsync({ id: 'uuid-1', input: updateInput }),
       ).rejects.toThrow()
     })
 

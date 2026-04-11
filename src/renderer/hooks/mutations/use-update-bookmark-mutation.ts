@@ -6,7 +6,7 @@ import { queryKeys } from '@renderer/lib/query-keys';
 export function useUpdateBookmarkMutation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, input }: { id: number; input: UpdateBookmarkInput }) => {
+    mutationFn: async ({ id, input }: { id: string; input: UpdateBookmarkInput }) => {
       const result = (await window.electron.invoke(
         IpcChannels.BOOKMARK_UPDATE,
         id,
@@ -20,6 +20,7 @@ export function useUpdateBookmarkMutation() {
       queryClient.invalidateQueries({ queryKey: queryKeys.bookmark.all });
       queryClient.invalidateQueries({ queryKey: queryKeys.tag.all });
       queryClient.invalidateQueries({ queryKey: queryKeys.bookmark.byId(id) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.sync.all });
     },
   });
 }

@@ -17,7 +17,7 @@ Object.defineProperty(window, 'electron', {
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
 
 const bookmarkFixture: Bookmark = {
-  id: 42,
+  id: 'uuid-42',
   url: 'https://example.com',
   title: 'Example Site',
   notes: null,
@@ -38,12 +38,12 @@ describe('useBookmarkQuery', () => {
     mockInvoke.mockResolvedValue(bookmarkFixture)
     const { wrapper } = createWrapper()
 
-    const { result } = renderHook(() => useBookmarkQuery(42), { wrapper })
+    const { result } = renderHook(() => useBookmarkQuery('uuid-42'), { wrapper })
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
     expect(result.current.data).toEqual(bookmarkFixture)
-    expect(mockInvoke).toHaveBeenCalledWith(IpcChannels.BOOKMARK_GET_BY_ID, 42)
+    expect(mockInvoke).toHaveBeenCalledWith(IpcChannels.BOOKMARK_GET_BY_ID, 'uuid-42')
     expect(mockInvoke).toHaveBeenCalledTimes(1)
   })
 
@@ -51,7 +51,7 @@ describe('useBookmarkQuery', () => {
     mockInvoke.mockReturnValue(new Promise(() => {})) // never resolves
     const { wrapper } = createWrapper()
 
-    const { result } = renderHook(() => useBookmarkQuery(1), { wrapper })
+    const { result } = renderHook(() => useBookmarkQuery('uuid-1'), { wrapper })
 
     expect(result.current.isPending).toBe(true)
   })
@@ -60,43 +60,43 @@ describe('useBookmarkQuery', () => {
     mockInvoke.mockResolvedValue(null)
     const { wrapper } = createWrapper()
 
-    const { result } = renderHook(() => useBookmarkQuery(999), { wrapper })
+    const { result } = renderHook(() => useBookmarkQuery('uuid-999'), { wrapper })
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
     expect(result.current.data).toBeNull()
-    expect(mockInvoke).toHaveBeenCalledWith(IpcChannels.BOOKMARK_GET_BY_ID, 999)
+    expect(mockInvoke).toHaveBeenCalledWith(IpcChannels.BOOKMARK_GET_BY_ID, 'uuid-999')
   })
 
-  it('does not call IPC when id is 0 (disabled by enabled: id > 0)', () => {
+  it('does not call IPC when id is empty string (disabled by enabled: !!id)', () => {
     const { wrapper } = createWrapper()
 
-    const { result } = renderHook(() => useBookmarkQuery(0), { wrapper })
+    const { result } = renderHook(() => useBookmarkQuery(''), { wrapper })
 
-    // enabled: id > 0 prevents the query from firing for invalid ids
+    // enabled: !!id prevents the query from firing for empty string ids
     expect(result.current.isPending).toBe(true)
     expect(result.current.fetchStatus).toBe('idle')
     expect(mockInvoke).not.toHaveBeenCalled()
   })
 
   it('refetches with the new id when id changes', async () => {
-    const bookmark1 = { ...bookmarkFixture, id: 1 }
-    const bookmark2 = { ...bookmarkFixture, id: 2 }
+    const bookmark1 = { ...bookmarkFixture, id: 'uuid-1' }
+    const bookmark2 = { ...bookmarkFixture, id: 'uuid-2' }
     mockInvoke.mockResolvedValueOnce(bookmark1).mockResolvedValueOnce(bookmark2)
     const { wrapper } = createWrapper()
 
     const { result, rerender } = renderHook(
-      ({ id }: { id: number }) => useBookmarkQuery(id),
-      { wrapper, initialProps: { id: 1 } },
+      ({ id }: { id: string }) => useBookmarkQuery(id),
+      { wrapper, initialProps: { id: 'uuid-1' } },
     )
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
-    expect(mockInvoke).toHaveBeenNthCalledWith(1, IpcChannels.BOOKMARK_GET_BY_ID, 1)
+    expect(mockInvoke).toHaveBeenNthCalledWith(1, IpcChannels.BOOKMARK_GET_BY_ID, 'uuid-1')
 
-    rerender({ id: 2 })
-    await waitFor(() => expect(result.current.data?.id).toBe(2))
+    rerender({ id: 'uuid-2' })
+    await waitFor(() => expect(result.current.data?.id).toBe('uuid-2'))
 
-    expect(mockInvoke).toHaveBeenNthCalledWith(2, IpcChannels.BOOKMARK_GET_BY_ID, 2)
+    expect(mockInvoke).toHaveBeenNthCalledWith(2, IpcChannels.BOOKMARK_GET_BY_ID, 'uuid-2')
     expect(mockInvoke).toHaveBeenCalledTimes(2)
   })
 
@@ -105,14 +105,14 @@ describe('useBookmarkQuery', () => {
     const { wrapper } = createWrapper()
 
     const { result, rerender } = renderHook(
-      ({ id }: { id: number }) => useBookmarkQuery(id),
-      { wrapper, initialProps: { id: 42 } },
+      ({ id }: { id: string }) => useBookmarkQuery(id),
+      { wrapper, initialProps: { id: 'uuid-42' } },
     )
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(mockInvoke).toHaveBeenCalledTimes(1)
 
-    rerender({ id: 42 })
+    rerender({ id: 'uuid-42' })
 
     // Same query key → served from cache, no additional IPC call
     expect(mockInvoke).toHaveBeenCalledTimes(1)
@@ -123,7 +123,7 @@ describe('useBookmarkQuery', () => {
     mockInvoke.mockRejectedValue(new Error('Not found'))
     const { wrapper } = createWrapper()
 
-    const { result } = renderHook(() => useBookmarkQuery(1), { wrapper })
+    const { result } = renderHook(() => useBookmarkQuery('uuid-1'), { wrapper })
 
     await waitFor(() => expect(result.current.isError).toBe(true))
 

@@ -34,7 +34,7 @@ export function useBookmarkForm() {
     mode: 'onSubmit',
   });
 
-  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
+  const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
   const [isFetchingMeta, setIsFetchingMeta] = useState(false);
   const [isDuplicate, setIsDuplicate] = useState(false);
   const [suggestedUrl, setSuggestedUrl] = useState('');
@@ -131,7 +131,7 @@ export function useBookmarkForm() {
     rhf.setValue('title', value);
   }
 
-  function toggleTag(tagId: number) {
+  function toggleTag(tagId: string) {
     setSelectedTagIds((prev) =>
       prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId],
     );
@@ -150,7 +150,7 @@ export function useBookmarkForm() {
 
   /** Pre-fills form for edit mode and cancels in-flight async calls. */
   const prefill = useCallback(
-    (data: { url: string; title: string; notes: string; tagIds: number[] }) => {
+    (data: { url: string; title: string; notes: string; tagIds: string[] }) => {
       sessionRef.current += 1;
       titleAutoFilledRef.current = false;
       rhf.reset({ url: data.url, title: data.title, notes: data.notes });

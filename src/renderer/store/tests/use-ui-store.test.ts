@@ -43,33 +43,33 @@ describe('useUIStore', () => {
 
   describe('toggleTag', () => {
     it('selects a tag when none is selected', () => {
-      useUIStore.getState().toggleTag(1)
-      expect(useUIStore.getState().selectedTagIds).toEqual([1])
+      useUIStore.getState().toggleTag('tag-uuid-1')
+      expect(useUIStore.getState().selectedTagIds).toEqual(['tag-uuid-1'])
     })
 
     it('deselects a tag when it is already selected', () => {
-      useUIStore.setState({ selectedTagIds: [1] })
-      useUIStore.getState().toggleTag(1)
+      useUIStore.setState({ selectedTagIds: ['tag-uuid-1'] })
+      useUIStore.getState().toggleTag('tag-uuid-1')
       expect(useUIStore.getState().selectedTagIds).toEqual([])
     })
 
     it('replaces the selected tag when a different tag is toggled', () => {
-      useUIStore.setState({ selectedTagIds: [1] })
-      useUIStore.getState().toggleTag(2)
-      expect(useUIStore.getState().selectedTagIds).toEqual([2])
+      useUIStore.setState({ selectedTagIds: ['tag-uuid-1'] })
+      useUIStore.getState().toggleTag('tag-uuid-2')
+      expect(useUIStore.getState().selectedTagIds).toEqual(['tag-uuid-2'])
     })
 
     it('only allows one tag to be active at a time', () => {
-      useUIStore.getState().toggleTag(1)
-      useUIStore.getState().toggleTag(3)
+      useUIStore.getState().toggleTag('tag-uuid-1')
+      useUIStore.getState().toggleTag('tag-uuid-3')
       expect(useUIStore.getState().selectedTagIds).toHaveLength(1)
-      expect(useUIStore.getState().selectedTagIds).toContain(3)
+      expect(useUIStore.getState().selectedTagIds).toContain('tag-uuid-3')
     })
   })
 
   describe('clearTags', () => {
     it('removes all selected tags', () => {
-      useUIStore.setState({ selectedTagIds: [1] })
+      useUIStore.setState({ selectedTagIds: ['tag-uuid-1'] })
       useUIStore.getState().clearTags()
       expect(useUIStore.getState().selectedTagIds).toEqual([])
     })
@@ -80,7 +80,7 @@ describe('useUIStore', () => {
     })
 
     it('does not affect searchQuery when a query is set', () => {
-      useUIStore.setState({ searchQuery: 'typescript', selectedTagIds: [2] })
+      useUIStore.setState({ searchQuery: 'typescript', selectedTagIds: ['tag-uuid-2'] })
       useUIStore.getState().clearTags()
       expect(useUIStore.getState().searchQuery).toBe('typescript')
       expect(useUIStore.getState().selectedTagIds).toEqual([])

@@ -30,20 +30,20 @@ export function BookmarkList() {
     [data],
   );
 
-  const [selectedBookmarkId, setSelectedBookmark] = useState<number | null>(null);
-  const [checkedBookmarkIds, setCheckedBookmarkIds] = useState<number[]>([]);
+  const [selectedBookmarkId, setSelectedBookmark] = useState<string | null>(null);
+  const [checkedBookmarkIds, setCheckedBookmarkIds] = useState<string[]>([]);
 
-  const toggleBookmarkCheck = useCallback((id: number) => {
+  const toggleBookmarkCheck = useCallback((id: string) => {
     setCheckedBookmarkIds((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
     );
   }, []);
 
-  const checkAllBookmarks = useCallback((ids: number[]) => {
+  const checkAllBookmarks = useCallback((ids: string[]) => {
     setCheckedBookmarkIds(ids);
   }, []);
 
-  const checkRangeBookmarks = useCallback((ids: number[], checked: boolean) => {
+  const checkRangeBookmarks = useCallback((ids: string[], checked: boolean) => {
     setCheckedBookmarkIds((prev) =>
       checked ? [...new Set([...prev, ...ids])] : prev.filter((x) => !ids.includes(x)),
     );
@@ -67,7 +67,7 @@ export function BookmarkList() {
   }, [checkedBookmarkIds.length]);
 
   const handleCheckToggle = useCallback(
-    (id: number, e: React.MouseEvent) => {
+    (id: string, e: React.MouseEvent) => {
       const currentIndex = displayBookmarks.findIndex((b) => b.id === id);
       if (e.shiftKey && lastCheckedIndexRef.current !== null) {
         const start = Math.min(lastCheckedIndexRef.current, currentIndex);

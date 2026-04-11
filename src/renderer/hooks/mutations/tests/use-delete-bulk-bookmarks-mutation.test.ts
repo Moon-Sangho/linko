@@ -29,13 +29,13 @@ describe('useDeleteBulkBookmarksMutation', () => {
     const { result } = renderHook(() => useDeleteBulkBookmarksMutation(), { wrapper })
 
     await act(async () => {
-      await result.current.mutateAsync([1, 2, 3])
+      await result.current.mutateAsync(['uuid-1', 'uuid-2', 'uuid-3'])
     })
 
     expect(mockInvoke).toHaveBeenCalledTimes(3)
-    expect(mockInvoke).toHaveBeenCalledWith(IpcChannels.BOOKMARK_DELETE, 1)
-    expect(mockInvoke).toHaveBeenCalledWith(IpcChannels.BOOKMARK_DELETE, 2)
-    expect(mockInvoke).toHaveBeenCalledWith(IpcChannels.BOOKMARK_DELETE, 3)
+    expect(mockInvoke).toHaveBeenCalledWith(IpcChannels.BOOKMARK_DELETE, 'uuid-1')
+    expect(mockInvoke).toHaveBeenCalledWith(IpcChannels.BOOKMARK_DELETE, 'uuid-2')
+    expect(mockInvoke).toHaveBeenCalledWith(IpcChannels.BOOKMARK_DELETE, 'uuid-3')
   })
 
   it('resolves without a return value when all deletions succeed', async () => {
@@ -47,7 +47,7 @@ describe('useDeleteBulkBookmarksMutation', () => {
 
     let returnValue: unknown = 'sentinel'
     await act(async () => {
-      returnValue = await result.current.mutateAsync([1, 2])
+      returnValue = await result.current.mutateAsync(['uuid-1', 'uuid-2'])
     })
 
     expect(returnValue).toBeUndefined()
@@ -65,7 +65,7 @@ describe('useDeleteBulkBookmarksMutation', () => {
     const { result } = renderHook(() => useDeleteBulkBookmarksMutation(), { wrapper })
 
     await act(async () => {
-      await expect(result.current.mutateAsync([1, 2, 3])).rejects.toThrow(
+      await expect(result.current.mutateAsync(['uuid-1', 'uuid-2', 'uuid-3'])).rejects.toThrow(
         'Failed to delete some bookmarks',
       )
     })
@@ -84,7 +84,7 @@ describe('useDeleteBulkBookmarksMutation', () => {
     const { result } = renderHook(() => useDeleteBulkBookmarksMutation(), { wrapper })
 
     await act(async () => {
-      await expect(result.current.mutateAsync([1, 2])).rejects.toThrow()
+      await expect(result.current.mutateAsync(['uuid-1', 'uuid-2'])).rejects.toThrow()
     })
 
     await waitFor(() =>
@@ -104,7 +104,7 @@ describe('useDeleteBulkBookmarksMutation', () => {
     const { result } = renderHook(() => useDeleteBulkBookmarksMutation(), { wrapper })
 
     await act(async () => {
-      await expect(result.current.mutateAsync([1, 2])).rejects.toThrow()
+      await expect(result.current.mutateAsync(['uuid-1', 'uuid-2'])).rejects.toThrow()
     })
 
     await waitFor(() =>
@@ -136,7 +136,7 @@ describe('useDeleteBulkBookmarksMutation', () => {
     const { result } = renderHook(() => useDeleteBulkBookmarksMutation(), { wrapper })
 
     await act(async () => {
-      await result.current.mutateAsync([10, 20])
+      await result.current.mutateAsync(['uuid-10', 'uuid-20'])
     })
 
     await waitFor(() => expect(invalidateSpy).toHaveBeenCalledTimes(2))
@@ -155,7 +155,7 @@ describe('useDeleteBulkBookmarksMutation', () => {
     const { result } = renderHook(() => useDeleteBulkBookmarksMutation(), { wrapper })
 
     await act(async () => {
-      await expect(result.current.mutateAsync([1, 2, 3])).rejects.toThrow('IPC channel unavailable')
+      await expect(result.current.mutateAsync(['uuid-1', 'uuid-2', 'uuid-3'])).rejects.toThrow('IPC channel unavailable')
     })
 
     await waitFor(() => expect(result.current.isError).toBe(true))

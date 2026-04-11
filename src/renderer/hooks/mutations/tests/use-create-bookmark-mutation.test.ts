@@ -24,7 +24,7 @@ const createInput: CreateBookmarkInput = {
 }
 
 const bookmarkFixture: Bookmark = {
-  id: 1,
+  id: 'uuid-1',
   url: 'https://example.com',
   title: 'Example',
   notes: null,

@@ -18,7 +18,7 @@ Object.defineProperty(window, 'electron', {
 
 const updateInput: UpdateTagInput = { name: 'typescript' }
 
-const tagFixture: Tag = { id: 7, name: 'typescript', count: 3 }
+const tagFixture: Tag = { id: 'tag-uuid-7', name: 'typescript', count: 3 }
 
 // ─── Tests ───────────────────────────────────────────────────────────────────
 
@@ -35,10 +35,10 @@ describe('useUpdateTagMutation', () => {
     const { result } = renderHook(() => useUpdateTagMutation(), { wrapper })
 
     await act(async () => {
-      await result.current.mutateAsync({ id: 7, input: updateInput })
+      await result.current.mutateAsync({ id: 'tag-uuid-7', input: updateInput })
     })
 
-    expect(mockInvoke).toHaveBeenCalledWith(IpcChannels.TAG_UPDATE, 7, updateInput)
+    expect(mockInvoke).toHaveBeenCalledWith(IpcChannels.TAG_UPDATE, 'tag-uuid-7', updateInput)
     expect(mockInvoke).toHaveBeenCalledTimes(1)
   })
 
@@ -51,7 +51,7 @@ describe('useUpdateTagMutation', () => {
 
     let data: Tag | undefined
     await act(async () => {
-      data = await result.current.mutateAsync({ id: 7, input: updateInput })
+      data = await result.current.mutateAsync({ id: 'tag-uuid-7', input: updateInput })
     })
 
     expect(data).toEqual(tagFixture)
@@ -66,7 +66,7 @@ describe('useUpdateTagMutation', () => {
     const { result } = renderHook(() => useUpdateTagMutation(), { wrapper })
 
     await act(async () => {
-      await expect(result.current.mutateAsync({ id: 99, input: updateInput })).rejects.toThrow(
+      await expect(result.current.mutateAsync({ id: 'tag-uuid-99', input: updateInput })).rejects.toThrow(
         'Tag not found',
       )
     })
@@ -82,7 +82,7 @@ describe('useUpdateTagMutation', () => {
     const { result } = renderHook(() => useUpdateTagMutation(), { wrapper })
 
     await act(async () => {
-      await expect(result.current.mutateAsync({ id: 7, input: updateInput })).rejects.toThrow(
+      await expect(result.current.mutateAsync({ id: 'tag-uuid-7', input: updateInput })).rejects.toThrow(
         'Failed to update tag',
       )
     })
@@ -97,7 +97,7 @@ describe('useUpdateTagMutation', () => {
     const { result } = renderHook(() => useUpdateTagMutation(), { wrapper })
 
     await act(async () => {
-      await result.current.mutateAsync({ id: 7, input: updateInput })
+      await result.current.mutateAsync({ id: 'tag-uuid-7', input: updateInput })
     })
 
     await waitFor(() =>
@@ -116,7 +116,7 @@ describe('useUpdateTagMutation', () => {
     const { result } = renderHook(() => useUpdateTagMutation(), { wrapper })
 
     await act(async () => {
-      await result.current.mutateAsync({ id: 7, input: updateInput })
+      await result.current.mutateAsync({ id: 'tag-uuid-7', input: updateInput })
     })
 
     await waitFor(() =>
@@ -135,7 +135,7 @@ describe('useUpdateTagMutation', () => {
     const { result } = renderHook(() => useUpdateTagMutation(), { wrapper })
 
     await act(async () => {
-      await expect(result.current.mutateAsync({ id: 7, input: updateInput })).rejects.toThrow()
+      await expect(result.current.mutateAsync({ id: 'tag-uuid-7', input: updateInput })).rejects.toThrow()
     })
 
     expect(invalidateSpy).not.toHaveBeenCalled()
@@ -149,7 +149,7 @@ describe('useUpdateTagMutation', () => {
 
     await act(async () => {
       await expect(
-        result.current.mutateAsync({ id: 7, input: updateInput }),
+        result.current.mutateAsync({ id: 'tag-uuid-7', input: updateInput }),
       ).rejects.toThrow('IPC channel unavailable')
     })
 

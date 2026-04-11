@@ -18,7 +18,7 @@ Object.defineProperty(window, 'electron', {
 
 const createInput: CreateTagInput = { name: 'typescript' }
 
-const tagFixture: Tag = { id: 10, name: 'typescript', count: 0 }
+const tagFixture: Tag = { id: 'tag-uuid-1', name: 'typescript', count: 0 }
 
 // ─── Tests ───────────────────────────────────────────────────────────────────
 

@@ -6,7 +6,7 @@ import { queryKeys } from '@renderer/lib/query-keys';
 export function useUpdateTagMutation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, input }: { id: number; input: UpdateTagInput }) => {
+    mutationFn: async ({ id, input }: { id: string; input: UpdateTagInput }) => {
       const result = (await window.electron.invoke(
         IpcChannels.TAG_UPDATE,
         id,
@@ -18,6 +18,7 @@ export function useUpdateTagMutation() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.tag.all });
       queryClient.invalidateQueries({ queryKey: queryKeys.bookmark.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.sync.all });
     },
   });
 }

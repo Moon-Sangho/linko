@@ -13,11 +13,11 @@ export class FaviconEnrichmentService {
    * Fire-and-forget favicon fetch for a single bookmark.
    * DB is updated before the push event is sent to the renderer.
    */
-  updateFaviconInBackground(id: number, url: string): void {
+  updateFaviconInBackground(id: string, url: string): void {
     void this.fetchAndUpdate(id, url);
   }
 
-  private async fetchAndUpdate(id: number, url: string): Promise<void> {
+  private async fetchAndUpdate(id: string, url: string): Promise<void> {
     try {
       const metadata = await fetchUrlMetadata(url);
       if (!metadata.favicon_url) return;

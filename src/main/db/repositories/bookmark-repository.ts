@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import type Database from 'better-sqlite3';
 import type {
   Bookmark,
@@ -14,18 +15,20 @@ import type {
 export interface BookmarkRepository {
   getAll(): Bookmark[];
   getPage(input: GetBookmarksPageInput): BookmarkPage;
-  getById(id: number): Bookmark | null;
+  getById(id: string): Bookmark | null;
   create(input: CreateBookmarkInput): Bookmark;
-  update(id: number, input: UpdateBookmarkInput): Bookmark;
-  delete(id: number): void;
+  createWithId(id: string, input: CreateBookmarkInput): Bookmark;
+  update(id: string, input: UpdateBookmarkInput): Bookmark;
+  delete(id: string): void;
+  deleteAll(): void;
   search(input: SearchBookmarksInput): Bookmark[];
-  isDuplicate(url: string, excludeId?: number): boolean;
+  isDuplicate(url: string, excludeId?: string): boolean;
 }
 
 // ─── Row Types (raw SQLite rows) ──────────────────────────────────────────────
 
 interface BookmarkRow {
-  id: number;
+  id: string;
   url: string;
   title: string | null;
   notes: string | null;
@@ -33,8 +36,6 @@ interface BookmarkRow {
   created_at: string;
   updated_at: string;
 }
-
-// Tag row shape is identical to the shared Tag type
 
 // ─── Local Repository ─────────────────────────────────────────────────────────
 
@@ -71,7 +72,7 @@ export class LocalBookmarkRepository implements BookmarkRepository {
         .prepare<[string], BookmarkRow>(
           `SELECT b.id, b.url, b.title, b.notes, b.favicon_url, b.created_at, b.updated_at
            FROM bookmarks b
-           JOIN bookmarks_fts fts ON fts.rowid = b.id
+           JOIN bookmarks_fts fts ON fts.rowid = b.rowid
            WHERE bookmarks_fts MATCH ?
            ORDER BY rank`,
         )
@@ -89,11 +90,11 @@ export class LocalBookmarkRepository implements BookmarkRepository {
       const placeholders = tagIds!.map(() => '?').join(', ');
       const taggedIds = new Set(
         this.db
-          .prepare<number[], { bookmark_id: number }>(
+          .prepare<string[], { bookmark_id: string }>(
             `SELECT DISTINCT bookmark_id FROM bookmark_tags WHERE tag_id IN (${placeholders})`,
           )
           .all(...tagIds!)
-          .map((r: { bookmark_id: number }) => r.bookmark_id),
+          .map((r) => r.bookmark_id),
       );
       rows = rows.filter((r) => taggedIds.has(r.id));
     }
@@ -105,9 +106,9 @@ export class LocalBookmarkRepository implements BookmarkRepository {
     };
   }
 
-  getById(id: number): Bookmark | null {
+  getById(id: string): Bookmark | null {
     const row = this.db
-      .prepare<[number], BookmarkRow>(
+      .prepare<[string], BookmarkRow>(
         `SELECT id, url, title, notes, favicon_url, created_at, updated_at
          FROM bookmarks WHERE id = ?`,
       )
@@ -118,14 +119,19 @@ export class LocalBookmarkRepository implements BookmarkRepository {
   }
 
   create(input: CreateBookmarkInput): Bookmark {
+    return this.createWithId(randomUUID(), input);
+  }
+
+  createWithId(id: string, input: CreateBookmarkInput): Bookmark {
     const now = new Date().toISOString();
 
-    const result = this.db
+    this.db
       .prepare(
-        `INSERT INTO bookmarks (url, title, notes, favicon_url, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO bookmarks (id, url, title, notes, favicon_url, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
       )
       .run(
+        id,
         input.url,
         input.title ?? null,
         input.notes ?? null,
@@ -134,8 +140,6 @@ export class LocalBookmarkRepository implements BookmarkRepository {
         now,
       );
 
-    const id = result.lastInsertRowid as number;
-
     if (input.tagIds && input.tagIds.length > 0) {
       this.setTags(id, input.tagIds);
     }
@@ -143,7 +147,7 @@ export class LocalBookmarkRepository implements BookmarkRepository {
     return this.getById(id)!;
   }
 
-  update(id: number, input: UpdateBookmarkInput): Bookmark {
+  update(id: string, input: UpdateBookmarkInput): Bookmark {
     const existing = this.getById(id);
     if (!existing) throw new Error(`Bookmark ${id} not found`);
 
@@ -175,12 +179,18 @@ export class LocalBookmarkRepository implements BookmarkRepository {
     return this.getById(id)!;
   }
 
-  delete(id: number): void {
+  delete(id: string): void {
     this.db.prepare(`DELETE FROM bookmark_tags WHERE bookmark_id = ?`).run(id);
     this.db.prepare(`DELETE FROM bookmarks WHERE id = ?`).run(id);
     this.db
       .prepare(`DELETE FROM tags WHERE id NOT IN (SELECT DISTINCT tag_id FROM bookmark_tags)`)
       .run();
+  }
+
+  deleteAll(): void {
+    this.db.prepare(`DELETE FROM bookmark_tags`).run();
+    this.db.prepare(`DELETE FROM bookmarks`).run();
+    this.db.prepare(`DELETE FROM tags`).run();
   }
 
   search(input: SearchBookmarksInput): Bookmark[] {
@@ -193,7 +203,6 @@ export class LocalBookmarkRepository implements BookmarkRepository {
     let rows: BookmarkRow[];
 
     if (hasQuery) {
-      // FTS5 search — sanitize query to avoid FTS syntax errors
       const ftsQuery = query!
         .trim()
         .split(/\s+/)
@@ -204,7 +213,7 @@ export class LocalBookmarkRepository implements BookmarkRepository {
         .prepare<[string], BookmarkRow>(
           `SELECT b.id, b.url, b.title, b.notes, b.favicon_url, b.created_at, b.updated_at
            FROM bookmarks b
-           JOIN bookmarks_fts fts ON fts.rowid = b.id
+           JOIN bookmarks_fts fts ON fts.rowid = b.rowid
            WHERE bookmarks_fts MATCH ?
            ORDER BY rank`,
         )
@@ -218,16 +227,15 @@ export class LocalBookmarkRepository implements BookmarkRepository {
         .all();
     }
 
-    // Filter by tags (OR logic: bookmark must have at least one of the given tags)
     if (hasTags) {
       const placeholders = tagIds!.map(() => '?').join(', ');
       const taggedIds = new Set(
         this.db
-          .prepare<number[], { bookmark_id: number }>(
+          .prepare<string[], { bookmark_id: string }>(
             `SELECT DISTINCT bookmark_id FROM bookmark_tags WHERE tag_id IN (${placeholders})`,
           )
           .all(...tagIds!)
-          .map((r: { bookmark_id: number }) => r.bookmark_id),
+          .map((r) => r.bookmark_id),
       );
       rows = rows.filter((r) => taggedIds.has(r.id));
     }
@@ -235,9 +243,9 @@ export class LocalBookmarkRepository implements BookmarkRepository {
     return this.bulkAttachTags(rows);
   }
 
-  isDuplicate(url: string, excludeId?: number): boolean {
+  isDuplicate(url: string, excludeId?: string): boolean {
     const row = this.db
-      .prepare<[string], { id: number }>(`SELECT id FROM bookmarks WHERE url = ? LIMIT 1`)
+      .prepare<[string], { id: string }>(`SELECT id FROM bookmarks WHERE url = ? LIMIT 1`)
       .get(url);
 
     if (!row) return false;
@@ -249,7 +257,7 @@ export class LocalBookmarkRepository implements BookmarkRepository {
 
   private attachTags(row: BookmarkRow): Bookmark {
     const tags = this.db
-      .prepare<[number], Tag>(
+      .prepare<[string], Tag>(
         `SELECT t.id, t.name
          FROM tags t
          JOIN bookmark_tags bt ON bt.tag_id = t.id
@@ -268,7 +276,7 @@ export class LocalBookmarkRepository implements BookmarkRepository {
     const placeholders = ids.map(() => '?').join(', ');
 
     const tagRows = this.db
-      .prepare<number[], { bookmark_id: number; id: number; name: string }>(
+      .prepare<string[], { bookmark_id: string; id: string; name: string }>(
         `SELECT bt.bookmark_id, t.id, t.name
          FROM tags t
          JOIN bookmark_tags bt ON bt.tag_id = t.id
@@ -277,7 +285,7 @@ export class LocalBookmarkRepository implements BookmarkRepository {
       )
       .all(...ids);
 
-    const tagMap = new Map<number, Tag[]>();
+    const tagMap = new Map<string, Tag[]>();
     for (const { bookmark_id, id, name } of tagRows) {
       const list = tagMap.get(bookmark_id) ?? [];
       list.push({ id, name });
@@ -287,7 +295,7 @@ export class LocalBookmarkRepository implements BookmarkRepository {
     return rows.map((row) => ({ ...row, tags: tagMap.get(row.id) ?? [] }));
   }
 
-  private setTags(bookmarkId: number, tagIds: number[]): void {
+  private setTags(bookmarkId: string, tagIds: string[]): void {
     this.db.prepare(`DELETE FROM bookmark_tags WHERE bookmark_id = ?`).run(bookmarkId);
 
     const insert = this.db.prepare(
@@ -298,7 +306,6 @@ export class LocalBookmarkRepository implements BookmarkRepository {
       insert.run(bookmarkId, tagId);
     }
 
-    // Remove tags that are no longer associated with any bookmark
     this.db
       .prepare(`DELETE FROM tags WHERE id NOT IN (SELECT DISTINCT tag_id FROM bookmark_tags)`)
       .run();

@@ -38,7 +38,7 @@ export function registerBookmarkHandlers(
     },
   );
 
-  ipcMain.handle(IpcChannels.BOOKMARK_GET_BY_ID, (_, id: number): Bookmark | null => {
+  ipcMain.handle(IpcChannels.BOOKMARK_GET_BY_ID, (_, id: string): Bookmark | null => {
     if (!isValidId(id)) throw new Error('Invalid id');
     return repo.getById(id);
   });
@@ -59,7 +59,7 @@ export function registerBookmarkHandlers(
 
   ipcMain.handle(
     IpcChannels.BOOKMARK_UPDATE,
-    (_, id: number, input: UpdateBookmarkInput): IpcResult<Bookmark> => {
+    (_, id: string, input: UpdateBookmarkInput): IpcResult<Bookmark> => {
       try {
         if (!isValidId(id)) return { success: false, error: 'Invalid id' };
         if (input.url !== undefined && !isValidUrl(input.url)) {
@@ -72,19 +72,21 @@ export function registerBookmarkHandlers(
     },
   );
 
-  ipcMain.handle(IpcChannels.BOOKMARK_DELETE, (_, id: number): IpcResult => {
+  ipcMain.handle(IpcChannels.BOOKMARK_DELETE, (_, id: string): IpcResult => {
     try {
       if (!isValidId(id)) return { success: false, error: 'Invalid id' };
       repo.delete(id);
       return { success: true };
     } catch (error) {
-      return { success: false, error: (error as Error).message };
+      const message = error instanceof Error ? error.message : String(error);
+      console.error('[bookmark:delete] failed:', message);
+      return { success: false, error: message };
     }
   });
 
   ipcMain.handle(
     IpcChannels.BOOKMARK_OPEN,
-    async (_, id: number, url: string): Promise<IpcResult> => {
+    async (_, id: string, url: string): Promise<IpcResult> => {
       try {
         if (!isValidId(id)) return { success: false, error: 'Invalid id' };
         if (!isValidUrl(url)) return { success: false, error: 'Invalid URL' };
@@ -116,7 +118,7 @@ export function registerBookmarkHandlers(
 
   ipcMain.handle(
     IpcChannels.BOOKMARK_CHECK_DUPLICATE,
-    (_, url: string, excludeId?: number): IpcResult<boolean> => {
+    (_, url: string, excludeId?: string): IpcResult<boolean> => {
       try {
         return { success: true, data: repo.isDuplicate(url, excludeId) };
       } catch (error) {
@@ -125,4 +127,3 @@ export function registerBookmarkHandlers(
     },
   );
 }
-

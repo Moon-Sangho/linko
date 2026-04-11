@@ -20,7 +20,7 @@ export function registerTagHandlers(repo: TagRepository): void {
     }
   });
 
-  ipcMain.handle(IpcChannels.TAG_UPDATE, async (_, id: number, input: UpdateTagInput): Promise<IpcResult<Tag>> => {
+  ipcMain.handle(IpcChannels.TAG_UPDATE, async (_, id: string, input: UpdateTagInput): Promise<IpcResult<Tag>> => {
     try {
       return { success: true, data: repo.update(id, input) };
     } catch (error) {
@@ -28,7 +28,7 @@ export function registerTagHandlers(repo: TagRepository): void {
     }
   });
 
-  ipcMain.handle(IpcChannels.TAG_DELETE, (_, id: number): IpcResult => {
+  ipcMain.handle(IpcChannels.TAG_DELETE, (_, id: string): IpcResult => {
     try {
       if (!isValidId(id)) return { success: false, error: 'Invalid id' };
       repo.delete(id);

@@ -29,10 +29,10 @@ describe('useDeleteTagMutation', () => {
     const { result } = renderHook(() => useDeleteTagMutation(), { wrapper })
 
     await act(async () => {
-      await result.current.mutateAsync(5)
+      await result.current.mutateAsync('tag-uuid-5')
     })
 
-    expect(mockInvoke).toHaveBeenCalledWith(IpcChannels.TAG_DELETE, 5)
+    expect(mockInvoke).toHaveBeenCalledWith(IpcChannels.TAG_DELETE, 'tag-uuid-5')
     expect(mockInvoke).toHaveBeenCalledTimes(1)
   })
 
@@ -45,7 +45,7 @@ describe('useDeleteTagMutation', () => {
 
     let returnValue: unknown = 'sentinel'
     await act(async () => {
-      returnValue = await result.current.mutateAsync(5)
+      returnValue = await result.current.mutateAsync('tag-uuid-5')
     })
 
     expect(returnValue).toBeUndefined()
@@ -60,7 +60,7 @@ describe('useDeleteTagMutation', () => {
     const { result } = renderHook(() => useDeleteTagMutation(), { wrapper })
 
     await act(async () => {
-      await expect(result.current.mutateAsync(99)).rejects.toThrow('Tag not found')
+      await expect(result.current.mutateAsync('tag-uuid-99')).rejects.toThrow('Tag not found')
     })
 
     await waitFor(() => expect(result.current.isError).toBe(true))
@@ -74,7 +74,7 @@ describe('useDeleteTagMutation', () => {
     const { result } = renderHook(() => useDeleteTagMutation(), { wrapper })
 
     await act(async () => {
-      await expect(result.current.mutateAsync(1)).rejects.toThrow('Failed to delete tag')
+      await expect(result.current.mutateAsync('tag-uuid-1')).rejects.toThrow('Failed to delete tag')
     })
   })
 
@@ -87,7 +87,7 @@ describe('useDeleteTagMutation', () => {
     const { result } = renderHook(() => useDeleteTagMutation(), { wrapper })
 
     await act(async () => {
-      await result.current.mutateAsync(5)
+      await result.current.mutateAsync('tag-uuid-5')
     })
 
     await waitFor(() =>
@@ -106,7 +106,7 @@ describe('useDeleteTagMutation', () => {
     const { result } = renderHook(() => useDeleteTagMutation(), { wrapper })
 
     await act(async () => {
-      await result.current.mutateAsync(5)
+      await result.current.mutateAsync('tag-uuid-5')
     })
 
     await waitFor(() =>
@@ -125,7 +125,7 @@ describe('useDeleteTagMutation', () => {
     const { result } = renderHook(() => useDeleteTagMutation(), { wrapper })
 
     await act(async () => {
-      await expect(result.current.mutateAsync(1)).rejects.toThrow()
+      await expect(result.current.mutateAsync('tag-uuid-1')).rejects.toThrow()
     })
 
     expect(invalidateSpy).not.toHaveBeenCalled()
@@ -138,7 +138,7 @@ describe('useDeleteTagMutation', () => {
     const { result } = renderHook(() => useDeleteTagMutation(), { wrapper })
 
     await act(async () => {
-      await expect(result.current.mutateAsync(5)).rejects.toThrow('IPC channel unavailable')
+      await expect(result.current.mutateAsync('tag-uuid-5')).rejects.toThrow('IPC channel unavailable')
     })
 
     await waitFor(() => expect(result.current.isError).toBe(true))

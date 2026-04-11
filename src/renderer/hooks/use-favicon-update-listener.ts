@@ -9,7 +9,7 @@ export function useFaviconUpdateListener(): void {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    const handler = ({ id, favicon_url }: { id: number; favicon_url: string }) => {
+    const handler = ({ id, favicon_url }: { id: string; favicon_url: string }) => {
       queryClient.setQueriesData<InfiniteData<BookmarkPage>>(
         { queryKey: queryKeys.bookmark.all },
         (old) => {

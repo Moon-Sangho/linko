@@ -28,6 +28,15 @@ export const IpcChannels = {
 
   // ─── App ─────────────────────────────────────────────────────────────────────
   APP_GET_VERSION: 'app:get-version',
+
+  // ─── Sync ─────────────────────────────────────────────────────────────────────
+  SYNC_GET_STATUS: 'sync:get-status',
+  SYNC_GET_DIFF: 'sync:get-diff',
+  SYNC_GET_CONFIG: 'sync:get-config',
+  SYNC_PUSH: 'sync:push',
+  SYNC_PULL: 'sync:pull',
+  SYNC_CONNECT: 'sync:connect',
+  SYNC_DISCONNECT: 'sync:disconnect',
 } as const;
 
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels];
@@ -44,5 +53,5 @@ export const IpcEventChannels = {
 export type IpcEventChannel = (typeof IpcEventChannels)[keyof typeof IpcEventChannels];
 
 export interface IpcEventPayloadMap {
-  [IpcEventChannels.BOOKMARK_FAVICON_UPDATED]: { id: number; favicon_url: string };
+  [IpcEventChannels.BOOKMARK_FAVICON_UPDATED]: { id: string; favicon_url: string };
 }

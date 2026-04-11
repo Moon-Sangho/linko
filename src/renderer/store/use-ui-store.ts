@@ -2,10 +2,10 @@ import { create } from 'zustand';
 
 interface UIStore {
   searchQuery: string;
-  selectedTagIds: number[];
+  selectedTagIds: string[];
 
   setSearchQuery: (query: string) => void;
-  toggleTag: (id: number) => void;
+  toggleTag: (id: string) => void;
   clearTags: () => void;
 }
 

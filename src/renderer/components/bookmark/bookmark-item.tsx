@@ -15,7 +15,7 @@ interface BookmarkItemProps {
   isChecked: boolean;
   isSelectionMode: boolean;
   onClick: () => void;
-  onCheckToggle: (id: number, e: React.MouseEvent) => void;
+  onCheckToggle: (id: string, e: React.MouseEvent) => void;
 }
 
 export function BookmarkItem({
@@ -89,9 +89,9 @@ export function BookmarkItem({
       setDeleteError('');
       try {
         await deleteBookmark(bookmark.id);
-      } catch {
+      } catch (err) {
         setDeleting(false);
-        setDeleteError('Failed');
+        setDeleteError(err instanceof Error ? err.message : 'Failed');
       }
     },
     [deleteBookmark, bookmark.id],

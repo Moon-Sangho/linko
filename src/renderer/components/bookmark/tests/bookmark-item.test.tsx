@@ -29,7 +29,7 @@ vi.mock('@renderer/overlay/control', () => ({
 // ─── Fixtures ────────────────────────────────────────────────────────────────
 
 const baseBookmark: Bookmark = {
-  id: 1,
+  id: 'uuid-1',
   url: 'https://example.com',
   title: 'Example Site',
   notes: null,
@@ -37,8 +37,8 @@ const baseBookmark: Bookmark = {
   created_at: '2024-01-15T10:00:00.000Z',
   updated_at: '2024-01-15T10:00:00.000Z',
   tags: [
-    { id: 1, name: 'work' },
-    { id: 2, name: 'react' },
+    { id: 'tag-uuid-1', name: 'work' },
+    { id: 'tag-uuid-2', name: 'react' },
   ],
 }
 
@@ -51,7 +51,7 @@ function renderItem(
     isChecked: boolean
     isSelectionMode: boolean
     onClick: () => void
-    onCheckToggle: (id: number, e: React.MouseEvent) => void
+    onCheckToggle: (id: string, e: React.MouseEvent) => void
   }> = {},
 ) {
   const onClick = vi.fn()
@@ -110,10 +110,10 @@ describe('BookmarkItem', () => {
       const bookmark: Bookmark = {
         ...baseBookmark,
         tags: [
-          { id: 1, name: 'a' },
-          { id: 2, name: 'b' },
-          { id: 3, name: 'c' },
-          { id: 4, name: 'd' },
+          { id: 'tag-uuid-1', name: 'a' },
+          { id: 'tag-uuid-2', name: 'b' },
+          { id: 'tag-uuid-3', name: 'c' },
+          { id: 'tag-uuid-4', name: 'd' },
         ],
       }
       renderItem({ bookmark })
@@ -129,9 +129,9 @@ describe('BookmarkItem', () => {
       const bookmark: Bookmark = {
         ...baseBookmark,
         tags: [
-          { id: 1, name: 'a' },
-          { id: 2, name: 'b' },
-          { id: 3, name: 'c' },
+          { id: 'tag-uuid-1', name: 'a' },
+          { id: 'tag-uuid-2', name: 'b' },
+          { id: 'tag-uuid-3', name: 'c' },
         ],
       }
       renderItem({ bookmark })
@@ -151,14 +151,14 @@ describe('BookmarkItem', () => {
       const user = userEvent.setup()
       renderItem()
       await user.dblClick(screen.getByText('Example Site'))
-      expect(mockOpenUrl).toHaveBeenCalledWith({ id: 1, url: 'https://example.com' })
+      expect(mockOpenUrl).toHaveBeenCalledWith({ id: 'uuid-1', url: 'https://example.com' })
     })
 
     it('calls openUrl when the open button is clicked', async () => {
       const user = userEvent.setup()
       renderItem()
       await user.click(screen.getByTitle('Open in browser'))
-      expect(mockOpenUrl).toHaveBeenCalledWith({ id: 1, url: 'https://example.com' })
+      expect(mockOpenUrl).toHaveBeenCalledWith({ id: 'uuid-1', url: 'https://example.com' })
     })
 
     it('opens the edit modal when the edit button is clicked', async () => {
@@ -182,7 +182,7 @@ describe('BookmarkItem', () => {
       const user = userEvent.setup()
       const { onCheckToggle } = renderItem()
       await user.click(screen.getByRole('button', { name: /select bookmark/i }))
-      expect(onCheckToggle).toHaveBeenCalledWith(1, expect.any(Object))
+      expect(onCheckToggle).toHaveBeenCalledWith('uuid-1', expect.any(Object))
     })
   })
 
@@ -216,7 +216,7 @@ describe('BookmarkItem', () => {
       renderItem()
       await user.click(screen.getByTitle('Delete'))
       await user.click(screen.getByRole('button', { name: 'Delete' }))
-      expect(mockDeleteBookmark).toHaveBeenCalledWith(1)
+      expect(mockDeleteBookmark).toHaveBeenCalledWith('uuid-1')
     })
 
     it('shows an error message when delete fails', async () => {

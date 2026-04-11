@@ -3,8 +3,8 @@ import { cn } from '@renderer/lib/cn';
 
 interface TagCheckboxListProps {
   tags: Tag[];
-  selectedIds: number[];
-  onToggle: (id: number) => void;
+  selectedIds: string[];
+  onToggle: (id: string) => void;
 }
 
 export function TagCheckboxList({ tags, selectedIds, onToggle }: TagCheckboxListProps) {

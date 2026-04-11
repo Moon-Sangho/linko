@@ -278,27 +278,27 @@ describe('useBookmarkForm', () => {
   describe('toggleTag', () => {
     it('adds a tag when it is not selected', () => {
       const { result } = renderHook(() => useBookmarkForm())
-      act(() => result.current.toggleTag(1))
-      expect(result.current.selectedTagIds).toContain(1)
+      act(() => result.current.toggleTag('tag-uuid-1'))
+      expect(result.current.selectedTagIds).toContain('tag-uuid-1')
     })
 
     it('removes a tag when it is already selected', () => {
       const { result } = renderHook(() => useBookmarkForm())
       act(() => {
-        result.current.toggleTag(1)
-        result.current.toggleTag(1)
+        result.current.toggleTag('tag-uuid-1')
+        result.current.toggleTag('tag-uuid-1')
       })
-      expect(result.current.selectedTagIds).not.toContain(1)
+      expect(result.current.selectedTagIds).not.toContain('tag-uuid-1')
     })
 
     it('allows multiple tags to be selected simultaneously', () => {
       const { result } = renderHook(() => useBookmarkForm())
       act(() => {
-        result.current.toggleTag(1)
-        result.current.toggleTag(2)
-        result.current.toggleTag(3)
+        result.current.toggleTag('tag-uuid-1')
+        result.current.toggleTag('tag-uuid-2')
+        result.current.toggleTag('tag-uuid-3')
       })
-      expect(result.current.selectedTagIds).toEqual([1, 2, 3])
+      expect(result.current.selectedTagIds).toEqual(['tag-uuid-1', 'tag-uuid-2', 'tag-uuid-3'])
     })
   })
 
@@ -310,7 +310,7 @@ describe('useBookmarkForm', () => {
       act(() => {
         result.current.handleUrlChange('https://example.com')
         result.current.handleTitleChange('Some Title')
-        result.current.toggleTag(1)
+        result.current.toggleTag('tag-uuid-1')
       })
       await act(async () => {
         await result.current.handleUrlBlur()
@@ -371,12 +371,12 @@ describe('useBookmarkForm', () => {
           url: 'https://prefilled.com',
           title: 'Prefilled Title',
           notes: 'Some notes',
-          tagIds: [1, 2],
+          tagIds: ['tag-uuid-1', 'tag-uuid-2'],
         })
       })
       expect(result.current.url).toBe('https://prefilled.com')
       expect(result.current.title).toBe('Prefilled Title')
-      expect(result.current.selectedTagIds).toEqual([1, 2])
+      expect(result.current.selectedTagIds).toEqual(['tag-uuid-1', 'tag-uuid-2'])
     })
 
     it('clears isDuplicate and suggestedUrl from a previous session', async () => {

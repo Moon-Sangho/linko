@@ -6,7 +6,7 @@ import { queryKeys } from '@renderer/lib/query-keys';
 export function useDeleteBulkBookmarksMutation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (ids: number[]) => {
+    mutationFn: async (ids: string[]) => {
       const results = await Promise.all(
         ids.map(
           (id) => window.electron.invoke(IpcChannels.BOOKMARK_DELETE, id) as Promise<IpcResult>,
@@ -19,6 +19,7 @@ export function useDeleteBulkBookmarksMutation() {
       // Refetch regardless — partial failure leaves the DB in an unknown state
       queryClient.invalidateQueries({ queryKey: queryKeys.bookmark.all });
       queryClient.invalidateQueries({ queryKey: queryKeys.tag.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.sync.all });
     },
   });
 }

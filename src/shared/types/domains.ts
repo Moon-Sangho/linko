@@ -3,13 +3,13 @@ import type { PageParams, Paged } from './paging';
 // ─── Core Domain Types ────────────────────────────────────────────────────────
 
 export interface Tag {
-  id: number;
+  id: string;
   name: string;
   count?: number;
 }
 
 export interface Bookmark {
-  id: number;
+  id: string;
   url: string;
   title: string | null;
   notes: string | null;
@@ -26,7 +26,7 @@ export interface CreateBookmarkInput {
   title?: string | null;
   notes?: string | null;
   favicon_url?: string | null;
-  tagIds?: number[];
+  tagIds?: string[];
 }
 
 export interface UpdateBookmarkInput {
@@ -34,7 +34,7 @@ export interface UpdateBookmarkInput {
   title?: string | null;
   notes?: string | null;
   favicon_url?: string | null;
-  tagIds?: number[];
+  tagIds?: string[];
 }
 
 export interface CreateTagInput {
@@ -52,7 +52,7 @@ export interface TagsResult {
 
 export interface SearchBookmarksInput {
   query?: string;
-  tagIds?: number[];
+  tagIds?: string[];
 }
 
 export type GetBookmarksPageInput = PageParams<SearchBookmarksInput>;
@@ -89,4 +89,36 @@ export interface WindowState {
   y: number;
   width: number;
   height: number;
+}
+
+// ─── Sync ─────────────────────────────────────────────────────────────────────
+
+export interface SyncStatus {
+  isConnected: boolean;
+  unsyncedCount: number;
+  lastSyncedAt: string | null;
+  repoUrl: string | null;
+}
+
+export interface SyncConfig {
+  repoUrl: string;
+  lastPushedAt: string | null;
+  lastPulledAt: string | null;
+}
+
+export interface SyncDiffItem {
+  id: string;
+  title: string | null;
+  url: string;
+}
+
+export interface SyncDiff {
+  added: SyncDiffItem[];
+  modified: SyncDiffItem[];
+  deleted: SyncDiffItem[];
+}
+
+export interface ConnectRepoInput {
+  repoUrl: string;
+  token: string;
 }

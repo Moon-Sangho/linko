@@ -18,8 +18,8 @@ Object.defineProperty(window, 'electron', {
 
 const tagsFixture: TagsResult = {
   tags: [
-    { id: 1, name: 'typescript', count: 3 },
-    { id: 2, name: 'react', count: 5 },
+    { id: 'tag-uuid-1', name: 'typescript', count: 3 },
+    { id: 'tag-uuid-2', name: 'react', count: 5 },
   ],
   total: 2,
 }
@@ -70,7 +70,7 @@ describe('useTagsQuery', () => {
 
   it('passes through IPC response verbatim when total mismatches tags length', async () => {
     // Confirms the hook does not normalize or drop data from the IPC response
-    const mismatchResult: TagsResult = { tags: [{ id: 1, name: 'typescript' }], total: 99 }
+    const mismatchResult: TagsResult = { tags: [{ id: 'tag-uuid-1', name: 'typescript' }], total: 99 }
     mockInvoke.mockResolvedValue(mismatchResult)
     const { wrapper } = createWrapper()
 

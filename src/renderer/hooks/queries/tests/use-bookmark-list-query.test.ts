@@ -21,7 +21,7 @@ Object.defineProperty(window, 'electron', {
 
 function makeBookmark(id: number): Bookmark {
   return {
-    id,
+    id: `uuid-${id}`,
     url: `https://example.com/${id}`,
     title: `Bookmark ${id}`,
     notes: null,
@@ -107,7 +107,7 @@ describe('useBookmarkListQuery', () => {
       const { wrapper } = createWrapper()
 
       const { result } = renderHook(
-        () => useBookmarkListQuery({ query: 'react', tagIds: [1, 2] }),
+        () => useBookmarkListQuery({ query: 'react', tagIds: ['tag-uuid-1', 'tag-uuid-2'] }),
         { wrapper },
       )
 
@@ -115,7 +115,7 @@ describe('useBookmarkListQuery', () => {
 
       expect(mockInvoke).toHaveBeenCalledWith(IpcChannels.BOOKMARKS_GET_PAGE, {
         query: 'react',
-        tagIds: [1, 2],
+        tagIds: ['tag-uuid-1', 'tag-uuid-2'],
         limit: BOOKMARK_PAGE_SIZE,
         offset: 0,
       })

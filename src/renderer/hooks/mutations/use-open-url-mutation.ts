@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { IpcChannels } from '@shared/ipc-channels';
 
 interface OpenUrlInput {
-  id: number;
+  id: string;
   url: string;
 }
 

@@ -27,10 +27,10 @@ describe('useOpenUrlMutation', () => {
     const { result } = renderHook(() => useOpenUrlMutation(), { wrapper })
 
     await act(async () => {
-      await result.current.mutateAsync({ id: 42, url: 'https://example.com' })
+      await result.current.mutateAsync({ id: 'uuid-42', url: 'https://example.com' })
     })
 
-    expect(mockInvoke).toHaveBeenCalledWith(IpcChannels.BOOKMARK_OPEN, 42, 'https://example.com')
+    expect(mockInvoke).toHaveBeenCalledWith(IpcChannels.BOOKMARK_OPEN, 'uuid-42', 'https://example.com')
     expect(mockInvoke).toHaveBeenCalledTimes(1)
   })
 
@@ -42,7 +42,7 @@ describe('useOpenUrlMutation', () => {
     const { result } = renderHook(() => useOpenUrlMutation(), { wrapper })
 
     await act(async () => {
-      await result.current.mutateAsync({ id: 1, url: 'https://example.com' })
+      await result.current.mutateAsync({ id: 'uuid-1', url: 'https://example.com' })
     })
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
@@ -57,7 +57,7 @@ describe('useOpenUrlMutation', () => {
 
     await act(async () => {
       await expect(
-        result.current.mutateAsync({ id: 1, url: 'https://example.com' }),
+        result.current.mutateAsync({ id: 'uuid-1', url: 'https://example.com' }),
       ).rejects.toThrow('Shell open failed')
     })
 

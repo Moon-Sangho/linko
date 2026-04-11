@@ -9,7 +9,7 @@ import { BookmarkFormModal } from './bookmark-form-modal';
 interface EditBookmarkModalProps {
   isOpen: boolean;
   onClose: () => void;
-  bookmarkId: number;
+  bookmarkId: string;
 }
 
 export function EditBookmarkModal({ isOpen, onClose, bookmarkId }: EditBookmarkModalProps) {

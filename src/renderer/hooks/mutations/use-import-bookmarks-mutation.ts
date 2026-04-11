@@ -22,6 +22,7 @@ export function useImportBookmarksMutation() {
       if (!data) return; // cancelled
       queryClient.invalidateQueries({ queryKey: queryKeys.bookmark.all });
       queryClient.invalidateQueries({ queryKey: queryKeys.tag.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.sync.all });
     },
   });
 }

@@ -6,7 +6,7 @@ import { queryKeys } from '@renderer/lib/query-keys';
 export function useDeleteBookmarkMutation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (id: number) => {
+    mutationFn: async (id: string) => {
       const result = (await window.electron.invoke(IpcChannels.BOOKMARK_DELETE, id)) as IpcResult;
       if (!result.success) throw new Error(result.error ?? 'Failed to delete bookmark');
     },
@@ -14,6 +14,7 @@ export function useDeleteBookmarkMutation() {
       queryClient.invalidateQueries({ queryKey: queryKeys.bookmark.all });
       queryClient.removeQueries({ queryKey: queryKeys.bookmark.byId(id) });
       queryClient.invalidateQueries({ queryKey: queryKeys.tag.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.sync.all });
     },
   });
 }

@@ -11,6 +11,7 @@ import { registerTagHandlers } from '@main/ipc/tags';
 import { registerWindowHandlers } from '@main/ipc/window';
 import { registerFileSystemHandlers } from '@main/ipc/file-system';
 import { registerAppHandlers } from '@main/ipc/app';
+import { registerSyncHandlers } from '@main/ipc/sync';
 
 const windows: Record<string, BrowserWindow | null> = {
   main: null,
@@ -35,6 +36,7 @@ function registerIpcHandlers(): void {
   registerFileSystemHandlers(bookmarkRepo);
   registerWindowHandlers();
   registerAppHandlers();
+  registerSyncHandlers(bookmarkRepo, tagRepo);
 }
 
 // ─── App Lifecycle ────────────────────────────────────────────────────────────

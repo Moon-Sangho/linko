@@ -7,7 +7,7 @@ export const BOOKMARK_PAGE_SIZE = 25;
 
 interface BookmarkListInput {
   query?: string;
-  tagIds?: number[];
+  tagIds?: string[];
 }
 
 export function useBookmarkListQuery(input: BookmarkListInput) {
